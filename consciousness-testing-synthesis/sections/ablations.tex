@@ -1,0 +1,62 @@
+While Butlin et al.\ derive indicators and Hoel constrains what theories can be taken seriously, Yin Jun Phua~\citep{phua2025} takes the empirical step: building synthetic agents that embody theoretical mechanisms and subjecting them to precise ablations impossible in biological systems.
+
+\subsection{The Synthetic Neuro-Phenomenology Approach}
+
+Phua's method treats AI agents as ``reference implementations'' of consciousness theories---not claims that these agents are conscious, but controlled systems for testing whether theoretical mechanisms have the predicted functional consequences.
+
+\begin{quote}
+``For neuroscience, synthetic agents offer a `perfect model organism' where every neuron, weight, and activation is observable and manipulable, allowing for causal tests that are ethically or technically impossible in biological brains.''~\citep[p.~1]{phua2025}
+\end{quote}
+
+The agents are reinforcement-learning-style architectures trained via supervised behavior cloning, incorporating:
+\begin{enumerate}
+    \item A \textbf{global workspace} for broadcasting information (GWT)
+    \item A \textbf{Self-Model} for monitoring internal states (HOT)
+    \item \textbf{Complexity probes} for measuring information integration (IIT-inspired)
+\end{enumerate}
+
+\subsection{Key Findings}
+
+Across three experiments, Phua reports striking dissociations:
+
+\subsubsection{Experiment 1: Synthetic Blindsight}
+
+Ablating the Self-Model selectively abolishes metacognitive calibration (Type-2 performance: knowing that you know) while leaving first-order task performance (Type-1) largely intact. This yields a ``synthetic blindsight'' analogue consistent with HOT predictions:
+
+\begin{quote}
+``The no-rewire Self-Model lesion abolishes metacognitive calibration while preserving first-order task performance, yielding a synthetic blindsight analogue consistent with HOT predictions.''~\citep[p.~1]{phua2025}
+\end{quote}
+
+This demonstrates that metacognition can be dissociated from competence---agents can \emph{do} without \emph{knowing}.
+
+\subsubsection{Experiment 2: Workspace Ignition}
+
+The workspace capacity proves causally necessary for information access. Complete workspace lesion produces qualitative collapse in access-related markers, while partial reductions show graded degradation. This is consistent with GWT's ``ignition'' framework: information either fully enters the workspace or doesn't.
+
+\subsubsection{Experiment 3: Broadcast-Amplification Effect}
+
+Contrary to intuitions that broadcasting creates robustness, global workspace alone exhibits a \emph{broadcast-amplification} effect: it broadcasts information but also amplifies noise, creating fragility. However, agents with both workspace and Self-Model (the ``B2 family'') remain robust under perturbation.
+
+\subsection{The Hierarchy Principle}
+
+The central finding is that GWT and HOT mechanisms are \emph{complementary} rather than competing:
+
+\begin{quote}
+``GWT provides the capacity for information exchange, while HOT mechanisms provide the control necessary to stabilize that exchange. Neither alone is sufficient for robust agency.''~\citep[p.~2]{phua2025}
+\end{quote}
+
+This suggests a hierarchical design principle: broadcast without quality control is fragile; quality control without broadcast is isolated.
+
+\subsection{Negative Result on IIT Proxies}
+
+Phua reports an explicit negative result regarding IIT-adjacent measures: raw perturbational complexity (PCI-A) \emph{decreases} under the workspace bottleneck, contrary to na\"ive expectations that ``more integrated $\Rightarrow$ higher PCI.'' This cautions against simple transfer of neuroscience-derived proxies to engineered systems.
+
+\subsection{Limitations}
+
+Phua emphasizes that these agents are not conscious:
+
+\begin{quote}
+``Our claims concern functional correlates within these synthetic systems: whether certain architectural features are necessary or sufficient for particular behavioral and representational signatures. We make no claims about whether these features would produce phenomenal experience in biological or artificial systems.''~\citep[p.~2]{phua2025}
+\end{quote}
+
+The experiments demonstrate functional necessity---these mechanisms are required for certain capabilities---but not phenomenal sufficiency.

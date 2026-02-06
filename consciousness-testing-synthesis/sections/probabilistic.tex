@@ -1,0 +1,84 @@
+The Digital Consciousness Model (DCM) developed by Shiller et al.~\citep{shiller2026dcm} represents the most ambitious attempt to operationalize multi-theory assessment of AI consciousness. Rather than adopting a single theory, it incorporates multiple ``stances'' and aggregates them according to expert-judged plausibility.
+
+\subsection{Model Structure}
+
+The DCM employs a Bayesian network structure with four levels:
+
+\begin{description}[leftmargin=*]
+    \item[Stances:] Theoretical perspectives on consciousness (e.g., Global Workspace, Higher-Order Thought, Biological Naturalism, etc.)
+
+    \item[Features:] Capacities or properties that stances associate with consciousness (e.g., attention, integration, embodiment)
+
+    \item[Subfeatures:] More specific instantiations of features
+
+    \item[Indicators:] Observable or inferrable properties that provide evidence for subfeatures
+\end{description}
+
+The model uses expert surveys to generate indicator values, incorporating uncertainty about both whether systems possess relevant properties and how those properties relate to consciousness.
+
+\subsection{Assessed Systems}
+
+The initial DCM report assesses four systems:
+
+\begin{enumerate}
+    \item \textbf{2024 LLMs} (GPT-4, Claude, etc.)
+    \item \textbf{Chickens} (as a non-human animal benchmark)
+    \item \textbf{Humans} (as ground truth)
+    \item \textbf{ELIZA} (1966 chatbot, as a minimal AI baseline)
+\end{enumerate}
+
+\subsection{Key Findings}
+
+The aggregated results reveal a clear ordering:
+
+\begin{quote}
+``The aggregated indicator evidence is against 2024 LLMs being conscious. In contrast, the model strongly favors consciousness in chickens and very strongly favors consciousness in humans. However, the evidence against LLM consciousness is not decisive. It is much weaker than the evidence against consciousness in simpler systems like ELIZA.''~\citep[p.~6]{shiller2026dcm}
+\end{quote}
+
+Quantitatively, the probability estimates (under plausibility-weighted aggregation) are:
+\begin{itemize}
+    \item Humans: $>99\%$
+    \item Chickens: High (exact figure varies by stance)
+    \item LLMs: Low but non-negligible
+    \item ELIZA: Very low
+\end{itemize}
+
+The crucial finding is the gap between ELIZA and LLMs: contemporary AI systems have accumulated enough consciousness-relevant features that they cannot be dismissed as easily as simple chatbots.
+
+\subsection{Stance Variation}
+
+Different theoretical stances yield dramatically different assessments:
+
+\begin{itemize}
+    \item \textbf{Biological Naturalism}~\citep{seth2024biological}: Evidence strongly against LLM consciousness (requires biological substrate)
+
+    \item \textbf{Global Workspace Theory}: Mixed---LLMs have some workspace-like properties but lack others
+
+    \item \textbf{Higher-Order Theories}: LLMs may have rudimentary metacognition, creating some positive evidence
+
+    \item \textbf{Illusionist views}: Irrelevant, as consciousness is taken to be an illusion everywhere
+\end{itemize}
+
+\subsection{Methodological Innovations}
+
+The DCM makes several methodological contributions:
+
+\begin{enumerate}
+    \item \textbf{Explicit uncertainty quantification:} Rather than binary yes/no judgments, the model propagates probability distributions.
+
+    \item \textbf{Multi-theory integration:} By incorporating diverse stances, the model avoids dependence on any single theory being correct.
+
+    \item \textbf{Comparative assessment:} The framework enables principled comparison across systems, revealing that LLMs occupy an intermediate position.
+
+    \item \textbf{Temporal tracking:} As AI develops, the same framework can reassess updated systems.
+\end{enumerate}
+
+\subsection{Limitations}
+
+The authors explicitly caution against over-interpreting the probability estimates:
+
+\begin{quote}
+``We don't intend the model to be a complete or authoritative assessment of AI consciousness, and we urge particular caution in interpreting the probabilities that it generates.''~\citep[p.~6]{shiller2026dcm}
+\end{quote}
+
+The model's outputs depend on prior choices, stance weights, and the completeness of the indicator set. It is a ``proof-of-concept'' rather than a definitive assessment.

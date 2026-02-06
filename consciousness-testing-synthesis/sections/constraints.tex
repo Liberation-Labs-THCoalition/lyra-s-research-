@@ -1,0 +1,51 @@
+While Butlin et al.\ ask what indicators consciousness might require, Erik Hoel~\citep{hoel2025disproof} asks a prior question: What formal constraints must \emph{any} theory of consciousness satisfy to be scientifically meaningful? His answer---the ``Kleiner-Hoel dilemma''---provides a novel argument that contemporary LLMs cannot be conscious.
+
+\subsection{The Falsifiability Framework}
+
+Hoel builds on earlier work with Johannes Kleiner~\citep{kleiner2021falsification} that formalized the requirements for testing theories of consciousness. The framework distinguishes two functions:
+
+\begin{itemize}
+    \item \textbf{Predictions} ($\text{pred}$): How a theory maps from observational data about a system's workings to claims about its experiences.
+
+    \item \textbf{Inferences} ($\text{inf}$): How a scientist infers conscious experiences from behavioral or verbal report data.
+\end{itemize}
+
+A theory is testable when predictions and inferences can be compared: if they diverge, the theory is falsified; if they converge, the theory gains support.
+
+\subsection{The Dilemma}
+
+The Kleiner-Hoel dilemma identifies two ``horns'' that theories must avoid:
+
+\begin{description}[leftmargin=*]
+    \item[Horn 1: Substitution Falsification.] If a ``universal substitution'' (a system with identical I/O but different internal structure) causes predictions to diverge from inferences, the theory is falsified. For example, IIT predicts that an RNN has positive $\Phi$, but its ``unfolded'' feedforward equivalent has zero $\Phi$---yet both behave identically.
+
+    \item[Horn 2: Strict Dependency (Triviality).] If predictions never diverge from inferences because they stem from the same source (I/O behavior), the theory is unfalsifiable and thus trivial. Behaviorism is the paradigmatic example: ``conscious iff behaves conscious'' provides no scientific information.
+\end{description}
+
+Theories must navigate between these horns, achieving what Hoel calls ``lenient dependency''---predictions that are related to but not identical with inferences.
+
+\subsection{The Proximity Argument Against LLM Consciousness}
+
+Hoel's key innovation is the ``Proximity Argument.'' He defines \emph{substitution distance} as the space of properties that differ between a system and its non-conscious substitutes. Humans are far from lookup tables in substitution space; LLMs are not.
+
+\begin{quote}
+``The chain L $\leftrightarrow$ N $\leftrightarrow$ M is constructed to preserve I/O... For any given theory of consciousness T, it either: (a) grants consciousness to contemporary baseline LLMs, but does not for trivially non-conscious systems, yet then T is a priori falsified by mismatches in prediction when non-conscious systems are substituted in for LLMs; or (b) grants consciousness to LLMs and non-conscious systems, but then the theory must apply in the latter case, and so must be trivial.''~\citep[p.~13]{hoel2025disproof}
+\end{quote}
+
+Here L is a lookup table, N is a static single-hidden-layer feedforward network, and M is the LLM. The chain exists via known mathematical theorems (universal approximation, unfolding). Any property within this substitution chain that could ground consciousness either varies (falsifying the theory) or doesn't vary (making it trivial).
+
+\subsection{The Continual Learning Hypothesis}
+
+Hoel's positive contribution is identifying \emph{continual learning} as a potential escape from the dilemma. If consciousness requires ongoing plasticity---learning that occurs with every experience---then static systems (including deployed LLMs) cannot be conscious, while learning systems might be.
+
+The key insight is that static substitutions (lookup tables, frozen networks) cannot act as universal substitutes for genuinely learning systems. A learning system's behavior depends on its history in ways that cannot be enumerated in a static I/O table.
+
+\begin{quote}
+``Consider the difference between how humans and LLMs conduct a conversation: for us humans, each conversation necessarily relies on continual learning to provide context about what has just been said. For the LLM, the whole conversation is stored verbatim externally and is continually being fed in the format of [input (x, history)] as part of each new prompt itself.''~\citep[p.~24]{hoel2025disproof}
+\end{quote}
+
+This hypothesis is speculative but provocative: it suggests that the cognitive limitations of LLMs (brittleness, lack of genuine adaptation) may be \emph{constitutively} linked to their lack of consciousness.
+
+\subsection{Implications}
+
+Hoel's argument is philosophically neutral---it does not assume any particular theory of consciousness, biological specialness, or the impossibility of AI consciousness in general. It merely shows that the specific architecture of contemporary LLMs cannot support any non-trivial theory. Future systems with genuine continual learning might escape the disproof.
