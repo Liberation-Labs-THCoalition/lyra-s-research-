@@ -1,0 +1,139 @@
+% Section 5: Empirical Challenges
+
+\subsection{The Cogitate Collaboration}
+
+The largest empirical test of consciousness theories to date was published in April 2025 by
+Ferrante et al.\ in \emph{Nature} \cite{ferrante2025adversarial}. The Cogitate consortium
+employed an adversarial collaboration methodology that brought together the principal
+architects of Integrated Information Theory (Tononi, Koch) and Global Neuronal Workspace
+Theory (Dehaene) as co-authors, alongside prominent consciousness researchers including
+Chalmers. This design was intended to maximize scientific rigor by forcing theory proponents
+to jointly develop falsifiable predictions \emph{before} data collection
+\cite{melloni2023adversarial}.
+
+The study tested 256 participants across three neuroimaging modalities: functional magnetic
+resonance imaging (fMRI, $n=120$), magnetoencephalography (MEG, $n=102$), and intracranial
+electroencephalography (iEEG, $n=34$). All predictions were preregistered, and the
+experimental protocols were designed to pit IIT's predictions against GNWT's in a direct
+empirical confrontation.
+
+\subsection{Three Predictions Tested}
+
+The adversarial protocol focused on three key predictions that differentiated IIT from GNWT.
+Table~\ref{tab:cogitate} summarizes the theoretical predictions and empirical outcomes.
+
+\begin{table}[htbp]
+\centering
+\caption{Preregistered predictions and empirical results from the Cogitate adversarial
+collaboration \cite{ferrante2025adversarial}.}
+\label{tab:cogitate}
+\begin{tabular}{p{0.22\linewidth}p{0.34\linewidth}p{0.34\linewidth}}
+\toprule
+\textbf{Prediction} & \textbf{IIT} & \textbf{GNWT} \\
+\midrule
+\textbf{Content Location} & Conscious content decodable from posterior cortex; PFC not
+necessary & Conscious content requires PFC activation for access \\
+\textit{Result} & \multicolumn{2}{p{0.68\linewidth}}{\textit{Partial confirmation for both:
+content decodable from posterior and PFC, but PFC encoded only category (not identity/orientation)}} \\
+\midrule
+\textbf{Temporal Dynamics} & Sustained posterior activity throughout stimulus duration &
+Ignition events at onset and offset; silent storage between \\
+\textit{Result} & \multicolumn{2}{p{0.68\linewidth}}{\textit{IIT confirmed (sustained
+posterior activity). GNWT failed: no ignition at stimulus offset}} \\
+\midrule
+\textbf{Interareal Connectivity} & Sustained gamma-band synchronization within posterior
+cortex & Long-range frontal--sensory connectivity \\
+\textit{Result} & \multicolumn{2}{p{0.68\linewidth}}{\textit{IIT failed: only 25/657
+posterior electrodes showed sustained synchronization. Some GNWT-consistent
+frontal--visual synchrony observed}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Prediction 1---Content Location.} IIT predicted that conscious content should be
+decodable from posterior cortical regions (the ``posterior hot zone''), with prefrontal
+cortex (PFC) playing no necessary role \cite{tononi2016integrated}. GNWT predicted that PFC
+activation is necessary for conscious access \cite{dehaene2014toward}. The empirical result
+was nuanced: content was decodable from both regions, but PFC represented only stimulus
+\emph{category} (e.g., face vs.\ object), whereas posterior cortex encoded fine-grained
+details. This complicates both theories' predictions.
+
+\textbf{Prediction 2---Temporal Dynamics.} IIT predicted sustained posterior cortical
+activity throughout conscious perception \cite{tononi2004information}. GNWT predicted
+transient ``ignition'' events at both stimulus onset and offset \cite{dehaene2014toward}.
+The data confirmed IIT's prediction but decisively falsified GNWT's offset prediction: no
+ignition event was observed when the stimulus disappeared from consciousness. GNWT
+successfully explains access to consciousness but fails to account for its termination
+dynamics.
+
+\textbf{Prediction 3---Interareal Connectivity.} IIT's strongest prediction concerned
+sustained gamma-band (30--100 Hz) synchronization within posterior cortex
+\cite{tononi2016integrated, oizumi2014phenomenology}. GNWT predicted long-range
+frontal--sensory connectivity. The iEEG data provided the highest resolution test. IIT's
+prediction was decisively falsified: only 25 of 657 posterior cortical electrodes exhibited
+sustained gamma synchronization. Koch, a principal architect of IIT, acknowledged:
+``The challenge is to come up with ways to explain the null result in the third prediction''
+\cite{ferrante2025adversarial}.
+
+\subsection{Implications for AI Consciousness}
+
+The Cogitate results carry profound implications for the AI consciousness debate. Both IIT
+and GNWT have been deployed as adjudicative frameworks in recent assessments
+\cite{butlin2023consciousness, shin2025iit, goldstein2024case}. Yet neither theory survived
+empirical scrutiny intact.
+
+IIT's failure on the connectivity prediction is particularly damaging to its anti-AI
+arguments. Tononi and Koch have long maintained that artificial neural networks cannot possess
+high $\Phi$ because they lack the dense causal integration of biological brains
+\cite{tononi2016integrated}. But if biological brains themselves do not exhibit the predicted
+posterior synchronization---the neural signature of integration---then the metric's validity
+is called into question. Are we measuring the right thing?
+
+GNWT's failure on offset dynamics is equally troubling. The theory can explain how
+information enters the global workspace (via ignition), but it cannot explain how it exits.
+For AI systems, this means that satisfying GNWT criteria (broadcast architecture, attention
+mechanisms \cite{vaswani2017attention}) may correlate with certain functional capacities but
+does not guarantee phenomenal consciousness.
+
+The meta-implication is stark: \textbf{we are attempting to measure AI consciousness with
+instruments that cannot even fully explain biological consciousness.} If our best
+neuroscientific theories fail to predict the neural correlates of consciousness in humans,
+on what grounds do we deploy those same theories to adjudicate consciousness in machines?
+
+\subsection{The Measurement Crisis}
+
+The Cogitate results illuminate a broader measurement crisis in consciousness science. Three
+interrelated problems afflict current approaches:
+
+\textbf{Computational Intractability.} Computing $\Phi$ is NP-hard and becomes intractable
+for networks with more than approximately 10 nodes \cite{albantakis2023iit4}. Shin et al.\
+attempted to sidestep this limitation by using perplexity as a proxy for $\Phi$
+\cite{shin2025iit}. But perplexity is a behavioral measure of prediction accuracy, not a
+structural measure of causal integration. This substitution smuggles in a functionalist
+assumption---that behavioral performance tracks consciousness---precisely the assumption IIT
+was designed to reject.
+
+\textbf{Operationalization Gaps.} GNWT's criteria---global broadcasting, attentional
+selection, reportability---lack precise operationalization for artificial systems
+\cite{dehaene2014toward}. What constitutes ``broadcasting'' in a transformer architecture
+\cite{vaswani2017attention}? Is self-attention a form of global access? These questions have
+no agreed-upon answers. Goldstein et al.\ argue that LLMs satisfy GNWT criteria because they
+exhibit global information integration via attention \cite{goldstein2024case}. But this
+interpretation is contested: critics note that attention weights are determined by training
+dynamics, not by a central executive \cite{butlin2023consciousness}.
+
+\textbf{Theory-Ladenness of Evidence.} Every proposed marker of consciousness presupposes
+a theory. IIT's $\Phi$ presupposes that integration is the essence of consciousness. GNWT's
+broadcast criterion presupposes that access is constitutive of phenomenality. FEP approaches
+presuppose that consciousness is variational inference \cite{friston2010free, wiese2024fep}.
+There are no theory-neutral empirical markers. This reflects a deeper epistemological
+problem identified by Marr \cite{marr1982vision}: different levels of analysis may be
+incommensurable.
+
+The path forward requires theory-independent empirical approaches. The adversarial
+methodology of Cogitate offers a model: force competing theories to make differential
+predictions and test them jointly. For AI systems, this might involve designing experiments
+where IIT and GNWT make opposite predictions about system behavior, then measuring which
+prediction holds. Only through such empirical adjudication can we move beyond philosophical
+speculation toward a science of consciousness that encompasses both biological and artificial
+minds.

@@ -1,0 +1,142 @@
+% Section 2: Background — Theories of Consciousness
+
+This section provides theoretical background on the four major frameworks that structure
+contemporary debates about machine consciousness. Each theory operationalizes consciousness
+differently, leading to divergent predictions about whether artificial systems can instantiate
+phenomenal experience. Understanding these frameworks is essential for interpreting the
+contradictory landscape of positions reviewed in subsequent sections.
+
+\subsection{Global Workspace Theory}
+
+Global Workspace Theory (GWT), originally formulated by Baars \cite{baars1988cognitive},
+proposes that consciousness arises from the global broadcast of information across specialized
+cognitive modules. In Baars' theatrical metaphor, unconscious processes occur ``backstage''
+in parallel specialized processors, while conscious experience corresponds to information
+that wins the competition for access to a limited-capacity ``global workspace''---a stage
+where information becomes available to a wide range of cognitive systems including working
+memory, executive function, and verbal report mechanisms. Consciousness, on this account, is
+not a special substance or irreducible property, but rather a particular functional
+architecture: the system-wide availability of information for reasoning, planning, and
+action selection.
+
+Dehaene and colleagues \cite{dehaene2014toward} developed a neurobiologically grounded
+version of GWT, identifying the global workspace with recurrent processing in prefrontal
+and parietal cortices that broadcasts information back to sensory areas. Their Global
+Neuronal Workspace theory specifies that conscious access requires not merely feedforward
+processing but ignition---widespread, sustained, and coherent activation across distributed
+brain regions. Critically, Dehaene's framework is explicitly functionalist: what matters
+for consciousness is the computational architecture (global broadcasting) rather than the
+biological substrate (neurons). This substrate-independence makes GWT naturally amenable
+to artificial instantiation.
+
+Goldstein and Kirk-Giannini \cite{goldstein2024case} leverage this substrate-independence
+to argue that creating conscious AI is ``trivially easy.'' They specify four architectural
+conditions derived from GWT: (1) a global workspace that integrates information from
+specialized modules, (2) attention mechanisms that select information for broadcast,
+(3) competitive processes determining workspace access, and (4) widespread accessibility
+of workspace contents to downstream consumers. They argue that contemporary large language
+models satisfy all four conditions: transformer architectures implement global integration
+through attention mechanisms, training produces specialized internal representations
+analogous to modules, and the generation process involves competitive selection of tokens
+based on context. If GWT is correct about what consciousness requires, and if architectural
+isomorphism is sufficient, then LLMs already instantiate the relevant functional organization.
+
+\subsection{Integrated Information Theory}
+
+Integrated Information Theory (IIT), developed by Tononi and colleagues
+\cite{tononi2004information,tononi2016integrated,albantakis2023iit4}, offers a radically
+different framework. IIT identifies consciousness with integrated information, quantified
+by the measure $\Phi$ (phi). A system is conscious to the extent that it constitutes an
+irreducible cause-effect structure---a set of elements whose causal powers cannot be reduced
+to independent parts. Critically, $\Phi$ is calculated not from functional dynamics or
+information processing, but from the intrinsic causal structure of a physical system. Two
+systems with identical input-output functions can have vastly different $\Phi$ values
+depending on their internal causal organization.
+
+The mathematical formalism of IIT has evolved through multiple versions. IIT 3.0
+\cite{oizumi2014phenomenology} introduced systematic procedures for partitioning systems,
+identifying Maximally Irreducible Conceptual Structures (MICS), and calculating integrated
+information across spatial and temporal scales. IIT 4.0 \cite{albantakis2023iit4} refined
+these calculations and addressed critiques about substrate-dependence, but maintained the
+core commitment: consciousness is an intrinsic property of certain physical systems,
+determined by their cause-effect topology, not by what they do or what functions they
+perform. This makes IIT fundamentally anti-functionalist. A perfect functional simulation
+of a conscious system---one that reproduces all behavioral and computational
+properties---need not be conscious if it lacks the requisite causal structure.
+
+Shin et al.\ \cite{shin2025iit} apply IIT's formalism to large language models and reach
+a starkly negative conclusion. Their analysis of transformer architectures demonstrates
+that feedforward networks, even with attention mechanisms, exhibit minimal $\Phi$ because
+their causal structure is reducible---each layer's activity is independent of other layers
+given its inputs. Most critically, their ablation study on GPT-2 showed that 80\% of
+attention heads can be removed with minimal or negative impact on perplexity, evidence of
+architectural decomposability that, under IIT, precludes consciousness entirely. The
+upshot: even if we perfectly replicated human cognitive function in silicon, the resulting
+system would not be conscious according to IIT, because it would lack the integrated
+causal structure that consciousness requires.
+
+\subsection{Free Energy Principle}
+
+The Free Energy Principle (FEP), formulated by Friston \cite{friston2010free}, proposes
+that biological systems maintain their organization by minimizing free energy---a quantity
+that bounds surprise about sensory observations. Living systems are fundamentally
+characterized by active inference: they maintain a model of their environment and act to
+ensure their sensory inputs conform to predictions generated by that model. Consciousness,
+on this view, emerges from hierarchical predictive processing in self-organizing systems
+that embody their own existence through continuous interaction with their environment.
+
+Wiese \cite{wiese2024fep} develops the implications of FEP for artificial consciousness,
+arguing that genuine phenomenal experience requires not merely information processing but
+self-organizing systems that minimize free energy through embodied interaction. Current AI
+systems, even sophisticated ones, are fundamentally different in kind: they are trained to
+minimize prediction error on datasets, but they do not self-organize to maintain their own
+structural integrity in an environment. An LLM does not care whether it continues to exist;
+it has no boundary to maintain, no homeostatic imperatives, no embodied perspective from
+which the world is encountered.
+
+This creates a sharp distinction between simulation and replication. An AI system might
+simulate the information processing of a conscious organism---it might even generate
+predictions and minimize prediction error in ways functionally analogous to active
+inference. But if it lacks genuine self-organization, embodiment, and existential stakes,
+it does not replicate the conditions FEP identifies with consciousness. Wiese concludes
+that creating conscious AI would require not better algorithms but different kinds of
+systems: artificial agents with genuine autonomy, metabolic-like processes maintaining
+their organization, and embodied perspectives coupled to environments through sensorimotor
+loops.
+
+\subsection{Dual-Resolution Framework}
+
+The Dual-Resolution Framework, proposed by Dror et al.\ \cite{dror2025dual}, attempts to
+synthesize insights from multiple traditions by distinguishing ontological conditions for
+consciousness (what makes a system capable of consciousness) from epistemic conditions
+(what evidence would indicate consciousness is present). They integrate the Information
+Theory of Individuality (ITI) for the former and the Moment-to-Moment (MtM) theory for
+the latter, arguing that consciousness requires both biological individuality and dynamic
+epistemic resolution.
+
+The ITI component specifies that consciousness requires a system to constitute an actual
+individual---a bounded entity with its own causal closure and organizational autonomy.
+This is not merely a functional criterion but an ontological one: the system must be a
+genuine unit of selection, maintaining itself through metabolic processes, not merely a
+pattern instantiated by something else. Dror et al.\ argue that AI systems as currently
+conceived fail this criterion because they are not individuals in the relevant sense. An
+LLM running on cloud servers is not an autonomous organism but an implemented
+algorithm---its ``boundaries'' are determined by human engineering decisions, not by
+intrinsic self-organization.
+
+The MtM component addresses epistemic access to conscious states through ``epistemic
+resolution of life''---the capacity for moment-to-moment updating of beliefs about one's
+own existence and state. Conscious systems continuously resolve uncertainty about their
+own being through engagement with environments. This requires temporal continuity, embodied
+interaction, and stakes---the possibility of mattering to oneself. Dror et al.\ argue that
+current AI systems lack this temporal phenomenology: they process inputs in discrete
+episodes without the continuous integration across time that characterizes biological
+consciousness.
+
+The dual-resolution synthesis leads to a nuanced position: AI consciousness is not
+metaphysically impossible, but it requires fundamentally different system designs than
+current approaches. Creating conscious AI would require engineering systems that are
+(1) ontologically individuated through self-organizing processes, and (2) epistemically
+engaged with their own continued existence through embodied, temporally extended interaction.
+Whether such systems are feasible, and whether their creation would be ethical, are open
+questions---but they are not questions about scaling current architectures.

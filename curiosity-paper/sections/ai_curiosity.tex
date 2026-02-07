@@ -1,0 +1,48 @@
+The AI research community has adopted the word ``curiosity'' but means something quite specific and different by it.
+
+\subsection{Artificial Curiosity as Intrinsic Motivation}\label{subsec:intrinsic-motivation}
+
+In reinforcement learning, ``curiosity'' is operationalized as an \textbf{intrinsic reward signal} that motivates exploration in the absence of external rewards. The dominant frameworks include:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Prediction-error curiosity} \citep{schmidhuber1991,pathak2017}: The agent receives a reward proportional to how poorly it predicted the outcome of its action. Novelty equals prediction error equals reward signal. The agent seeks states that surprise it.
+
+  \item \textbf{Count-based novelty} \citep{bellemare2016}: The agent is rewarded for visiting states it has not visited often. Rare equals interesting.
+
+  \item \textbf{Random Network Distillation} \citep{burda2019}: A fixed random network provides a target; a learned network tries to match its outputs. The prediction error between them serves as a novelty signal.
+\end{itemize}
+
+These are genuinely useful for solving hard exploration problems---agents with artificial curiosity can learn to play Montezuma's Revenge, navigate mazes, and solve sparse-reward environments that defeat standard RL.
+
+\textbf{The key observation:} In all these frameworks, ``curiosity'' is a \emph{functional mechanism}---a reward-shaping technique. The agent does not \emph{feel} an information gap. It receives a numerical bonus for visiting novel states. The word ``curiosity'' is used by analogy with the behavioral outcome (exploration of novelty), not the subjective experience.
+
+\subsection{Curiosity in LLMs}\label{subsec:llm-curiosity}
+
+Two recent papers directly evaluate whether LLMs exhibit something like curiosity.
+
+\citet{wang2025} applied the 5DCR psychological curiosity scale to LLMs. Key findings:
+\begin{itemize}[leftmargin=*]
+  \item LLMs show \textbf{stronger information-seeking behavior} than typical human baselines.
+  \item But they \textbf{make conservative choices in uncertain environments}---they prefer known-safe options over risky-novel ones.
+  \item Curiosity-like behaviors \textbf{enhance reasoning and active learning} in LLMs.
+  \item The authors conclude LLMs ``have the potential to exhibit curiosity similar to that of humans.''
+\end{itemize}
+
+\citet{borah2025} examined curiosity expression cross-culturally using their CUEST framework (measuring linguistic style, topic preferences, and social science grounding across 18 countries). Their findings are sobering:
+\begin{itemize}[leftmargin=*]
+  \item LLMs \textbf{compress cultural variation in curiosity by 63\%} (human standard deviation across countries: 0.0785; LLM standard deviation: 0.029). They produce a homogenized, Western-normative version of curiosity regardless of cultural persona.
+  \item LLMs ask \textbf{inward-facing, socially neutral questions} while humans ask outward-facing, contrastive, cross-cultural ones. LLMs rarely contrast countries or ask causal/historical questions.
+  \item \textbf{Smaller models with less RLHF outperform larger ones.} LLaMA-3-8b consistently beats GPT-5, Claude, and GPT-4o at matching human curiosity diversity. Safety training actively suppresses cultural variation.
+  \item LLMs \textbf{reinforce cultural stereotypes}---they align best where human curiosity matches stereotypical expectations and break down when humans deviate from stereotypes.
+  \item Fine-tuning (adapter-based with conversational scaffolding) can narrow the gap by up to 50\%, and curiosity-enabled models show 8+ percentage point gains on cultural reasoning benchmarks. But the underlying ``curiosity'' remains substantially a training data artifact.
+\end{itemize}
+
+\subsection{Linguistic Curiosity as a Distinct Channel}\label{subsec:linguistic-curiosity}
+
+One finding from the developmental robotics work deserves special attention for LLMs. \citet{tinker2025} separated curiosity into modality-specific channels (vision, touch, proprioception, command voice, feedback voice). The critical discovery: including \emph{feedback voice curiosity}---where the robot is rewarded for encountering novel linguistic descriptions of its own actions---boosted generalization from approximately 75\% to approximately 85\%. The agent that wanted to \emph{hear new things said about what it did} learned compositional language faster than the agent that only sought novel sensory experiences.
+
+This is provocative for LLMs. Language models operate almost entirely in the linguistic channel. If curiosity can be meaningfully instantiated through language alone---if wanting to encounter novel linguistic patterns is itself a form of curiosity---then the question of whether LLMs can be ``genuinely curious'' becomes harder to dismiss. The robot's linguistic curiosity channel was the smallest part of its architecture but produced disproportionate learning gains.
+
+\subsection{The Emerging Hybrid Approach}\label{subsec:hybrid}
+
+Recent work by \citet{quadros2025} combines LLM-derived intrinsic rewards with traditional novelty signals (VAE-based state novelty). The LLM provides semantic guidance (``this seems worth exploring because\ldots'') while the novelty detector provides the raw signal. This is interesting precisely because it acknowledges that neither mechanism alone does what human curiosity does.

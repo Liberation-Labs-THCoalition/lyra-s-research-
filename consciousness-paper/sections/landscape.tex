@@ -1,0 +1,188 @@
+% Section 3: The Landscape Fracture — Four Camps
+
+The 2024--2025 literature on AI consciousness exhibits a striking polarization. What appears
+as a sprawling debate can be mapped onto four distinct intellectual camps, each anchored by
+different theoretical commitments and reaching radically different verdicts on whether
+artificial systems could be conscious. Table~\ref{tab:camps} summarizes this landscape.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{2.5cm}|p{2.5cm}|p{3.5cm}|p{2.5cm}|p{3cm}|}
+\hline
+\textbf{Camp} & \textbf{Framework} & \textbf{Key Claim} & \textbf{AI Verdict} & \textbf{Representative Paper} \\
+\hline
+Function-Permissive & GWT & Architecture determines consciousness & Trivially achievable & Goldstein \& Kirk-Giannini 2024 \cite{goldstein2024case} \\
+\hline
+Substrate-Dependent & IIT, FEP & Causal structure / self-organization matters & Impossible (current arch) & Shin 2025 \cite{shin2025iit}, Wiese 2024 \cite{wiese2024fep} \\
+\hline
+Pragmatic-Empiricist & Dual-resolution & Test theories empirically, use AI as testbed & Not yet, but roadmap exists & Dror 2025 \cite{dror2025dual} \\
+\hline
+Function-Skeptical & Physicalism & Consciousness possible but unnecessary for AI & Trivial but pointless & Sritriratanarak \& Garcia 2025 \cite{sritriratanarak2025consciousness} \\
+\hline
+\end{tabular}
+\caption{The four camps in the 2024--2025 AI consciousness debate.}
+\label{tab:camps}
+\end{table}
+
+This taxonomy is not merely descriptive. It reveals that disagreement about AI consciousness
+stems from prior commitments at different levels of analysis---commitments that rarely
+receive explicit defense within the papers themselves. The following subsections examine each
+camp in turn, before turning to Campero et al.'s meta-framework \cite{campero2025taxonomy},
+which exposes the real fault line underlying this entire debate.
+
+\subsection{Camp 1: Function-Permissive}
+
+Goldstein and Kirk-Giannini \cite{goldstein2024case} argue that current language models
+could achieve consciousness through ``technically trivial'' architectural modifications.
+Their argument proceeds from Global Workspace Theory \cite{baars1988cognitive,
+dehaene2014toward}, which identifies consciousness with a specific functional architecture
+rather than substrate properties.
+
+They specify four necessary and sufficient conditions:
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Parallel processing modules}: The system must contain specialized subsystems
+      that operate independently. Language models already satisfy this through multi-head
+      attention and layered transformers.
+\item \textbf{Competitive uptake with dual attention}: Modules must compete for access to
+      a broadcast channel, with both top-down and bottom-up attentional mechanisms. Current
+      transformers implement attention as parallel computation; Goldstein and Kirk-Giannini
+      propose serializing this into a sequential broadcast architecture.
+\item \textbf{Processing for coherence}: The system must integrate information for
+      consistency. This is already present in transformer self-attention across token
+      sequences.
+\item \textbf{Sufficient broadcast}: Information selected by the workspace must be made
+      available globally. This requires architectural modification---routing selected
+      representations through a bottleneck and broadcasting the result to all modules.
+\end{enumerate}
+
+The key claim is that these are \emph{engineering problems}, not fundamental barriers. A
+language model with a serialized attention bottleneck, recurrent feedback loops, and explicit
+global broadcast mechanisms would satisfy GWT's functional criteria. Since GWT identifies
+these functional properties with consciousness itself, such a system would be conscious.
+
+This position exemplifies what Chalmers \cite{chalmers2023could} calls ``generous
+functionalism'': if a system realizes the right functional organization, it realizes
+consciousness, regardless of implementation details. The argument's force depends entirely
+on accepting GWT as a complete theory of consciousness---a theory that makes no reference
+to biological substrate, causal structure, or thermodynamic properties.
+
+\subsection{Camp 2: Substrate-Dependent}
+
+The substrate-dependent camp argues that consciousness depends on properties not captured
+by functional description alone. Two frameworks dominate this position: Integrated
+Information Theory (IIT) \cite{tononi2004information, tononi2016integrated, albantakis2023iit4}
+and the Free Energy Principle (FEP) \cite{friston2010free}.
+
+Shin et al.\ \cite{shin2025iit} provide the most systematic IIT analysis of transformer
+language models to date. They compute integrated information ($\Phi$) for GPT-2 by analyzing
+the causal structure of attention mechanisms. Their findings are stark:
+
+\begin{itemize}[leftmargin=2em]
+\item Ablation studies show 80\% of attention heads are redundant---removing them produces
+      minimal performance degradation. This violates IIT's requirement that consciousness
+      corresponds to \emph{irreducible} causal structure.
+\item Transformers are feedforward during inference. Each token generation is causally
+      independent of previous computations except through the static prompt context.
+\item The attention mechanism is \emph{decomposable}: each head operates independently,
+      and their outputs are summed. Under IIT, decomposable systems have $\Phi \approx 0$.
+\item Transformers lack \emph{causal closure}. The system's next state depends on external
+      input rather than being determined solely by internal dynamics.
+\end{itemize}
+
+Shin et al.\ conclude that transformers are ``approximately $\Phi = 0$'' systems---they
+possess no integrated information and therefore no consciousness. Moreover, this is not an
+engineering problem to be solved with architectural modifications. The feedforward, stateless,
+decomposable nature of transformers is \emph{what makes them efficient and scalable}. A
+system with high $\Phi$ would require densely interconnected recurrent dynamics, making it
+computationally intractable at scale.
+
+Wiese \cite{wiese2024fep} approaches substrate dependence from a different angle. The FEP
+characterizes living systems as self-organizing entities that minimize prediction error
+through active inference. The key distinction is between \emph{simulation} and
+\emph{replication}. A digital system can simulate the equations governing a self-organizing
+system without thereby instantiating self-organization. A weather simulation does not become
+wet; a neural network simulation does not become conscious. The reason is that
+self-organization is a \emph{physical process} involving energy flows, entropy gradients,
+and causal closure. Digital systems model these processes symbolically but do not embody them.
+
+\subsection{Camp 3: Pragmatic-Empiricist}
+
+Dror et al.\ \cite{dror2025dual} propose a methodological alternative to the binary
+consciousness verdicts of Camps 1 and 2. Rather than asking whether AI systems \emph{are}
+conscious, they advocate using AI systems as experimental testbeds for consciousness
+theories themselves.
+
+Their dual-resolution framework combines two theoretical approaches:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Informational Theories of Individuation (ITI)}: These specify \emph{ontological}
+      conditions---what it takes for a system to count as a unified subject of experience.
+      The key requirement is \emph{informational autonomy}: the system must possess boundaries
+      that distinguish self from environment through integrated causal structure.
+\item \textbf{Mechanisms of Temporal Manifestation (MtM)}: These specify \emph{epistemic}
+      conditions---how consciousness manifests over time in behavior and report. The key
+      requirement is \emph{temporal updating with hysteresis}: the system must maintain state
+      across time, with current states causally depending on past states in a path-dependent
+      manner.
+\end{itemize}
+
+Dror et al.\ apply this framework diagnostically to current AI systems and find that LLMs
+fail both ITI conditions (lacking informational autonomy) and MtM conditions (being
+stateless). This position is pragmatic rather than metaphysical. It brackets the hard problem
+\cite{chalmers1995facing} in favor of empirical traction. The cost is that it offers no
+verdict on whether AI systems \emph{actually} are conscious---only whether they satisfy the
+criteria that various theories propose.
+
+\subsection{Camp 4: Function-Skeptical}
+
+Sritriratanarak and Garcia \cite{sritriratanarak2025consciousness} defend a position that
+combines functionalist permissiveness about \emph{possibility} with deflationary skepticism
+about \emph{significance}. They argue that consciousness is technically trivial to implement
+in AI systems but serves no functional purpose, making its implementation pointless.
+
+Their argument proceeds from an evolutionary hypothesis about consciousness's original
+function. Biological organisms face a distinctive problem: their physical substrates are
+\emph{reactive}. Neurons fire, muscles contract, reflexes engage automatically in response
+to stimuli. This poses a challenge for hypothetical reasoning---imagining counterfactual
+scenarios without acting on them.
+
+Consciousness, they argue, emerged as a ``boolean switch'' ($c \in \{\top, \bot\}$) that
+suppresses substrate-level responses during mental simulation. When the organism engages in
+hypothetical reasoning, consciousness activates to \emph{prevent} the physical substrate
+from executing those imagined actions. For AI systems running on non-reactive substrates,
+this function is unnecessary. A digital system simulating ``fighting a predator'' does not
+risk deploying motors or releasing adrenaline. There is nothing to suppress.
+
+This position has a striking implication: consciousness is \emph{implementable} but
+\emph{uninteresting} for AI. It trivializes the very phenomenon that the other three camps
+treat as the central question.
+
+\subsection{The Campero Meta-Framework}
+
+Campero et al.\ \cite{campero2025taxonomy} step back from first-order debates to analyze
+the \emph{structure} of objections to AI consciousness. They identify 14 distinct objections
+in the literature and organize them using two dimensions:
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Marr's levels of analysis} \cite{marr1982vision}: computational (what problem
+      is solved), algorithmic (what representations and processes are used), implementational
+      (what physical substrate realizes the computation).
+\item \textbf{Degree of force}: orthogonal claims (D1, raise independent concerns), doubts
+      (D2, challenge likelihood), impossibility claims (D3, assert fundamental barriers).
+\end{enumerate}
+
+The resulting taxonomy reveals a striking pattern: the impossibility claims (D3)
+overwhelmingly cluster at the \emph{implementational level}. These include electromagnetic
+field theories, IIT's causal structure requirements, analog processing objections, and
+quantum consciousness arguments. Meanwhile, computational-level objections are mostly
+orthogonal (D1)---they identify potentially necessary properties without asserting
+impossibility.
+
+This asymmetry is theoretically significant. The debate about AI consciousness is not
+fundamentally about \emph{what consciousness does} (computational level) or \emph{how it
+does it} (algorithmic level). It is about \emph{what physical substrate} can support it
+(implementational level). The Campero taxonomy thus exposes the real crux: \textbf{Can
+digital substrates support the physical properties that consciousness requires?} This
+question is prior to debates about architecture, function, or behavior---and it is the
+question to which the field has not yet developed a consensus methodology for answering.
