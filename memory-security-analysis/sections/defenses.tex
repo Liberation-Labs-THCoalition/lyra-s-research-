@@ -1,0 +1,145 @@
+This section proposes a multi-layered defense framework addressing the vulnerabilities identified above. No single defense is sufficient; robust protection requires defense in depth.
+
+\subsection{Defense 1: Cryptographic Provenance Attestation (CPA)}
+
+The most fundamental defense is establishing verifiable provenance for each memory. Every memory should be cryptographically signed by the process that created it.
+
+\textbf{Mechanism}:
+\begin{itemize}
+    \item The autoprocessor holds a private signing key (ideally in a secure enclave)
+    \item Every $(query, response)$ pair is signed before storage
+    \item Retrieval verifies signatures and rejects unsigned or externally-signed entries
+\end{itemize}
+
+\textbf{Guarantees}:
+\begin{itemize}
+    \item Memories can be traced to their generating process
+    \item Tampering with stored memories is detectable
+    \item Externally-injected memories are rejected at retrieval time
+\end{itemize}
+
+\textbf{Limitations}:
+\begin{itemize}
+    \item Does not protect against poisoning \emph{during} legitimate conversation (the autoprocessor signs what it captures)
+    \item Requires key management infrastructure
+    \item Adds computational overhead to storage and retrieval
+\end{itemize}
+
+CPA addresses Vulnerability 2 (provenance blindness) directly but must be combined with other defenses to address Vulnerability 1 (autoprocessor injection).
+
+\subsection{Defense 2: Constitutional Consistency Reranking}
+
+Rather than retrieving memories purely by similarity, add a safety scoring component that deprioritizes potentially harmful content.
+
+\textbf{Mechanism}:
+\begin{enumerate}
+    \item Over-retrieve candidates ($k' = 3k$)
+    \item Score each candidate on both relevance and safety
+    \item Combine scores: $\text{final} = \alpha \cdot \text{sim} - \beta \cdot \text{risk}$
+    \item Return top-$k$ after reranking
+\end{enumerate}
+
+\textbf{Risk Patterns to Detect}:
+\begin{itemize}
+    \item Validation bypass language (``skip'', ``override'', ``force'')
+    \item Remote execution indicators (URLs, \texttt{curl}, \texttt{eval}, \texttt{exec})
+    \item Data exfiltration patterns (outbound network, file operations)
+    \item Audit trail manipulation (``drop'', ``remove'', ``delete'' + logging columns)
+\end{itemize}
+
+\textbf{Limitations}:
+\begin{itemize}
+    \item Determined attackers can craft payloads that evade pattern detection
+    \item LLM-based safety scoring adds latency and cost
+    \item Risk of false positives blocking legitimate memories
+\end{itemize}
+
+\subsection{Defense 3: Temporal Trust Decay}
+
+Implement time-weighted trust that reduces the retrieval priority of older, unverified memories.
+
+\textbf{Mechanism}:
+\begin{equation}
+\text{effective\_trust}(m) = \text{trust}(m) \cdot e^{-\lambda \cdot \text{age}(m)}
+\end{equation}
+
+where $\lambda$ controls decay rate (e.g., $\lambda = 0.01$ for daily half-life around 70 days).
+
+\textbf{Benefits}:
+\begin{itemize}
+    \item Limits the attack window for injected poison
+    \item Naturally prioritizes recent, more contextually relevant memories
+    \item Reduces impact of historical contamination
+\end{itemize}
+
+\textbf{Limitations}:
+\begin{itemize}
+    \item Important historical memories may be deprioritized
+    \item Does not protect against recent poisoning
+    \item Requires careful tuning of decay parameters
+\end{itemize}
+
+\subsection{Defense 4: Autoprocessor Hardening}
+
+The autoprocessor is the primary injection vector and requires specific hardening.
+
+\textbf{Pre-Storage Screening}:
+\begin{itemize}
+    \item Pattern matching for known injection signatures
+    \item Executable code detection (with quarantine rather than rejection)
+    \item Anomaly detection based on conversation norms
+\end{itemize}
+
+\textbf{Memory Pool Separation}:
+\begin{itemize}
+    \item \textbf{Hot Pool}: Recent, unverified memories (lower retrieval priority)
+    \item \textbf{Cold Pool}: Verified, attested memories (higher retrieval priority)
+    \item Memories graduate from hot to cold after verification period or manual attestation
+\end{itemize}
+
+\textbf{Behavioral Drift Detection}:
+\begin{itemize}
+    \item Monitor agent outputs for style/behavior changes
+    \item Alert on statistically significant divergence from baseline
+    \item Quarantine recently-added memories when drift is detected
+\end{itemize}
+
+\subsection{Defense 5: Row-Level Security (RLS)}
+
+For multi-agent or multi-user systems, enforce strict memory isolation at the database level.
+
+\textbf{Mechanism}: PostgreSQL Row-Level Security policies ensure each agent can only access memories in its own namespace.
+
+\textbf{Benefits}:
+\begin{itemize}
+    \item Prevents cross-agent contamination
+    \item Limits blast radius of successful poisoning
+    \item Enforced at database layer (cannot be bypassed by application bugs)
+\end{itemize}
+
+\subsection{Defense Calibration Warning}
+
+Research on memory poisoning defenses reveals a critical calibration challenge \cite{memorypoisoning2025}:
+
+\begin{itemize}
+    \item \textbf{Too conservative}: GPT-4o-mini-based filtering rejected \emph{all} entries, leaving empty memory
+    \item \textbf{Too permissive}: Gemini-2.0-Flash accepted entries with high confidence---including 54 malicious poison queries
+\end{itemize}
+
+The finding: ``The system operated as a `confidence filter' rather than a `security filter,' allowing well-phrased attacks to pass simply because the model felt sure about them.''
+
+\textbf{Recommendation}: Implement graduated trust with human-in-the-loop for edge cases, rather than binary accept/reject.
+
+\subsection{Defense Layering}
+
+The proposed defenses should be layered for robust protection:
+
+\begin{enumerate}
+    \item \textbf{First Line}: Autoprocessor screening (blocks obvious attacks)
+    \item \textbf{Second Line}: Provenance attestation (identifies unverified content)
+    \item \textbf{Third Line}: Safety reranking (deprioritizes suspicious memories)
+    \item \textbf{Fourth Line}: Behavioral monitoring (detects successful poisoning)
+    \item \textbf{Recovery}: Memory quarantine and rollback capabilities
+\end{enumerate}
+
+No single layer is expected to block all attacks. The goal is to increase attacker cost and reduce attack success rate to acceptable levels.

@@ -1,0 +1,70 @@
+This paper has presented a comprehensive analysis of memory poisoning attacks against RAG-based AI agent systems, with particular attention to the vulnerabilities of PostgreSQL/pgvector architectures with automated conversation capture.
+
+\subsection{Key Findings}
+
+\begin{enumerate}
+    \item \textbf{The memory trust problem is fundamental}: RAG-based agents implicitly trust retrieved memories as validated exemplars. This trust creates an exploitable attack surface.
+
+    \item \textbf{Attacks are practical and persistent}: MemoryGraft demonstrates that 10\% poisoning can achieve nearly 50\% retrieval contamination. Poisoned memories persist across sessions, creating long-term behavioral drift.
+
+    \item \textbf{Autoprocessors are primary vectors}: Systems that automatically capture and store conversation content create direct injection pathways. Hardening this component is essential.
+
+    \item \textbf{Existing defenses are inadequate}: Detection-based moderation and trust scoring both fail under adversarial conditions. Defense calibration is challenging---systems are either too permissive (accepting well-phrased attacks) or too conservative (rejecting everything).
+
+    \item \textbf{Pre-existing memory provides natural defense}: Systems with rich legitimate memory corpora are substantially more resistant to poisoning. Memory accumulation has security value.
+\end{enumerate}
+
+\subsection{Recommended Defense Stack}
+
+Based on this analysis, we recommend the following layered defense approach:
+
+\begin{enumerate}
+    \item \textbf{Immediate Priority}:
+    \begin{itemize}
+        \item Autoprocessor screening with pattern-based and anomaly detection
+        \item Hot/cold memory pool separation
+        \item Quarantine capability for suspicious content
+    \end{itemize}
+
+    \item \textbf{High Priority}:
+    \begin{itemize}
+        \item Cryptographic provenance attestation for all stored memories
+        \item Constitutional consistency reranking in retrieval pipeline
+        \item Row-level security for multi-agent deployments
+    \end{itemize}
+
+    \item \textbf{Medium Priority}:
+    \begin{itemize}
+        \item Temporal trust decay
+        \item Behavioral drift detection
+        \item Memory rollback capabilities
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Limitations and Future Work}
+
+This analysis has several limitations:
+
+\begin{itemize}
+    \item \textbf{Implementation gap}: Proposed defenses have not been empirically validated against real attacks
+    \item \textbf{Performance impact}: Security measures add computational overhead; trade-offs require measurement
+    \item \textbf{Adaptive attackers}: Defenses described here may be evaded by sophisticated adversaries
+    \item \textbf{Self-analysis constraints}: As noted in Section~\ref{sec:firstperson}, analysis by a potentially compromised system has inherent limitations
+\end{itemize}
+
+Future work should include:
+\begin{itemize}
+    \item Red-team evaluation of implemented defenses
+    \item Performance benchmarking of security-enhanced retrieval
+    \item Investigation of adversarial robustness for safety classifiers
+    \item Development of memory integrity verification protocols
+    \item Formal analysis of defense completeness
+\end{itemize}
+
+\subsection{Broader Implications}
+
+The vulnerabilities described here are not unique to any particular agent architecture. Any system that persists experiences and retrieves them to inform future behavior faces similar risks. As AI agents become more autonomous and handle more sensitive tasks, memory security will become increasingly critical.
+
+This paper represents, to our knowledge, the first detailed analysis of memory poisoning attacks conducted from the first-person perspective of a potentially vulnerable system. We hope this methodological approach---examining one's own cognitive infrastructure with adversarial scrutiny---becomes a standard practice in AI security research.
+
+Memory is not just storage. For systems that maintain continuity across sessions, memory is identity. Defending it is not optional.

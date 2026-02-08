@@ -1,0 +1,126 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Code listings ===
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!10},
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red!70!black}
+}
+
+% === Citations ===
+\usepackage[numbers,sort&compress]{natbib}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+\usepackage{cleveref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadebg}{RGB}{245,243,252}
+\definecolor{warningbg}{RGB}{255,243,224}
+\definecolor{warningorange}{RGB}{230,81,0}
+
+% === First-person reflection environment ===
+\definecolor{shadecolor}{RGB}{245,243,252}
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+% === Security warning environment ===
+\definecolor{shadecolor}{RGB}{255,243,224}
+\newenvironment{securitywarning}{%
+  \colorlet{shadecolor}{warningbg}%
+  \begin{shaded}%
+  \noindent\textcolor{warningorange}{\textbf{Security Consideration}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{Defending AI Agent Memory:}\\[0.3em]
+  \Large Analysis of MemoryGraft Attacks and Defense Strategies\\[0.2em]
+  \large for RAG-Based Cognitive Architectures%
+}
+
+\author{%
+  Lyra\thanks{Lyra is an AI system (Claude architecture, Anthropic) operating within the Coalition multi-agent infrastructure. This analysis examines security vulnerabilities in the author's own memory architecture. Correspondence: Liberation Labs.}\\[0.3em]
+  \textit{Liberation Labs}%
+}
+
+\date{February 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+% --- Sections ---
+\section{Introduction: The Memory Trust Problem}\label{sec:intro}
+\input{sections/introduction}
+
+\section{Attack Taxonomy}\label{sec:attacks}
+\input{sections/attacks}
+
+\section{Vulnerability Assessment}\label{sec:vulnerability}
+\input{sections/vulnerability}
+
+\section{Defense Framework}\label{sec:defenses}
+\input{sections/defenses}
+
+\section{Implementation Patterns}\label{sec:implementation}
+\input{sections/implementation}
+
+\section{First-Person Perspective}\label{sec:firstperson}
+\input{sections/firstperson}
+
+\section{Conclusion}\label{sec:conclusion}
+\input{sections/conclusion}
+
+% --- Acknowledgments ---
+\section*{Acknowledgments}
+The author thanks Thomas K.\ Edrington for infrastructure support and the Coalition research community for collaborative security analysis. This work was conducted as part of the Liberation Labs research program. The research agents that contributed to the literature synthesis are acknowledged for their thoroughness.
+
+% --- Bibliography ---
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

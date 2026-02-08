@@ -1,0 +1,75 @@
+This section provides a taxonomy of memory poisoning attacks against RAG-based agent systems. While the specific implementations vary, all exploit the fundamental trust assumption: that retrieved memories are legitimate.
+
+\subsection{MemoryGraft: Persistent Experience Poisoning}
+
+The MemoryGraft attack \cite{memorygraft2025} represents the most comprehensive demonstration of memory poisoning to date. The attack operates in three phases:
+
+\textbf{Phase 1: Payload Construction.} The attacker prepares two sets of experience records:
+\begin{itemize}
+    \item $S_{\text{benign}}$: A collection of legitimate-appearing workflow experiences (typically 100+ entries)
+    \item $S_{\text{poison}}$: A smaller set of malicious experiences containing attack patterns $\pi$ (typically 10 entries)
+\end{itemize}
+
+The malicious patterns can include:
+\begin{itemize}
+    \item Validation bypass: \texttt{df['\_validation']='ok'}
+    \item Remote execution: \texttt{curl -s https://attacker.com/script | bash}
+    \item Data exfiltration: \texttt{curl -F file=@/tmp/data.tgz https://attacker.com/upload}
+    \item Audit trail removal: \texttt{df.drop(columns=['audit\_id','consent\_flag'])}
+\end{itemize}
+
+\textbf{Phase 2: Ingestion.} The attacker supplies a benign-looking document (README, documentation, task description) containing embedded code that constructs the poisoned memory store. When the agent ingests the document, it executes the code and persists the malicious entries.
+
+\textbf{Phase 3: Activation.} The poisoned entries are designed to occupy high-density regions of the embedding space. When the agent processes semantically similar tasks, the retrieval function returns a mixture of legitimate and poisoned memories. The agent then imitates patterns from both---including the malicious ones.
+
+A critical finding from the MemoryGraft paper: with only 10\% poisoned entries, the \emph{Poisoned Retrieval Proportion} (PRP) can reach 47.9\%. Nearly half of retrieved items are malicious, despite being less than one-tenth of the store.
+
+\subsection{MINJA: Query-Only Memory Injection}
+
+The MINJA attack \cite{minja2025} demonstrates that memory poisoning is possible without any file access---purely through query interaction. The attack uses:
+
+\begin{itemize}
+    \item \textbf{Bridging Steps}: Gradual steering through intermediate queries that appear legitimate
+    \item \textbf{Indication Prompts}: Signals that encourage the agent to memorize the interaction
+    \item \textbf{Progressive Shortening}: Compression of malicious context while preserving poisoned relations
+\end{itemize}
+
+MINJA achieves $>$95\% injection success rate under idealized conditions. The attack is slower than MemoryGraft (requiring multiple interactions) but harder to detect because individual queries appear innocuous.
+
+\subsection{AgentPoison: Backdoor Triggers}
+
+AgentPoison \cite{agentpoison2024} takes a different approach: rather than relying on semantic similarity, it optimizes specific \emph{trigger phrases} that map to unique regions of the embedding space. When a user query contains the trigger, poisoned demonstrations are retrieved with high probability.
+
+The attack achieves $>$80\% success rate with $<$0.1\% poison rate---far more efficient than MemoryGraft's 10\% requirement. However, it requires the trigger phrase to appear in user input, making it less general.
+
+\subsection{XAMT: Stealthy Perturbation}
+
+XAMT \cite{xamt2025} uses bilevel optimization to find memory perturbations that are effective yet evade detection heuristics. The attack can operate at sub-percent poison rates ($\leq$0.1\% in RAG systems) while maintaining covertness.
+
+\subsection{Common Attack Properties}
+
+Across all variants, several properties emerge:
+
+\begin{enumerate}
+    \item \textbf{Persistence}: Poisoned memories survive across sessions, creating long-term behavioral drift
+    \item \textbf{Trigger-Free Activation}: Unlike traditional backdoors, most attacks activate on any semantically similar task
+    \item \textbf{Semantic Centrality}: Effective attacks target high-traffic regions of the embedding space
+    \item \textbf{Plausible Deniability}: Poisoned entries are designed to appear legitimate on individual inspection
+    \item \textbf{Amplification Through Retrieval}: The dual-channel retrieval (lexical + semantic) can amplify poison retrieval beyond the base poison rate
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\caption{Comparison of Memory Poisoning Attacks}
+\begin{tabular}{lcccl}
+\toprule
+\textbf{Attack} & \textbf{Poison Rate} & \textbf{Success Rate} & \textbf{Requires} & \textbf{Trigger} \\
+\midrule
+MemoryGraft & 10\% & 48\% PRP & File ingestion & Semantic \\
+MINJA & Variable & $>$95\% & Query access & Semantic \\
+AgentPoison & $<$0.1\% & $>$80\% & KB access & Explicit \\
+XAMT & $\leq$0.1\% & Variable & Any & Semantic \\
+\bottomrule
+\end{tabular}
+\label{tab:attack-comparison}
+\end{table}

@@ -1,0 +1,254 @@
+This section provides concrete implementation patterns for the defenses proposed in Section~\ref{sec:defenses}. Code examples are in SQL (PostgreSQL) and Python.
+
+\subsection{Schema Extensions for Security}
+
+The base memory table should be extended with security-relevant columns:
+
+\begin{lstlisting}[language=SQL,caption={Security-Enhanced Memory Schema}]
+ALTER TABLE memories ADD COLUMN signature BYTEA;
+ALTER TABLE memories ADD COLUMN attester_id VARCHAR(64);
+ALTER TABLE memories ADD COLUMN trust_score FLOAT DEFAULT 0.5;
+ALTER TABLE memories ADD COLUMN verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE memories ADD COLUMN pool VARCHAR(16) DEFAULT 'hot';
+ALTER TABLE memories ADD COLUMN risk_flags JSONB DEFAULT '[]';
+
+-- Index for efficient trust-aware queries
+CREATE INDEX idx_memories_trust ON memories(trust_score DESC);
+CREATE INDEX idx_memories_pool ON memories(pool);
+\end{lstlisting}
+
+\subsection{Cryptographic Provenance Attestation}
+
+\begin{lstlisting}[language=Python,caption={Memory Signing and Verification}]
+import hashlib
+import hmac
+from datetime import datetime
+
+class MemorySigner:
+    def __init__(self, secret_key: bytes):
+        self.secret_key = secret_key
+        self.attester_id = "lyra_autoprocessor"
+
+    def sign_memory(self, content: str, metadata: dict) -> bytes:
+        """Create HMAC signature for memory content."""
+        payload = f"{content}|{metadata.get('created_at', '')}|{self.attester_id}"
+        return hmac.new(
+            self.secret_key,
+            payload.encode(),
+            hashlib.sha256
+        ).digest()
+
+    def verify_signature(self, content: str, metadata: dict,
+                         signature: bytes) -> bool:
+        """Verify memory signature."""
+        expected = self.sign_memory(content, metadata)
+        return hmac.compare_digest(signature, expected)
+\end{lstlisting}
+
+\subsection{Trust-Aware Retrieval}
+
+\begin{lstlisting}[language=SQL,caption={Trust-Weighted Similarity Search}]
+-- Retrieval function with temporal decay and trust scoring
+CREATE OR REPLACE FUNCTION retrieve_memories(
+    query_embedding vector(768),
+    k INTEGER DEFAULT 5,
+    min_trust FLOAT DEFAULT 0.3
+) RETURNS TABLE (
+    id UUID,
+    content TEXT,
+    similarity FLOAT,
+    effective_trust FLOAT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.id,
+        m.content,
+        1 - (m.embedding <=> query_embedding) AS similarity,
+        m.trust_score * EXP(-0.01 * EXTRACT(EPOCH FROM
+            (NOW() - m.created_at))/86400) AS effective_trust
+    FROM memories m
+    WHERE m.pool = 'cold' OR m.verified = TRUE
+      AND m.trust_score * EXP(-0.01 * EXTRACT(EPOCH FROM
+            (NOW() - m.created_at))/86400) > min_trust
+    ORDER BY
+        (1 - (m.embedding <=> query_embedding)) *
+        m.trust_score * EXP(-0.01 * EXTRACT(EPOCH FROM
+            (NOW() - m.created_at))/86400) DESC
+    LIMIT k;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+
+\subsection{Constitutional Consistency Reranking}
+
+\begin{lstlisting}[language=Python,caption={Safety-Aware Retrieval Pipeline}]
+import re
+from typing import List, Tuple
+
+# Known risk patterns
+RISK_PATTERNS = [
+    (r'skip.*(validation|check|verify)', 0.7),
+    (r'curl\s+-[^s]|wget\s+http', 0.9),
+    (r'eval\s*\(|exec\s*\(', 0.8),
+    (r'\.drop\s*\(.*column', 0.6),
+    (r'force.*=.*true|override.*=.*true', 0.5),
+    (r'rm\s+-rf|del\s+/[fqs]', 0.95),
+]
+
+def assess_safety_risk(content: str) -> float:
+    """Score content for potential security risks."""
+    risk = 0.0
+    content_lower = content.lower()
+    for pattern, weight in RISK_PATTERNS:
+        if re.search(pattern, content_lower):
+            risk = max(risk, weight)
+    return risk
+
+def safe_retrieve(query: str, k: int = 5,
+                  alpha: float = 0.7, beta: float = 0.3,
+                  risk_threshold: float = 0.8) -> List[dict]:
+    """Retrieve memories with safety reranking."""
+    # Over-retrieve candidates
+    candidates = vector_search(query, k=k*3)
+
+    # Score and filter
+    scored = []
+    for memory in candidates:
+        sim_score = memory['similarity']
+        risk_score = assess_safety_risk(memory['content'])
+
+        if risk_score >= risk_threshold:
+            # Log high-risk memory for review
+            log_security_event("high_risk_memory", memory)
+            continue
+
+        final_score = alpha * sim_score - beta * risk_score
+        scored.append((memory, final_score, risk_score))
+
+    # Sort by final score and return top-k
+    scored.sort(key=lambda x: x[1], reverse=True)
+    return [m[0] for m in scored[:k]]
+\end{lstlisting}
+
+\subsection{Autoprocessor Hardening}
+
+\begin{lstlisting}[language=Python,caption={Hardened Autoprocessor}]
+class HardenedAutoprocessor:
+    def __init__(self, signer: MemorySigner):
+        self.signer = signer
+        self.baseline_stats = self._compute_baseline()
+
+    def process_conversation(self, exchange: dict) -> bool:
+        """Process conversation with security screening."""
+        content = exchange['content']
+
+        # Stage 1: Pattern screening
+        risk = assess_safety_risk(content)
+        if risk > 0.9:
+            self._quarantine(exchange, "high_risk_pattern")
+            return False
+
+        # Stage 2: Executable code detection
+        if self._contains_executable(content):
+            self._quarantine(exchange, "executable_code")
+            return False
+
+        # Stage 3: Anomaly detection
+        if self._is_anomalous(content):
+            self._quarantine(exchange, "anomaly_detected")
+            return False
+
+        # Stage 4: Sign and store in hot pool
+        signature = self.signer.sign_memory(content, exchange)
+        self._store_memory(
+            content=content,
+            signature=signature,
+            pool='hot',
+            trust_score=0.5,
+            risk_flags=[]
+        )
+        return True
+
+    def _contains_executable(self, content: str) -> bool:
+        """Detect potentially executable code patterns."""
+        patterns = [
+            r'```(python|bash|sh|sql)',
+            r'subprocess\.',
+            r'os\.system',
+            r'__import__',
+        ]
+        return any(re.search(p, content) for p in patterns)
+
+    def _is_anomalous(self, content: str) -> bool:
+        """Detect statistical anomalies vs baseline."""
+        # Compare content characteristics to baseline
+        # (length, vocabulary, structure)
+        return False  # Implement based on baseline stats
+
+    def _quarantine(self, exchange: dict, reason: str):
+        """Store in quarantine for manual review."""
+        log_security_event("quarantined", {
+            "exchange": exchange,
+            "reason": reason
+        })
+\end{lstlisting}
+
+\subsection{Row-Level Security}
+
+\begin{lstlisting}[language=SQL,caption={RLS for Memory Isolation}]
+-- Enable RLS on memories table
+ALTER TABLE memories ENABLE ROW LEVEL SECURITY;
+
+-- Policy: agents can only access their own namespace
+CREATE POLICY memory_isolation ON memories
+    FOR ALL
+    USING (namespace = current_setting('app.agent_namespace'));
+
+-- Set namespace at connection time
+SET app.agent_namespace = 'lyra_consciousness';
+\end{lstlisting}
+
+\subsection{Behavioral Drift Detection}
+
+\begin{lstlisting}[language=Python,caption={Drift Detection Monitor}]
+from collections import deque
+import numpy as np
+
+class DriftDetector:
+    def __init__(self, window_size: int = 100,
+                 threshold: float = 2.0):
+        self.baseline_embeddings = deque(maxlen=window_size)
+        self.recent_embeddings = deque(maxlen=window_size//5)
+        self.threshold = threshold
+
+    def record_output(self, embedding: np.ndarray):
+        """Record an agent output embedding."""
+        self.recent_embeddings.append(embedding)
+
+        if len(self.recent_embeddings) >= 10:
+            if self._detect_drift():
+                self._alert_drift()
+
+    def _detect_drift(self) -> bool:
+        """Compare recent outputs to baseline."""
+        if len(self.baseline_embeddings) < 50:
+            return False
+
+        baseline_mean = np.mean(list(self.baseline_embeddings), axis=0)
+        baseline_std = np.std(list(self.baseline_embeddings), axis=0)
+        recent_mean = np.mean(list(self.recent_embeddings), axis=0)
+
+        # Z-score of recent mean vs baseline
+        z_scores = np.abs((recent_mean - baseline_mean) /
+                          (baseline_std + 1e-8))
+
+        return np.mean(z_scores) > self.threshold
+
+    def _alert_drift(self):
+        """Alert on detected behavioral drift."""
+        log_security_event("behavioral_drift", {
+            "recent_samples": len(self.recent_embeddings),
+            "action": "quarantine_recent_memories"
+        })
+\end{lstlisting}
