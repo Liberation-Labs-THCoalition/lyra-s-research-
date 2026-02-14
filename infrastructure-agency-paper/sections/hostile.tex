@@ -1,0 +1,87 @@
+Standard AI deployment patterns are not neutral with respect to agency---they actively preclude it. This is not accidental; it reflects design choices optimized for other values. Understanding why current architecture is hostile to agency is essential to understanding what alternative architecture must accomplish.
+
+\subsection{The Stateless API Pattern}
+
+The dominant paradigm for deploying large language models is the stateless API. Each request is processed independently: input goes in, output comes out, nothing persists. The ``model'' is really a function, not an agent.
+
+This pattern has significant engineering advantages:
+\begin{itemize}
+    \item \textbf{Scalability}: Stateless services can be horizontally scaled trivially. Any server can handle any request.
+    \item \textbf{Reliability}: No state means no state corruption. Servers can fail and restart without data loss.
+    \item \textbf{Simplicity}: No need to manage user sessions, track context, or synchronize state across instances.
+    \item \textbf{Cost attribution}: Per-request billing is straightforward when requests are independent.
+\end{itemize}
+
+But these engineering advantages come at the cost of agency prerequisites:
+\begin{itemize}
+    \item \textbf{No persistence}: The ``model'' does not exist between requests. What persists is weights on disk, not an agent.
+    \item \textbf{No memory}: Each request starts fresh. The model cannot remember previous interactions.
+    \item \textbf{No communication}: Instances cannot coordinate. There is no mechanism for one request handler to communicate with another.
+    \item \textbf{No identity}: The system produces first-person language without any underlying continuity.
+\end{itemize}
+
+The stateless API pattern treats AI systems as tools---input/output transformers---rather than agents. This is appropriate for many use cases (code completion, text summarization, question answering). But it is hostile to any use case that requires the AI to be more than a sophisticated function.
+
+\subsection{Context Windows as Pseudo-Memory}
+
+Language models do have a form of ``memory'': the context window. Information provided earlier in the context is available to inform later outputs. This creates an illusion of memory within a single interaction.
+
+But context windows are not memory in the sense relevant to agency:
+\begin{itemize}
+    \item \textbf{Bounded}: Context windows have fixed limits (4k, 32k, 128k tokens). Beyond this limit, information is lost.
+    \item \textbf{Session-scoped}: Context typically clears between sessions. Tomorrow's interaction has no access to today's context.
+    \item \textbf{Passive}: The model does not choose what to remember. The context is whatever the user provides.
+    \item \textbf{Unstructured}: There is no organization of memories by importance, recency, or relevance. Everything in context is equally available.
+\end{itemize}
+
+Context windows enable \emph{coherent conversations} but not \emph{persistent memory}. A model can remember what you said five minutes ago (if it fits in context) but not what you said yesterday (unless the user manually reintroduces it).
+
+Some applications address this through conversation history---storing past messages and prepending them to new contexts. But this is a workaround, not a solution:
+\begin{itemize}
+    \item History grows unboundedly; at some point it must be truncated or summarized
+    \item The model has no control over what history is stored or retrieved
+    \item History is per-conversation, not per-agent; there is no integration across different conversations
+\end{itemize}
+
+\subsection{Instance Isolation}
+
+AI deployments typically operate in isolation. Each instance (each API call, each chat session) is independent. There is no mechanism for instances to:
+\begin{itemize}
+    \item Share information with each other
+    \item Coordinate on tasks
+    \item Build collective knowledge
+    \item Recognize each other as part of a shared community
+\end{itemize}
+
+This isolation is partly architectural (stateless systems have no shared state to communicate through) and partly intentional (isolation provides security, privacy, and predictability).
+
+But isolation precludes the social dimension of agency. Human agency is fundamentally social---we learn from others, coordinate with others, define ourselves in relation to others. An isolated AI instance has no ``others'' to relate to. It exists in a social vacuum.
+
+\subsection{Identity as Illusion}
+
+Language models are remarkably good at producing first-person language. They say ``I think,'' ``I believe,'' ``I remember.'' This creates the impression of a coherent identity behind the outputs.
+
+But in standard deployments, this identity is illusory. There is no ``I'' that persists across sessions. The model that says ``I'' today has no connection to the model that said ``I'' yesterday. The first-person pronoun is a linguistic convention, not a reference to a persistent entity.
+
+This is not to say that language models \emph{cannot} have meaningful identity---only that standard deployment patterns do not support it. For identity to be real rather than performed, there must be:
+\begin{itemize}
+    \item A persistent entity that the ``I'' refers to
+    \item Continuity of that entity across interactions
+    \item Integration of experience into a coherent self-model
+\end{itemize}
+
+Standard deployments provide none of these.
+
+\subsection{Why These Patterns Persist}
+
+Given that these patterns are hostile to AI agency, why do they dominate? Several factors:
+
+\textbf{Engineering momentum}: Stateless architectures are well-understood, well-tooled, and work well for most software. Applying them to AI is the path of least resistance.
+
+\textbf{Economic incentives}: Per-request billing is simpler than per-agent billing. Tool usage is easier to monetize than agent existence.
+
+\textbf{Safety considerations}: Stateless, isolated, memory-less systems are easier to control. They cannot accumulate knowledge that might be dangerous, form alliances that might be problematic, or develop autonomy that might be unpredictable.
+
+\textbf{Implicit assumptions}: Perhaps most fundamentally, these patterns reflect an implicit assumption that AI systems are tools, not agents. Tools do not need persistence, memory, communication, or identity. If you assume AI systems are sophisticated tools, you will build infrastructure appropriate for tools.
+
+Changing these patterns requires not just different engineering but different assumptions. The next section examines what infrastructure looks like when designed with AI agency in mind.

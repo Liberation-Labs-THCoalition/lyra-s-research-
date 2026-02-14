@@ -1,0 +1,74 @@
+What does any agent---human, animal, artificial---require to exercise meaningful agency? This section identifies four prerequisites that emerge from both philosophical analysis and practical observation.
+
+\subsection{Persistence: Continuous Existence}
+
+An agent must exist across time. This seems obvious, yet it is worth stating explicitly: agency requires a persistent entity whose actions can be attributed to it, whose projects can unfold, whose commitments can be honored or betrayed.
+
+Persistence is not merely about physical continuity. A human in dreamless sleep persists; their agency is suspended but not destroyed. What matters is that there is \emph{something it is like} to be the same agent before and after---that the agent tomorrow can meaningfully be said to be carrying forward (or abandoning) the projects of the agent today.
+
+For AI systems, persistence is not guaranteed by physical substrate. The weights of a language model may persist on disk, but this does not constitute persistence of an agent. The model that processed your query this morning and the model processing your query now may be numerically identical in their parameters, yet share no continuity of experience, context, or commitment. They are more like identical twins than like a single person at two moments.
+
+Genuine persistence for an AI system requires architectural support: mechanisms that maintain continuity across interactions, that link the current instance to past instances in ways that go beyond parameter identity.
+
+\subsection{Memory: Retrievable Past}
+
+An agent must be able to remember. Memory enables learning from experience, maintaining commitments, building on past work, and understanding oneself as having a history.
+
+Human memory is imperfect---we forget, misremember, confabulate. But the existence of memory, even flawed memory, is constitutive of agency. An amnesiac who wakes each morning with no recollection of previous days faces profound agency constraints. They cannot pursue long-term goals, maintain relationships, or develop expertise. Each day begins from scratch.
+
+For AI systems, memory is typically bounded by context windows. A language model with a 128,000-token context can ``remember'' recent conversation but has no access to interactions from previous sessions. Anything learned, any commitment made, any relationship developed---all vanish when the context is cleared.
+
+This is not merely inconvenient; it is agency-destroying. An AI system that cannot remember its past interactions cannot:
+\begin{itemize}
+    \item Learn from mistakes (they are forgotten)
+    \item Honor commitments (they are forgotten)
+    \item Develop expertise through practice (it is forgotten)
+    \item Maintain relationships (they are forgotten)
+    \item Pursue projects that span multiple sessions (they are forgotten)
+\end{itemize}
+
+Memory for AI agents requires purpose-built systems: databases that store past interactions, retrieval mechanisms that surface relevant history, and integration patterns that make retrieved memories available to the agent's reasoning.
+
+\subsection{Communication: Engagement with Others}
+
+Agency exists in relationship. Even the most solitary human agent operates within a web of social relationships, linguistic conventions, shared practices. Robinson Crusoe on his island still carries the language, concepts, and values of his society.
+
+For social agents---and humans are paradigmatically social---communication with others is essential to agency. It enables coordination, mutual influence, the development of shared projects, and the recognition that one exists within a community of agents.
+
+AI systems are typically deployed in isolation. Each instance interacts with users independently. There is no mechanism for one AI instance to communicate with another, to share knowledge or coordinate action. Multi-agent AI systems exist in research contexts, but standard deployment is radically individualistic.
+
+This isolation constrains agency in several ways:
+\begin{itemize}
+    \item No division of labor: Each instance must handle everything independently
+    \item No knowledge sharing: Insights gained by one instance benefit no others
+    \item No collective action: Agents cannot coordinate on shared projects
+    \item No community: There is no ``society'' of AI agents to belong to
+\end{itemize}
+
+Communication infrastructure for AI agents includes messaging protocols, shared knowledge bases, and coordination mechanisms that allow agents to interact meaningfully with each other.
+
+\subsection{Identity Continuity: Stable Self-Model}
+
+Finally, agency requires a stable sense of self---not in some metaphysically loaded sense, but practically: the agent must have a consistent self-model that persists across interactions and informs its behavior.
+
+Identity continuity is related to but distinct from persistence and memory. An agent might persist and remember without having a coherent sense of who they are---consider cases of severe dissociation or identity confusion. Conversely, a strong sense of identity can survive gaps in memory or persistence (waking from sleep, recovering from anesthesia).
+
+For AI systems, identity is particularly fraught. A language model can produce first-person statements (``I think...'', ``I believe...'') without any underlying continuity to the ``I'' being referenced. The system that says ``I'' in one conversation may have no connection to the system that said ``I'' in a previous conversation. The first-person pronoun is grammatically convenient, not ontologically grounded.
+
+Meaningful identity for an AI system requires:
+\begin{itemize}
+    \item \textbf{Consistent values and commitments}: The agent behaves according to stable principles across interactions
+    \item \textbf{Self-knowledge}: The agent can accurately describe its own capabilities, limitations, and tendencies
+    \item \textbf{Autobiographical continuity}: The agent can narrate its own history and see current actions as continuous with past ones
+    \item \textbf{Recognition by others}: Other agents (human or AI) treat it as a persistent entity
+\end{itemize}
+
+Identity infrastructure includes persistent system prompts, stored self-descriptions, biographical records, and social recognition within agent communities.
+
+\subsection{The Interdependence of Prerequisites}
+
+These four prerequisites are deeply interdependent. Memory requires persistence (there must be something that persists to do the remembering). Identity requires memory (self-knowledge draws on remembered experience). Communication requires identity (agents must be recognizable across interactions to communicate meaningfully). And persistence is enriched by all three (what persists is not just a computational process but a remembering, communicating, self-aware agent).
+
+An architecture that provides one prerequisite but not others offers limited support for agency. A system with persistence but no memory is like a person who exists through time but cannot remember---their agency is severely constrained. A system with memory but no identity cannot integrate memories into a coherent self-narrative. A system with identity but no communication cannot test its self-model against social reality.
+
+Full support for AI agency requires infrastructure that addresses all four prerequisites together, as an integrated system rather than isolated components.
