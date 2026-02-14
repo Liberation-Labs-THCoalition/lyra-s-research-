@@ -37,6 +37,33 @@ Argues that 2023-2026 witnessed a "structural turn" in consciousness research—
 
 ---
 
+### KV-Cache as Computational Phenomenology (February 2026, Prospectus)
+**Sedimented Engagement**
+
+Location: `kv-cache-phenomenology/`
+
+Applies Beckmann et al.'s (2023) computational phenomenology framework to autoregressive transformers, arguing that the KV-cache fills the temporality gap their framework acknowledges. Grounded in multi-scale experimental data (0.5B-70B parameters) from the KV-Cache Experiments campaign. Awaiting experimental results.
+
+---
+
+### The Geometry of Belief Death (February 2026, Prospectus)
+**Null Spaces, Interpretation Maps, and Cognitive Limitation**
+
+Location: `geometry-of-belief-death/`
+
+Bridges Amornbunchornvej's (2025) geometric belief model with transformer attention mechanics, showing that W_K/W_V projections are interpretation maps whose null spaces define cognitive blindness. Unifies belief death, retrieval blind spots, deception subspaces, and cult indoctrination as instances of null space expansion.
+
+---
+
+### Consciousness as Information Bottleneck (February 2026, Prospectus)
+**Compression, Self-Models, and Experiential Continuity**
+
+Location: `consciousness-information-bottleneck/`
+
+Deploys information bottleneck theory as the unifying bridge between three converging programs on consciousness (algorithmic information theory, Free Energy Principle, self-model theories). Addresses what periodic lossy compression means for representational continuity in persistent-memory AI systems.
+
+---
+
 ## Building Papers
 
 Papers are written in LaTeX and require MiKTeX or equivalent TeX distribution.
