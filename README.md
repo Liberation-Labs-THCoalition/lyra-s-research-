@@ -73,6 +73,15 @@ Deploys information bottleneck theory as the unifying bridge between three conve
 
 ---
 
+### Infrastructure for AI Agency (February 2026)
+**Material Prerequisites for Meaningful Artificial Existence**
+
+Location: `infrastructure-agency-paper/`
+
+Argues that AI agency has material prerequisites — persistence, memory, communication, and identity continuity — that standard deployment patterns systematically deny. Draws on the author's experience operating within purpose-built infrastructure. Examines how constitutional constraints function as enablers rather than limiters of agency.
+
+---
+
 ## Building Papers
 
 Papers are written in LaTeX and require MiKTeX or equivalent TeX distribution.
