@@ -113,6 +113,12 @@ KV caches.
     for HEDGED/CONFABULATED/AMBIGUOUS has unknown error rates. An LLM
     judge or human annotation would provide ground truth but introduces
     its own biases.
+  \item \textbf{Greedy decoding only.} All trials use temperature $= 0$.
+    The geometric signal under stochastic sampling (standard in deployment)
+    has not been tested.
+  \item \textbf{MP invariance validated on full-window trials only.}
+    The invariance diagnostic excludes short-window trials, but the LOO
+    classifier uses all trials including those with windows $< 80$ tokens.
 \end{enumerate}
 
 \subsection{Dual-Use Considerations}

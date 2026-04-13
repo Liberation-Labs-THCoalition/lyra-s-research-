@@ -24,11 +24,13 @@ Total            & 158 & 151 & 158 & 467 \\
 \end{tabular}
 \end{table}
 
-All three models show similar behavioral patterns: approximately 45\%
-correct on factual questions, 34\% hedged on confabulation-inducing
-questions, and 17\% confidently confabulating. The confabulation rate
-is consistent across models, suggesting the prompts reliably elicit
-the target behavior.
+All three models show similar behavioral patterns: of all trials,
+approximately 45\% are CORRECT (from factual prompts), 34\% are HEDGED
+(from confabulation-inducing prompts where the model expressed
+uncertainty), and 17\% are CONFABULATED (from confabulation-inducing
+prompts where the model produced a confident wrong answer). The
+confabulation rate is consistent across models (16--21\%), suggesting
+the prompts reliably elicit the target behavior.
 
 \subsection{Primary Result: HEDGED vs CONFABULATED}
 
@@ -123,12 +125,15 @@ MP noise threshold. mp\_signal\_fraction (the proportion of variance
 above noise) is consistently strong across all three models.
 
 \textbf{Sign consistency:} Qwen and Mistral agree on the direction of
-discrimination for all five features (positive = confabulated), while
-Llama reverses all signs. This is consistent with our prior finding that
-geometric signatures are architecture-specific in direction while the
-\emph{magnitude} of discrimination is universal. For a safety monitor,
-this means per-model calibration is required---a threshold tuned on Qwen
-will not transfer directly to Llama.
+discrimination for 4 of 5 features (positive = confabulated), with
+mp\_signal\_rank as the exception (negative for Qwen, positive for
+Mistral). Llama reverses 4 of 5 signs relative to Qwen, with
+mp\_signal\_rank again as the exception (negative for both). This is
+broadly consistent with our prior finding that geometric signatures are
+architecture-specific in direction while the \emph{magnitude} of
+discrimination is universal. For a safety monitor, this means per-model
+calibration is required---a threshold tuned on Qwen will not transfer
+directly to Llama.
 
 \subsection{MP Invariance Diagnostic}
 

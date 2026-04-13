@@ -14,8 +14,8 @@ redundant computation. It is already computed, already in memory, and
 already accessible through standard inference APIs. We show that singular
 value decomposition (SVD) of the key-cache tensor produces features that
 distinguish confabulated responses from genuinely uncertain
-ones---at inference time, without model weights, without training data,
-and with overhead under 50ms per response.
+ones---at inference time, without model weights, and without training
+data.
 
 \subsection{A Safety Script, Not a Research Prototype}
 
@@ -28,7 +28,8 @@ before delivering it to the user:
 
 \begin{enumerate}[nosep]
   \item Extract the key cache (already in GPU memory).
-  \item Reshape and compute SVD ($< 50$ms on consumer hardware).
+  \item Reshape and compute SVD (lightweight linear algebra on the
+    existing cache tensor).
   \item Compare spectral features against Marchenko-Pastur thresholds.
   \item Flag, log, or regenerate based on confabulation score.
 \end{enumerate}
@@ -42,9 +43,11 @@ additional infrastructure to maintain.
 We introduce Marchenko-Pastur (MP) corrected features that further
 simplify deployment. Raw SVD features require post-hoc regression to
 remove token-count confounds; MP features are approximately
-dimension-invariant by construction, requiring no regression, no
-calibration data, and no per-model tuning. A single set of thresholds
-works across architectures.
+dimension-invariant by construction, requiring no regression and no
+calibration data. Each matrix's MP threshold $\lambda_+$ adapts
+automatically to its dimensions, eliminating the need for per-response
+length correction. Per-model classifier calibration is still required
+(see \cref{sec:results}).
 
 \subsection{From Monitoring to Self-Regulation}
 
@@ -94,9 +97,9 @@ This paper makes four contributions:
 
 The detection results are moderate (AUROC 0.707 on the hardest
 comparison), not perfect. This is a confabulation \emph{signal}, not a
-confabulation \emph{oracle}. But it is a signal that requires no training,
-no labeled data, no weight access, and under 50ms of compute---properties
-that no competing approach offers simultaneously. We believe the
+confabulation \emph{oracle}. But it is a signal that requires no
+weight access, no probing classifier, and no separate training
+dataset---properties that no competing approach offers simultaneously. We believe the
 combination of accessibility, generality, and low overhead makes this
 useful even at moderate accuracy, particularly as one signal among several
 in a defense-in-depth safety stack.

@@ -4,7 +4,7 @@ no training data, and no modification to the model itself. Singular value
 decomposition (SVD) of the key-value cache---a standard byproduct of
 autoregressive generation available on any transformer backend---produces
 spectral features that distinguish genuine reasoning from confabulation
-with under 50ms overhead per response. We introduce Marchenko-Pastur (MP)
+with minimal computational overhead. We introduce Marchenko-Pastur (MP)
 corrected features derived from random matrix theory that are approximately
 dimension-invariant, eliminating the dominant token-count confound that
 plagued prior KV-cache analysis. In a clean experiment across three
