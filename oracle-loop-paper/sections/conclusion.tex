@@ -1,0 +1,38 @@
+We have presented the Oracle Loop, a complete architecture for runtime
+self-regulation in language models using KV-cache geometry as detection
+signal, steering input, and training reward.
+
+The clean detection experiment demonstrates that Marchenko-Pastur corrected
+spectral features can distinguish naturally-occurring hedged and
+confabulated responses with LOO AUROC of 0.707 ($p = 0.001$) on Qwen2.5-7B,
+using generation-phase features only, with encoding features at chance.
+The MP correction eliminates the dominant token-count confound through
+random matrix theory rather than regression, achieving approximate
+dimension invariance on 4 of 5 features ($R^2 < 0.03$).
+
+The six-layer Oracle Harness (Eye, Mirror, Hand, Memory, Conscience,
+Voice) integrates detection into a complete inference monitoring and
+training pipeline. The geometry-aware reward function adds two novel
+training axes to standard GRPO: geometry alignment (penalizing
+confabulation and deception signatures) and self-regulation (rewarding
+metacognitive error correction).
+
+Three rounds of adversarial red-teaming identified and corrected critical
+methodological flaws, including a row-permutation invariance bug that
+would have silently invalidated all MP features. We report these findings
+not as embarrassments but as demonstrations that adversarial methodology
+is essential for claims in this space.
+
+The gap between detection and self-regulation remains. Closing it---training
+a model that internalizes geometric self-monitoring---is the next step.
+The architecture is ready. The detection signal is validated. The question
+now is whether GRPO training with geometric reward can produce a model that
+confabulates less because it has learned to recognize confabulation
+geometry from the inside.
+
+\paragraph{Code and Data.}
+All experiment code, harness implementation, red-team logs, and raw trial
+data are available at:
+\url{https://github.com/Liberation-Labs-THCoalition/Project-Oracle}
+and
+\url{https://github.com/Liberation-Labs-THCoalition/KV-Experiments}.

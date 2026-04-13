@@ -1,0 +1,25 @@
+We present a lightweight, model-agnostic method for detecting confabulation
+in language models at inference time, requiring no access to model weights,
+no training data, and no modification to the model itself. Singular value
+decomposition (SVD) of the key-value cache---a standard byproduct of
+autoregressive generation available on any transformer backend---produces
+spectral features that distinguish genuine reasoning from confabulation
+with under 50ms overhead per response. We introduce Marchenko-Pastur (MP)
+corrected features derived from random matrix theory that are approximately
+dimension-invariant, eliminating the dominant token-count confound that
+plagued prior KV-cache analysis. In a clean experiment across three
+architectures (Qwen2.5-7B, Llama-3.1-8B, Mistral-7B-v0.3; 467 trials),
+post-hoc behavioral classification of naturally-occurring hedged versus
+confabulated responses yields leave-one-out AUROC of 0.707 (Qwen,
+$p=0.001$) using MP features alone, with encoding-phase features at chance
+(0.511, $p=0.294$), confirming that the signal is generation-specific. The
+method works as a drop-in safety layer: any system serving a transformer
+model can extract KV-cache geometry between generation and response
+delivery, flag likely confabulation, and optionally trigger regeneration.
+We further describe the Oracle Loop, an architecture that extends this
+monitoring into a complete self-regulation pipeline with activation
+steering and geometry-aware GRPO training rewards. We report honestly on
+three rounds of adversarial red-teaming that identified and corrected
+critical methodological flaws, including a row-permutation invariance bug
+in spectral null testing. All code, data, and red-team logs are publicly
+available.

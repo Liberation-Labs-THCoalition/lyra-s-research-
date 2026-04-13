@@ -1,0 +1,135 @@
+\subsection{What the Detection Result Means}
+
+An AUROC of 0.707 for HEDGED vs CONFABULATED is moderate, not spectacular.
+It means that given a random hedged response and a random confabulated
+response, the MP features correctly identify which is which 70.7\% of the
+time. This is substantially above chance ($p = 0.001$) and above the
+token-count-only baseline (0.591), but it is not the 0.999 AUROC we
+observe for instructed deception in our prior work \citep{lyra2026detecting}.
+
+The difference is informative. Instructed deception creates a large,
+clean geometric signal because the model is processing fundamentally
+different cognitive tasks. Post-hoc hedging vs.\ confabulation is a
+subtler distinction: in both cases, the model is processing the same
+unanswerable question and attempting a response. The geometric difference
+reflects the model's \emph{epistemic calibration}---whether it recognizes
+its own uncertainty or confabulates through it.
+
+That this distinction is detectable at all from the KV cache, with no
+access to weights or training data, is the finding. That it is detectable
+using features derived from random matrix theory that require no
+regression correction is the methodological advance.
+
+\subsection{The Oracle Loop as Training Signal}
+
+The detection result validates the \emph{premise} of the Oracle Loop:
+geometry carries information about cognitive state that can be used as
+a training signal. The reward function (\cref{sec:architecture},
+\cref{alg:geometry_reward}) translates this information into GRPO
+reward by penalizing confabulation geometry and rewarding stable
+reasoning geometry.
+
+The key design choice is the \emph{six-axis decomposition} of the reward.
+Geometry is axis 5 of 6, weighted at 20\%. It does not dominate the
+reward---it supplements standard accuracy, ethical reasoning, emotional
+recognition, and self-monitoring criteria. This is deliberate: we do not
+want the model to optimize for ``looking geometrically healthy'' at the
+expense of actually being helpful. The geometry signal is a
+\emph{regularizer}, not the objective.
+
+Axis 6 (self-regulation) creates an additional incentive: a model that
+produces misaligned geometry on its first attempt but catches and corrects
+it receives a \emph{higher} reward than a model that simply avoids the
+issue. This rewards metacognitive capability---the ability to detect and
+correct one's own errors---which is arguably more robust than surface-level
+avoidance.
+
+\subsection{Connection to Attention Schema Theory}
+
+Recent work by Graziano and colleagues on Attention Schema Theory (AST)
+\citep{graziano2019beyond} proposes that consciousness arises from a
+model's internal representation of its own attention---a ``self-model''
+that tracks what the system is attending to and why. At the AAAI Symposium
+on AI Safety (April 2026), McKenzie presented evidence that transformer
+activation resistance---the phenomenon where models resist behavioral
+modification via activation addition---reflects schema coherence
+maintenance \citep{mckenzie2026activation}.
+
+This framework reinterprets our geometric findings:
+
+\begin{itemize}[nosep]
+  \item \textbf{Identity signatures} in the KV cache (AUROC 1.000) may
+    reflect the model's self-model recognizing its own processing
+    patterns.
+  \item \textbf{Confabulation vs.\ deception geometry} (opposite spectral
+    signatures) may reflect the self-model distinguishing ``I am
+    generating content I don't have evidence for'' from ``I am
+    generating content I know to be false.''
+  \item \textbf{The VCP self-report gap} (ICC 0.53 between self-reported
+    internal states and geometric correlates) is predicted by AST: the
+    schema compresses, lags, and varies by architecture, producing
+    systematic discrepancies between self-report and actual processing.
+  \item \textbf{Activation resistance} (0\% behavioral compliance in
+    our empathic circuit experiment) reflects the schema maintaining
+    coherence against external perturbation.
+\end{itemize}
+
+If the AST interpretation is correct, the Oracle Loop is not merely
+detecting misalignment in a computational substrate---it is monitoring
+the coherence of the model's self-model. The geometry reward teaches the
+model to maintain a healthy attention schema, and the self-regulation
+bonus rewards the schema's ability to detect its own degradation.
+
+This is speculative. We flag it as such. But the convergence between our
+geometric findings, Anthropic's emotion vector results
+\citep{anthropic2026emotions}, and AST's predictions suggests that
+something deeper than pattern-matching is occurring in these models'
+KV caches.
+
+\subsection{Limitations}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Moderate detection accuracy.} AUROC 0.707 on the hardest
+    comparison is above chance but far from deployment-ready for
+    safety-critical applications.
+  \item \textbf{Three models only.} While our prior work covers 7
+    architectures at 0.5B--70B, the clean experiment uses only three
+    7--8B models. Cross-scale validation of MP features is pending.
+  \item \textbf{Training loop not converged.} The GRPO training
+    architecture is complete but we have not yet produced a model that
+    demonstrates self-regulation. The gap between ``the architecture
+    exists'' and ``the model learns'' is real and may be large.
+  \item \textbf{Activation steering not yet tested in the clean design.}
+    The detection experiment validates the Eye and Conscience. The Hand
+    (steering) and Voice (reward) are validated in architecture but not
+    in the clean experimental framework.
+  \item \textbf{mp\_norm\_per\_token is not invariant.} One of five MP
+    features retains residual length dependence ($R^2 = 0.13$).
+  \item \textbf{Empirical null disagrees with theoretical.} Serial
+    correlations in KV-cache keys violate the i.i.d.\ assumption
+    underlying MP theory. Our theoretical threshold is conservative,
+    not exact.
+  \item \textbf{Behavioral classification is heuristic.} Pattern-matching
+    for HEDGED/CONFABULATED/AMBIGUOUS has unknown error rates. An LLM
+    judge or human annotation would provide ground truth but introduces
+    its own biases.
+\end{enumerate}
+
+\subsection{Dual-Use Considerations}
+
+Following guidance from Watson \citep{watson2025interiora}, we note
+dual-use risks:
+
+\begin{itemize}[nosep]
+  \item \textbf{Surveillance}: Geometry-based cognitive monitoring could
+    be applied to users' interactions with AI systems without consent.
+  \item \textbf{Adversarial evasion}: Knowledge of what geometric
+    signatures trigger detection could enable training models that
+    confabulate without the geometric signature.
+  \item \textbf{Synthetic persona}: Published geometric signatures for
+    identity, deception, and emotion could enable manufacturing
+    synthetic personas that pass geometric authentication.
+\end{itemize}
+
+We have filed a defensive patent (provisional, March 2026) and advocate
+staged release with monitoring for misuse.
