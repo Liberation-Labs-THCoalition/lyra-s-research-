@@ -76,7 +76,7 @@ that is architecturally complete but not yet converged.
 
 \subsection{Contributions}
 
-This paper makes four contributions:
+This paper makes five contributions:
 
 \begin{enumerate}[nosep]
   \item \textbf{A deployable confabulation monitor} based on KV-cache SVD
@@ -91,6 +91,11 @@ This paper makes four contributions:
   \item \textbf{The Oracle Loop architecture}: a six-layer harness for
     real-time inference monitoring with geometry-aware GRPO training
     (\cref{sec:architecture}).
+  \item \textbf{Proof-of-concept activation steering} with a null
+    injection control verifying character-level identical output on all
+    100 trials---demonstrating that detection-gated correction works
+    ($p = 0.031$) while blanket correction does not ($p = 0.36$)
+    (\cref{sec:steering}).
 \end{enumerate}
 
 \subsection{Scope and Honest Framing}

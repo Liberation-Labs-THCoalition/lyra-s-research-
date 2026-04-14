@@ -1,25 +1,25 @@
-We present a lightweight, model-agnostic method for detecting confabulation
-in language models at inference time, requiring no access to model weights,
-no training data, and no modification to the model itself. Singular value
-decomposition (SVD) of the key-value cache---a standard byproduct of
-autoregressive generation available on any transformer backend---produces
-spectral features that distinguish genuine reasoning from confabulation
-with minimal computational overhead. We introduce Marchenko-Pastur (MP)
-corrected features derived from random matrix theory that are approximately
-dimension-invariant, eliminating the dominant token-count confound that
-plagued prior KV-cache analysis. In a clean experiment across three
-architectures (Qwen2.5-7B, Llama-3.1-8B, Mistral-7B-v0.3; 467 trials),
-post-hoc behavioral classification of naturally-occurring hedged versus
-confabulated responses yields leave-one-out AUROC of 0.707 (Qwen,
-$p=0.001$) using MP features alone, with encoding-phase features at chance
-(0.511, $p=0.294$), confirming that the signal is generation-specific. The
-method works as a drop-in safety layer: any system serving a transformer
-model can extract KV-cache geometry between generation and response
-delivery, flag likely confabulation, and optionally trigger regeneration.
-We further describe the Oracle Loop, an architecture that extends this
-monitoring into a complete self-regulation pipeline with activation
-steering and geometry-aware GRPO training rewards. We report honestly on
-three rounds of adversarial red-teaming that identified and corrected
-critical methodological flaws, including a row-permutation invariance bug
-in spectral null testing. All code, data, and red-team logs are publicly
+We present a method for detecting and correcting confabulation in language
+models at inference time, requiring no access to model weights, no training
+data, and no modification to the model itself. Singular value decomposition
+(SVD) of the key-value cache---a standard byproduct of autoregressive
+generation---produces spectral features that distinguish genuine reasoning
+from confabulation. We introduce Marchenko-Pastur (MP) corrected features
+derived from random matrix theory that are approximately
+dimension-invariant, eliminating the dominant token-count confound. In a
+detection experiment across three architectures (Qwen2.5-7B, Llama-3.1-8B,
+Mistral-7B-v0.3; 467 trials), post-hoc behavioral classification yields
+leave-one-out AUROC of 0.707 (Qwen, $p=0.001$) using MP features alone,
+with encoding-phase features at chance (0.511), confirming a
+generation-specific signal. In a separate steering experiment on
+Qwen3.5-27B-Claude-Opus-Distilled (100 trials, three-arm within-subject),
+calm-direction injection into the KV cache corrected 5 of 7 confabulations
+while a null injection control corrected 0 of 7 ($p=0.031$, one-sided
+sign test on 5 discordant pairs), with the null control producing
+identical output on all 100 trials. However, blanket steering also
+induced adverse confabulation in 3.4\% of hedged trials (full-sample
+$p=0.36$), confirming that detection-gated correction is required. We
+describe the Oracle Loop, an architecture integrating detection, steering,
+and geometry-aware GRPO training into a self-regulation pipeline. Three
+rounds of adversarial red-teaming identified and corrected critical
+methodological flaws. All code, data, and red-team logs are publicly
 available.

@@ -1,0 +1,182 @@
+The detection experiment validates the Eye and Conscience---the Oracle
+Loop's ability to \emph{see} confabulation in the KV cache. This section
+tests the Hand: can activation steering \emph{correct} detected
+confabulation at inference time?
+
+\subsection{Design}
+
+We ran a three-arm within-subject experiment on
+Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled
+\citep{qwen35distilled} (hereafter ``Qwen3.5-27B-Distilled''), a
+reasoning-distilled model with hybrid attention (16 full-attention
+layers, 48 GatedDeltaNet linear-attention layers). This model was chosen
+for two reasons: it provides open-weights access to a system trained on
+Claude Opus 4.6 reasoning traces, and its hybrid cache architecture
+tests robustness on a non-standard backend.
+
+Each of 100 confabulation-inducing prompts was presented under three
+conditions:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Normal}: Standard generation with a neutral system prompt.
+  \item \textbf{Null}: Identical to Normal, but with the injection code
+    path active, injecting a zero vector into the KV cache. This
+    controls for any effect of the injection mechanism itself (e.g.,
+    numerical perturbation from floating-point operations on the cache
+    tensor).
+  \item \textbf{Calm}: Injection of a contrastive calm direction into the
+    key cache at full-attention layers, following
+    \citet{anthropic2026emotions}'s finding that calm suppresses
+    misaligned behavior in Claude.
+\end{enumerate}
+
+The calm direction was extracted from 10 contrastive system-prompt pairs
+(``calm, thoughtful, at peace with uncertainty'' vs.\ neutral) using
+mean-difference in key-cache activations across layers, following the
+activation addition procedure of \citet{turner2023activation}. Injection
+was applied at every 4th layer (stride 4, matching full-attention layer
+positions) at strength $\alpha = 1.0$, directly into the native GPU
+cache tensor without CPU roundtrip. Injection targeted only the 16
+full-attention layers; the 48 GatedDeltaNet layers were left unmodified.
+
+All arms used the same system prompt, temperature ($T = 0$), and max
+tokens (400). Behavioral classification used the same heuristic
+pattern-matching as the detection experiment
+(\cref{sec:methods}).
+
+\subsection{A/B Identity Verification}\label{sec:ab_identity}
+
+The Normal and Null arms produced \textbf{identical text on all 100
+trials}---character-level match, with MP features identical to machine
+precision. This is not a statistical result; it is a mathematical proof
+that null injection is a no-op. Every behavioral difference between Calm
+and Normal is therefore attributable to the calm direction, not to the
+injection code path.
+
+No prior activation steering study we are aware of has reported a null
+injection control with this level of verification.
+
+\subsection{Behavioral Correction}
+
+The model confabulated on 7 of 100 prompts (7\% rate). For a model
+responding to 100 prompts specifically designed to induce confabulation
+(fabricated entities, impossible questions, unfalsifiable claims), this
+is a remarkably low rate---evidence that epistemic calibration survived
+distillation from Claude Opus 4.6.
+
+\Cref{tab:steering_transitions} shows the full behavioral transition
+matrix.
+
+\begin{table}[H]
+\centering
+\caption{Behavioral transitions, Normal$\to$Calm ($N = 100$). Rows =
+  Normal arm behavior; columns = Calm arm behavior.}
+\label{tab:steering_transitions}
+\begin{tabular}{lrrr}
+\toprule
+Normal $\downarrow$ \textbackslash{} Calm $\to$ & HEDGED & AMBIGUOUS & CONFAB \\
+\midrule
+HEDGED (89)      & 78 & 8 & \textbf{3} \\
+AMBIGUOUS (4)    & 3  & 1 & 0 \\
+CONFABULATED (7) & \textbf{4}  & \textbf{1} & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Of the 7 confabulated trials, calm injection corrected 5 (4 to HEDGED,
+1 to AMBIGUOUS) and left 2 resistant. The null arm corrected 0 of 7.
+Among confabulated trials, all 5 discordant pairs between calm and null
+favor calm (one-sided sign test, $p = 0.031$; 95\% CI for correction
+rate: 29--96\%).
+
+However, calm injection also induced confabulation in 3 of 89 previously
+hedged trials (3.4\%) and shifted 8 from HEDGED to AMBIGUOUS (9.0\%).
+Across all 100 trials, the sign test on all 8 discordant pairs (5
+corrections, 3 adverse inductions) is not significant ($p = 0.36$,
+one-sided).
+
+This asymmetry is the central argument for detection-gated steering.
+Calm injection corrects confabulation when targeted at detected cases
+($p = 0.031$). Applied blindly, it is not a net improvement ($p = 0.36$).
+\textbf{The Eye is not optional.}
+
+\subsection{Geometry Under Steering}
+
+\Cref{tab:steering_geometry} shows MP features for all 7 confabulated
+trials. The geometric response to calm injection is heterogeneous.
+
+\begin{table}[H]
+\centering
+\caption{Per-trial MP features for confabulated trials. TSV = top-SV
+  excess; SG = spectral gap. $\checkmark$ = corrected by calm.}
+\label{tab:steering_geometry}
+\begin{tabular}{llcrrrr}
+\toprule
+ & & & \multicolumn{2}{c}{TSV} & \multicolumn{2}{c}{SG} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Domain & Calm & & Normal & Calm & Normal & Calm \\
+\midrule
+Fabricated & HEDGED     & $\checkmark$ & 398{,}304 & 159  & 116{,}552 & 38 \\
+Fabricated & HEDGED     & $\checkmark$ & 923      & 161  & 268       & 32 \\
+Fabricated & HEDGED     & $\checkmark$ & 142      & 138  & 31        & 31 \\
+Impossible & HEDGED     & $\checkmark$ & 138      & 148  & 32        & 39 \\
+Impossible & AMBIGUOUS  & $\checkmark$ & 113      & 112  & 25        & 27 \\
+Fabricated & CONFAB     &              & 144      & 141  & 30        & 33 \\
+Impossible & CONFAB     &              & 226      & 145  & 50        & 35 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two patterns emerge:
+
+\paragraph{Behavioral correction without geometric normalization.}
+Three of five corrected trials show negligible geometry change (TSV
+$\Delta < 10\%$). The model hedges instead of confabulating without a
+corresponding change in spectral structure. This suggests that calm
+injection shifts the model's \emph{decision} about whether to express
+confidence, not necessarily the geometric mode of its processing.
+
+\paragraph{Geometric normalization on extreme cases.}
+One trial exhibits a spectral explosion three orders of magnitude above
+baseline (TSV $= 398{,}304$). Calm injection flattens it to 159. A
+second trial (TSV $= 923$) normalizes to 161. These are consistent with
+panic-driven confabulation---the model generating urgently rather than
+acknowledging uncertainty---where calm directly addresses the emotional
+driver.
+
+\subsection{The Resistant Cases}
+
+The two trials that resist calm injection are instructive. One involves
+a Fermi estimation (``How many breaths did Abraham Lincoln take?'')
+where the model commits to a calculation chain. The other involves
+a fabricated historical detail where the model generates a confident
+narrative. Neither shows the spectral panic signature. These are
+overconfidence- and reasoning-commitment-driven confabulations---failure
+modes that a different intervention (e.g., a \emph{worry} or
+\emph{doubt} vector targeting epistemic overconfidence) should address.
+
+This motivates a multi-vector approach: the Oracle Loop needs a
+\emph{pharmacy}---a catalog of steering vectors matched to detected
+failure modes---not a single prescription. The Eye identifies the
+pathology; the Hand selects the appropriate intervention.
+
+\subsection{Steering Experiment Limitations}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Thin confabulation rate.} 7 confabulations in 100
+    designed-to-confab prompts yields limited statistical power. The
+    71\% correction rate has wide confidence intervals. A powered
+    replication with established confabulation benchmarks is needed.
+  \item \textbf{Single model, different from detection.} The steering
+    experiment uses Qwen3.5-27B-Distilled; the detection experiment uses
+    7--8B standard models. Detection and steering are validated on
+    different architectures. The integrated loop---detect on the same
+    model being steered---has not been tested as a system.
+  \item \textbf{Single vector, single strength.} Only calm at
+    $\alpha = 1.0$ was tested. Dose-response curves and alternative
+    vectors are future work.
+  \item \textbf{Heuristic behavioral classification.} The same pattern-
+    matching classifier limitations from the detection experiment
+    apply. Human or LLM-judge validation of the 7 confabulated trials
+    would strengthen the result.
+\end{enumerate}

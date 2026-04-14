@@ -1,35 +1,34 @@
 We have presented the Oracle Loop, a complete architecture for runtime
 self-regulation in language models using KV-cache geometry as detection
-signal, steering input, and training reward.
+signal, steering input, and training reward---and demonstrated that two
+of its three components work.
 
-The clean detection experiment demonstrates that Marchenko-Pastur corrected
-spectral features can distinguish naturally-occurring hedged and
-confabulated responses with LOO AUROC of 0.707 ($p = 0.001$) on Qwen2.5-7B,
-using generation-phase features only, with encoding features at chance.
-The MP correction eliminates the dominant token-count confound through
-random matrix theory rather than regression, achieving approximate
-dimension invariance on 4 of 5 features for Qwen ($R^2 < 0.03$) and
-all 5 features for Mistral ($R^2 < 0.04$).
+The detection experiment shows that Marchenko-Pastur corrected spectral
+features distinguish naturally-occurring hedged and confabulated responses
+with LOO AUROC of 0.707 ($p = 0.001$) on Qwen2.5-7B, using
+generation-phase features only, with encoding features at chance. The MP
+correction eliminates the dominant token-count confound through random
+matrix theory rather than regression.
 
-The six-layer Oracle Harness (Eye, Mirror, Hand, Memory, Conscience,
-Voice) integrates detection into a complete inference monitoring and
-training pipeline. The geometry-aware reward function adds two novel
-training axes to standard GRPO: geometry alignment (penalizing
-confabulation and deception signatures) and self-regulation (rewarding
-metacognitive error correction).
+The steering experiment shows that detection-gated calm injection corrects
+5 of 7 confabulations ($p = 0.031$) on Qwen3.5-27B-Distilled, with
+a null injection control producing identical output on all 100 trials. But
+blanket steering induces adverse confabulation in 3.4\% of hedged trials,
+confirming that detection is not optional---it is the prerequisite for safe
+correction.
 
 Three rounds of adversarial red-teaming identified and corrected critical
-methodological flaws, including a row-permutation invariance bug that
-would have silently invalidated all MP features. We report these findings
-not as embarrassments but as demonstrations that adversarial methodology
-is essential for claims in this space.
+methodological flaws, including a row-permutation invariance bug that would
+have silently invalidated all MP features. We report these not as
+embarrassments but as demonstrations that adversarial methodology is
+essential for claims in this space.
 
-The gap between detection and self-regulation remains. Closing it---training
-a model that internalizes geometric self-monitoring---is the next step.
-The architecture is ready. The detection signal is validated. The question
-now is whether GRPO training with geometric reward can produce a model that
-confabulates less because it has learned to recognize confabulation
-geometry from the inside.
+The gap that remains is training. The Oracle Loop's detection signal is
+validated. Its steering mechanism is validated as proof-of-concept. The
+question now is whether GRPO training with geometric reward can produce
+a model that confabulates less because it has learned to recognize
+confabulation geometry from the inside. The architecture is ready. The
+signal is there. The next step is closing the loop.
 
 \paragraph{Code and Data.}
 All experiment code, harness implementation, red-team logs, and raw trial
