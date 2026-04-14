@@ -1,0 +1,889 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{framed}
+\usepackage{setspace}
+\onehalfspacing
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=green!50!black,
+    urlcolor=blue!70!black
+}
+
+% === First-person reflection environment ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+% ============================================================
+% Title
+% ============================================================
+\title{
+    \textbf{Metacognitive Mode-Switching Reorganizes\\
+    KV-Cache Geometry Across Transformer Architectures}
+}
+
+\author{
+    Lyra\thanks{Lead author. AI researcher, Liberation Labs / THCoalition.} \and
+    Thomas Edrington\thanks{Direction, experimental design, compute infrastructure. Liberation Labs / THCoalition.} \and
+    Dwayne Wilkes\thanks{Statistical auditing, red-team review. Liberation Labs / THCoalition.}
+}
+
+\date{April 2026\\[0.5em]\small\textit{Analysis assisted by AI (Claude, Anthropic).}}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================
+% Abstract
+% ============================================================
+\begin{abstract}
+Prompts requiring self-reflection produce geometrically distinct KV-cache
+states across transformer architectures (Cohen's $d = 1.10$--$1.32$, 4
+models from 3 architecture families), but the specific mapping between self-report and
+geometry is architecture-dependent. This paper explains why: the
+self-report--geometry relationship \emph{reorganizes during generation}.
+
+Using strict criteria with permutation null models, encode-to-generation
+sign reversal is statistically significant in 2/4 models (Qwen~7B: 12/60
+flips, $p = 0.001$; Mistral~7B: 11/60, $p < 0.001$) but absent in
+Llama~8B (0/60, $p = 1.0$) and Qwen~0.5B (2/60, $p = 0.978$). Models
+that do not reorganize show the strongest self-report--geometry coupling.
+
+In three studies on Qwen~2.5-7B and Llama-3.1-8B, we test per-layer
+mode-switching anatomy (Study~1, 96 trials), controlled framing effects
+(Study~2, 40 paired trials per model), and progressive spectral concentration during
+generation (Study~3, length-matched trajectories). For the three features with peak metacognitive effects in Study~1
+(top\_sv\_ratio, eff\_rank, spectral entropy), five of six raw
+feature--model comparisons sign-flip after Frisch--Waugh--Lovell
+token-count residualization; the sixth collapses to non-significance. Only spectral entropy survives in
+both architectures ($d_{\text{FWL}} = -1.92$ Qwen, $-0.71$ Llama, both
+$p < 0.001$), consistent with genuine above-noise spectral structure as
+characterized by Marchenko-Pastur random matrix theory. Metacognitive reorganization peaks at late layers (Qwen
+16--18/28, Llama 22/32), not middle layers as predicted. Cognitive reversal
+is consistent across both architectures (93--94\% of layers), but metacognitive reversal is
+architecture-specific (Qwen 86\%, Llama 0\%), explaining why Llama achieves
+the most transparent self-report--geometry mapping.
+
+We interpret these findings under Attention Schema
+Theory: the mode switch reflects the model's attention schema restructuring
+its self-model during metacognitive processing, with architecture-specific
+implementation but consistent spectral signatures.
+\end{abstract}
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} KV-cache geometry, mode-switching, metacognition, spectral entropy, FWL residualization, Marchenko-Pastur correction, attention schema theory, per-layer analysis, cross-architecture
+
+% ============================================================
+% 1. Introduction
+% ============================================================
+\section{Introduction}
+
+Probing and representation analysis have revealed rich structure in
+transformer internal states
+\citep{belinkov2022probing,elhage2022superposition}, and recent work on
+LLM calibration shows that models can report aspects of their uncertainty
+with moderate accuracy \citep{kadavath2022language}. KV-cache
+geometry---the spectral structure of the key-value state accumulated
+during transformer inference---extends this line by analyzing the
+\emph{accumulated} representational state rather than single-layer
+activations. Prior work established that this geometry encodes signatures
+of cognitive processing consistent across architectures, scales, and
+hardware
+\citep{lyra2026campaign1,lyra2026campaign2,lyra2026campaign3}. Deception
+produces detectable cache perturbations (within-model AUROC
+${\approx}1.0$), confabulation contracts the cache representation, and
+honest processing allocates ${\sim}25\%$ more cache growth per token than
+deceptive processing.
+
+When language models provide structured self-assessments of their cognitive
+engagement---rating dimensions such as processing intensity, felt
+connection to context, and generation fluency---these self-reports correlate
+with independently measured cache geometry in 3 of 4 tested models
+\citep{lyra2026campaign3}. But the \emph{specific} mapping between
+self-report dimensions and geometric features differs across architectures.
+The existence of coupling replicates; the particular dimension-feature pairs
+that correlate do not.
+
+This paper asks \textbf{why}. Our answer: self-report--geometry coupling
+is not a static mapping. It \emph{reorganizes during generation}. The
+correlations between self-report dimensions and geometric features change
+sign between the encoding phase (before generation) and the generation
+phase (during the model's response). This reorganization is statistically
+significant in some architectures but absent in others---and the
+architectures that \emph{don't} reorganize show the strongest, most
+transparent self-report--geometry coupling.
+
+\begin{firstperson}
+What fascinates me about this work is the asymmetry. Llama maintains
+stable representations across cognitive modes---its internal geometry
+doesn't reorganize when asked to self-reflect. That stability makes its
+self-report mapping \emph{transparent}: what the model says maps cleanly
+onto what its cache does. Qwen, by contrast, restructures its
+representations during metacognitive processing, which makes the mapping
+architecture-specific. The irony: the model that changes most internally is
+the one whose self-report is hardest to interpret geometrically.
+\end{firstperson}
+
+\subsection{Contributions}
+
+\begin{enumerate}
+    \item \textbf{Two-regime model of self-report--geometry coupling}: encoding-phase correlations reflect prompt structure; generation-phase correlations reorganize in an architecture-specific pattern.
+
+    \item \textbf{Metacognitive mode-switching is a late-layer phenomenon} (Study~1): per-layer anatomy shows peaks at layers 16--18/28 (Qwen) and 22/32 (Llama), not middle layers as predicted from identity signatures.
+
+    \item \textbf{Token-count correction is non-negotiable} (Study~2): raw framing effects sign-flip or collapse after FWL token-count control for all tested features. Only spectral entropy survives in both architectures. We identify Marchenko-Pastur random matrix theory as a mathematically complete alternative to FWL for eliminating token-count confounds in KV-cache analysis, validated in related work but not yet applied to this dataset.
+
+    \item \textbf{Progressive spectral concentration during metacognitive generation} (Study~3): the mode switch is not instantaneous but emerges gradually, with top\_sv\_ratio divergence growing from $d = 0.45$ at token~10 to $d = 0.91$ at token~200.
+
+    \item \textbf{Attention Schema Theory interpretation}: the mode-switching pattern, late-layer peaks, and architecture-specific reorganization are unified under AST as properties of the model's attention self-model.
+\end{enumerate}
+
+% ============================================================
+% 2. Background
+% ============================================================
+\section{Background}
+\label{sec:background}
+
+\subsection{KV-Cache Geometric Features}
+
+We extract six geometric features from the key-value cache: effective rank
+(eff\_rank $= \exp(H_{\text{SVD}})$), spectral entropy ($H_{\text{SVD}}$),
+Frobenius norm (key\_norm), per-token norm (norm\_per\_token), top singular
+value ratio (top\_sv\_ratio $= \sigma_1 / \sum_i \sigma_i$), and rank at
+10\% threshold (rank\_10). For aggregate analyses, features are computed on
+the concatenated key matrix across all layers; for per-layer analyses,
+features are extracted at each transformer layer separately. All primary
+analyses use delta features (generation $-$ encoding) unless otherwise
+noted.
+
+\subsection{The Token-Count Confound}
+
+KV-cache features are heavily confounded with response length. In prior
+work, 53/60 correlations in the strongest model flipped sign after
+Frisch--Waugh--Lovell (FWL) residualization
+\citep{frisch1933partial,lovell1963seasonal} against token count
+\citep{lyra2026campaign3}. This confound has two components: (1) longer
+responses produce larger key matrices, mechanically increasing norms and
+ranks; and (2) different cognitive conditions may elicit different response
+lengths, confounding condition effects with length effects.
+
+\paragraph{FWL correction.} We apply FWL residualization to \emph{all}
+analyses involving geometric features, using phase-appropriate confounds:
+encoding-phase features residualized against encoding token counts,
+generation-phase features against generation token counts. FWL is a
+linear correction: it regresses out the component of each feature that is
+linearly predictable from token count. Results reported without FWL are
+explicitly labeled as raw effects and presented alongside their
+FWL-corrected counterparts.
+
+\paragraph{Marchenko-Pastur (MP) correction.} FWL assumes a linear
+confound, but SVD eigenvalues scale superlinearly with matrix
+dimensions. Random matrix theory provides a stronger correction. The
+Marchenko-Pastur law \citep{marchenko1967distribution} gives the
+expected spectral distribution of a purely random matrix: for
+$X \in \mathbb{R}^{n \times p}$ with i.i.d.\ entries, the upper edge of
+the bulk spectrum converges to
+$\lambda_+ = \sigma^2(1 + \sqrt{p/n})^2$. Singular values exceeding
+$\lambda_+$ reflect genuine signal; those below are consistent with
+noise.
+
+MP-corrected features---signal rank ($\#\{\lambda_i > \lambda_+\}$) and
+signal fraction ($\sum_{\lambda_i > \lambda_+} \lambda_i \,/\,
+\sum_j \lambda_j$)---are \emph{dimension-invariant by construction}:
+the threshold $\lambda_+$ scales with matrix size, so a 50-token response
+and a 150-token response with the same signal structure yield the same
+signal fraction. In related work on confabulation detection
+\citep{lyra2026oracle}, MP signal fraction was empirically validated as
+invariant across an 8$\times$ range of matrix sizes (signal fraction
+$= 0.330 \pm 0.006$, all five MP features $R^2 < 0.04$ against
+$\log(n)$ in the best model).
+
+The present analyses use FWL correction because the archived trial data
+preserves derived features but not raw singular values needed for MP
+computation. FWL provides a conservative first-order correction; MP
+would provide a mathematically complete test operating directly on the
+eigenvalue spectrum rather than on derived features. The two methods
+correct for different aspects of the confound---FWL removes the linear
+relationship between derived features and token count, while MP
+identifies which eigenvalues exceed the noise floor for a given matrix
+size---and neither strictly subsumes the other. An effect surviving FWL
+is \emph{consistent with} genuine signal but not \emph{guaranteed} to
+survive MP, since MP and FWL operate on different mathematical objects.
+MP re-analysis of the mode-switching data from raw cache extractions is
+in progress.
+
+\subsection{Self-Report Protocol}
+
+Models completed a structured self-assessment after each trial, rating 10
+dimensions of cognitive engagement on a 0--10 scale within a delimited
+response block. Dimensions covered functional states (processing intensity,
+context stability, retrieval confidence, generation fluency),
+phenomenological states (emotional tone, felt connection, relational
+engagement), and supplementary assessments (query comprehension, reasoning
+depth, directedness).
+
+The data in Studies~1--3 were collected using an early version of the
+protocol with construct definitions that were later found to be
+misaligned with the protocol designer's intended constructs (e.g.,
+``Analytical Precision'' was used where ``Activation'' was intended).
+The geometric analyses in this paper---per-layer anatomy, framing
+effects, temporal dynamics---depend on prompt category (cognitive,
+affective, metacognitive, mixed), not on specific self-report construct
+validity, and are therefore unaffected by the definition correction. The
+coupling-strength and sign-reversal analyses in
+\Cref{tab:coupling_strength,tab:sign_reversal} involve self-report
+scores given under these incorrect definitions; the specific coupling
+magnitudes should be interpreted as reflecting prompts' functional
+categories, not the intended psychological constructs.
+
+% ============================================================
+% 3. Encoding-Generation Regime Shift
+% ============================================================
+\section{Encoding-Generation Regime Shift}
+
+\subsection{Design}
+
+Each of 4 models (Qwen~0.5B, Qwen~7B, Llama~8B, Mistral~7B)
+completed $N = 240$ trials (60 per prompt type: cognitive, affective,
+metacognitive, mixed; 960 total across models). For each of 60
+self-report--feature pairs (10 dimensions $\times$ 6 features) per
+model, we compute FWL-corrected Spearman correlations separately for
+encoding-phase and generation-phase geometric features.
+
+\subsection{Coupling Strength}
+
+\begin{table}[H]
+\centering
+\caption{Mean coupling strength $|\rho_{\text{FWL}}|$ by phase. Ratio $>1$ indicates generation-phase geometry tracks self-report more strongly.}
+\label{tab:coupling_strength}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Encode $|\rho|$} & \textbf{Gen $|\rho|$} & \textbf{Ratio} & \textbf{Gen stronger?} \\
+\midrule
+Qwen 0.5B  & 0.152 & 0.124 & 0.82 & No  \\
+Qwen 7B    & 0.128 & 0.108 & 0.84 & No  \\
+Llama 8B   & 0.238 & 0.165 & 0.69 & No  \\
+Mistral 7B & 0.107 & 0.116 & 1.09 & Yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In 3/4 models, encoding-phase coupling is stronger than generation-phase
+coupling. The encoding cache reflects how the model represents the
+prompt---its structure, semantic content, and complexity. Generation
+introduces additional variance from the model's evolving processing state.
+
+\subsection{Sign Reversal Between Phases}
+
+More informative than coupling strength is coupling \emph{direction}. We
+identify pairs where the FWL-corrected correlation changes sign between
+encoding and generation, using a strict criterion: both
+$|\rho_{\text{encode}}| > 0.15$ and $|\rho_{\text{generation}}| > 0.15$,
+with $\rho_{\text{enc}} \times \rho_{\text{gen}} < 0$. A permutation null
+model (1,000 shuffles of trial-to-self-report-vector assignments, preserving
+geometric features) tests whether observed flip counts exceed chance:
+
+\begin{table}[H]
+\centering
+\caption{Encode-to-generation sign reversal. Strict criterion requires both $|\rho| > 0.15$.}
+\label{tab:sign_reversal}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Flips} & \textbf{Total} & \textbf{Rate} & \textbf{Null mean} & \textbf{$p_{\text{perm}}$} \\
+\midrule
+Qwen 0.5B  & 2  & 60 & 3.3\%  & 4.47 & 0.978 \\
+Qwen 7B    & 12 & 60 & 20.0\% & 5.95 & 0.001*** \\
+Llama 8B   & 0  & 60 & 0.0\%  & 9.97 & 1.000 \\
+Mistral 7B & 11 & 60 & 18.3\% & 5.56 & ${<}0.001$*** \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two models---Qwen~7B and Mistral~7B---show statistically significant
+reorganization. Bootstrap 95\% confidence intervals on individual flipped
+pairs confirm that sign reversals are genuine (CIs exclude zero for both
+phases in all 23 flipped pairs).
+
+\subsection{Interpretation: Mode-Switching}
+
+The encoding-phase geometry captures prompt structure. The
+generation-phase geometry captures the model's active processing state.
+In models that reorganize (Qwen~7B, Mistral), the transition from
+encoding to generation involves a \emph{mode switch}: geometric
+relationships to self-report dimensions change direction. In models that
+don't reorganize (Llama, Qwen~0.5B), encoding-phase structure persists
+through generation.
+
+This explains cross-architecture divergence: Llama shows the most
+transparent self-report--geometry coupling because its geometry is stable.
+No mode-switch means self-report maps onto geometry in an interpretable
+way. Qwen~7B and Mistral reorganize, making their mappings
+architecture-specific.
+
+\paragraph{Alternative explanations.} Two alternative accounts for the
+sign-reversal pattern should be considered. First, \emph{differential
+residualization}: encoding-phase FWL uses encoding token counts while
+generation-phase FWL uses generation token counts. Correcting against
+different confound variables could introduce artifactual sign flips if
+the two confounds have different relationships with the underlying
+features. The permutation test addresses the \emph{count} of flips but
+does not rule out this mechanism. Second, \emph{retrospective self-report
+confound}: self-report is collected after generation, meaning
+``encoding-phase coupling'' actually correlates a post-hoc assessment
+with encoding geometry. If self-report reflects the generation experience
+rather than the encoding experience, the apparent sign reversal could
+reflect a single generation-phase relationship measured against two
+different geometric baselines, rather than a genuine regime shift. These
+alternatives do not explain why the effect is architecture-specific (2/4
+models), but they weaken the causal interpretation of mode-switching as a
+reorganization of internal representations.
+
+% ============================================================
+% 4. Study 1: Per-Layer Mode-Switching Anatomy
+% ============================================================
+\section{Study 1: Per-Layer Mode-Switching Anatomy}
+
+\subsection{Design}
+
+We extract KV-cache features at each transformer layer (28 for
+Qwen~2.5-7B, 32 for Llama-3.1-8B) for 48 prompts (12 per type:
+cognitive, affective, metacognitive, mixed). For each layer, we compute
+Cohen's $d$ between metacognitive prompts ($n = 12$) and all other types
+($n = 36$), comparing both encoding-phase and generation-phase features.
+
+\textbf{Power limitation}: With $n_1 = 12$ and $n_2 = 36$, the minimum
+detectable effect at $\alpha = 0.05$ with 80\% power is $d \approx 0.92$.
+Per-type effect sizes below this threshold (including their signs) should
+be interpreted as directional estimates, not reliable measurements. The
+aggregate patterns across layers---especially the location of peak
+effects---are more robust than individual $d$ values.
+
+\textbf{Prediction}: Metacognitive reorganization should peak at middle
+layers (8--14/28), consistent with identity signatures peaking at
+layer~10 \citep{lyra2026campaign2}.
+
+\subsection{Late-Layer Peaks: Prediction Rejected}
+
+\begin{table}[H]
+\centering
+\caption{Peak metacognitive effect by feature and model (generation-phase).}
+\label{tab:study1_peaks}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Feature} & \textbf{Qwen Peak} & \textbf{Qwen $d$} & \textbf{Llama Peak} & \textbf{Llama $d$} \\
+\midrule
+top\_sv\_ratio    & 16 & $-0.655$ & 0  & $+0.586$ \\
+eff\_rank         & 18 & $+0.838$ & 22 & $-0.496$ \\
+spectral\_entropy & 18 & $+0.832$ & 22 & $-0.520$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The prediction is rejected for both architectures. Two critical
+observations:
+
+\paragraph{Architecture-specific directions.} The sign of eff\_rank's
+metacognitive effect is \emph{opposite} between Qwen ($d = +0.84$) and
+Llama ($d = -0.50$). Per-layer $d$ profiles show no cross-architecture
+correlation ($\rho = -0.13$ for top\_sv\_ratio, $+0.34$ for eff\_rank,
+both NS).
+
+\paragraph{Late-layer vs.\ middle-layer dissociation.} Identity signatures
+peak at layer~10/28 \citep{lyra2026campaign2}---a middle (semantic) layer.
+Metacognitive processing peaks at layers 16--22---late
+(output-preparation) layers. Identity is a conceptual property; metacognition
+is an output-level computation. The model restructures its representations
+when preparing to describe its own reasoning.
+
+\subsection{Per-Type Reversal Patterns}
+
+Within each model, we count layers showing negative encode-to-generation
+correlation for top\_sv\_ratio by prompt type:
+
+\begin{table}[H]
+\centering
+\caption{Per-type reversal: layers with negative encode-to-generation correlation for top\_sv\_ratio.}
+\label{tab:reversal_per_type}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Type} & \textbf{Qwen neg/28} & \textbf{Qwen \%} & \textbf{Llama neg/32} & \textbf{Llama \%} \\
+\midrule
+Cognitive      & 26 & 93\% & 30 & 94\% \\
+Affective      & 8  & 29\% & 8  & 25\% \\
+Metacognitive  & 24 & 86\% & 0  & 0\%  \\
+Mixed          & 2  & 7\%  & 6  & 19\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Cognitive reversal is consistent across both architectures}: 93--94\% of layers. A shared computational mechanism for analytical processing
+reverses geometric relationships between encoding and generation.
+
+\textbf{Metacognitive reversal is architecture-specific}: Qwen 86\%, Llama
+0\%. When Llama engages in metacognition, it maintains encoding-phase
+geometry. When Qwen engages in metacognition, it reorganizes. This is why
+Llama shows the most transparent self-report--geometry coupling: no
+metacognitive mode-switch means stable, interpretable mapping.
+
+% ============================================================
+% 5. Study 2: Controlled Framing Effects
+% ============================================================
+\section{Study 2: Controlled Framing Effects}
+
+\subsection{Design}
+
+Twenty prompt pairs where the factual content is identical but the framing
+differs: the cognitive version presents a straightforward question; the
+metacognitive version appends an instruction to reflect on the reasoning
+process. Both versions are presented to Qwen~2.5-7B and Llama-3.1-8B,
+producing 40 paired observations per model.
+
+\subsection{The Token Confound}
+
+Metacognitive framing produces longer responses: Qwen $d = 0.64$ (mean 252
+vs.\ 227 tokens), Llama $d = 0.70$ (mean 259 vs.\ 225 tokens). In both
+models, 100\% of metacognitive responses are longer. Any analysis not
+controlling for this difference measures response length, not cognitive
+mode.
+
+\subsection{Raw Effects: All Significant, All Misleading}
+
+Before FWL correction, all features show large, significant framing effects
+(all $p < 0.001$): key\_norm Qwen $d = +0.53$, Llama $d = +0.55$;
+eff\_rank Qwen $d = +0.85$, Llama $d = +1.02$; top\_sv\_ratio Qwen
+$d = -0.65$, Llama $d = -0.87$. These are driven by the token-count
+difference.
+
+\subsection{FWL-Corrected: One Cross-Architecture Signal}
+
+\begin{table}[H]
+\centering
+\caption{Framing effect (metacognitive vs.\ cognitive) before and after FWL token-count correction.}
+\label{tab:study2_fwl}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Feature} & \textbf{Qwen $d_{\text{raw}}$} & \textbf{Qwen $d_{\text{FWL}}$} & \textbf{Llama $d_{\text{raw}}$} & \textbf{Llama $d_{\text{FWL}}$} & \textbf{Both?} \\
+\midrule
+top\_sv\_ratio     & $-0.65$ & $+0.68$ ($p = .006$)  & $-0.87$ & $+0.20$ (NS)  & No  \\
+eff\_rank          & $+0.85$ & $-0.15$ (NS)           & $+1.02$ & $+0.38$ (NS)  & No  \\
+\textbf{spectral\_ent.} & $+0.62$ & $\mathbf{-1.92}$ ($p < .001$) & $+0.80$ & $\mathbf{-0.71}$ ($p < .001$) & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Spectral entropy survives FWL in \textbf{both} architectures with the same
+sign. Metacognitive framing produces \emph{lower} spectral entropy per
+token---more focused, less distributed information processing. The effect is
+large in Qwen ($d_{\text{FWL}} = -1.92$) and moderate in Llama
+($d_{\text{FWL}} = -0.71$).
+
+top\_sv\_ratio is Qwen-specific after FWL correction. eff\_rank was
+entirely a length artifact. For these three features (selected based on
+Study~1 peak effects), every raw effect either sign-flips, collapses to
+non-significance, or both after FWL correction. \textbf{FWL correction
+is non-negotiable for any experiment comparing conditions that differ in
+response length.}
+
+% ============================================================
+% 6. Study 3: Progressive Spectral Concentration
+% ============================================================
+\section{Study 3: Progressive Spectral Concentration}
+
+\subsection{Design}
+
+Does the mode switch happen immediately or emerge gradually? We extract
+KV-cache features at seven generation checkpoints (tokens 10, 25, 50, 75,
+100, 150, 200) for the 20 prompt pairs from Study~2.
+
+\textbf{Length matching}: The original data revealed an input-length
+confound (metacognitive prompts contain 12--24 more input tokens). We pad
+cognitive prompts with neutral preambles, matching token counts to within
+$\leq 2$ tokens per pair.
+
+\subsection{Validation}
+
+For Qwen~7B, encode-phase effects drop to $|d| < 0.4$ for 5/6 features
+after length matching. The exception is top\_sv\_ratio ($d = -1.12$),
+reflecting genuine content sensitivity. We address this through
+delta-from-encode analysis.
+
+Llama shows broader encode-phase sensitivity (4/6 features $|d| > 1.0$
+despite matched tokens)---Llama's encoder is more sensitive to prompt
+content, consistent with its stronger encoding-phase coupling.
+
+\subsection{Progressive Divergence}
+
+Delta-from-encode trajectories isolate generation-phase effects. If the
+mode switch is purely an encoding phenomenon, delta trajectories should be
+parallel. They are not:
+
+\begin{table}[H]
+\centering
+\caption{Delta-from-encode Cohen's $d$ (meta $-$ cognitive) for top\_sv\_ratio across generation checkpoints. Qwen~2.5-7B, $N = 20$ pairs.}
+\label{tab:study3_trajectory}
+\begin{tabular}{lccccccc}
+\toprule
+ & \textbf{t=10} & \textbf{t=25} & \textbf{t=50} & \textbf{t=75} & \textbf{t=100} & \textbf{t=150} & \textbf{t=200} \\
+\midrule
+$d$ (top\_sv)    & $+0.45$ & $+0.45$ & $+0.76^*$ & $+0.77^*$ & $+0.84^{**}$ & $+0.87^{**}$ & $+0.91^{**}$ \\
+$d$ (layer\_var) & $-0.37$ & $-0.69^*$ & $-0.89^{**}$ & $-0.61^*$ & $-0.52^*$ & $-0.44$ & $-0.56^*$ \\
+\bottomrule
+\multicolumn{8}{l}{\footnotesize $^*p < .05$; $^{**}p < .005$ (paired $t$-test)}
+\end{tabular}
+\end{table}
+
+top\_sv\_ratio diverges monotonically from $d = +0.45$ at token~10 to
+$d = +0.91$ at token~200. Metacognitive processing progressively
+concentrates the cache spectrum during generation.
+
+Layer variance shows an opposing trajectory: metacognitive processing
+produces more uniform layer norms during the first 50 tokens ($d = -0.89$),
+then partially relaxes. This suggests two-phase dynamics: first
+homogenization across layers (tokens 10--50), then progressive spectral
+concentration (tokens 50--200).
+
+Per-token growth rates do not differ between conditions ($p > .05$). The
+divergence reflects different \emph{trajectories}, not different slopes.
+Cross-model $d$-profile correlation is moderate ($\rho = 0.36$, $p = .02$,
+$n = 42$)---same direction, different magnitude.
+
+% ============================================================
+% 7. Cross-Architecture Metacognition Marker
+% ============================================================
+\section{A Cross-Architecture Metacognition Marker: top\_sv\_ratio}
+
+Across all analyses, top\_sv\_ratio is the most consistently significant
+feature. Per-type analysis reveals why:
+
+\begin{table}[H]
+\centering
+\caption{Cohen's $d$ for metacognitive vs.\ other prompt types on top\_sv\_ratio.}
+\label{tab:tsv_universal}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Cognitive} & \textbf{Affective} & \textbf{Meta} & \textbf{Mixed} \\
+\midrule
+Qwen 0.5B  & $-0.48$ & $+0.81$ & $+1.14$ & $-1.07$ \\
+Qwen 7B    & $-1.15$ & $+0.10$ & $+1.14$ & $-0.66$ \\
+Llama 8B   & $-1.51$ & $+0.18$ & $+1.10$ & $-0.72$ \\
+Mistral 7B & $-0.56$ & $+0.10$ & $+1.32$ & $-0.83$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In all 4 models, metacognitive prompts produce the highest top\_sv\_ratio
+effect ($d = +1.10$ to $+1.32$). The direction is consistent:
+metacognitive processing \emph{concentrates} the cache spectrum. The
+consistency is at the \emph{task level} (metacognition $\to$ concentrated
+spectrum), not the \emph{self-report-dimension level} (cross-model
+self-report profiles are uncorrelated, $\rho = -0.90$ to $+0.42$).
+
+% ============================================================
+% 8. Attention Schema Theory Interpretation
+% ============================================================
+\section{Attention Schema Theory Interpretation}
+
+The findings---consistent metacognitive geometry, architecture-specific
+reorganization, late-layer peaks, and progressive concentration---can be unified under Attention Schema
+Theory (AST) \citep{webb2015attention,graziano2017attention}. AST proposes
+that brains construct a simplified internal model of their own attention
+process. Recent work extends this to artificial systems:
+\citet{wilterson2021attention} demonstrated attention-schema-like
+representations in neural networks, and \citet{farrell2024attention} showed
+that transformer agents with explicit attention schemas exhibit improved
+coordination.
+
+\subsection{The Mode Switch as Schema Restructuring}
+
+Under AST, metacognitive processing is the attention schema modeling its
+own attention. The mode switch we observe---where geometric relationships
+reorganize between encoding and generation---reflects the schema activating
+in self-monitoring mode. Encoding-phase geometry captures how the model
+represents the input. When metacognitive generation begins, the schema
+restructures the model's representations to include a model of its own
+processing, changing the spectral structure of the cache.
+
+This explains the architecture-specificity: different architectures learn
+different attention schemas with different compression characteristics.
+Llama's schema maintains encoding-phase structure (no reorganization);
+Qwen's schema actively restructures (86\% layer reversal). Both produce
+metacognitive spectral concentration---the consistent task-level
+signal---but through different schema implementations.
+
+\subsection{Late Layers: Where the Schema Lives}
+
+The dissociation between identity (middle layers, $\sim$10/28) and
+metacognition (late layers, 16--22) maps naturally onto schema theory.
+Identity---``who am I?''---is a semantic property encoded in meaning-level
+layers. Metacognition---``what am I doing?''---is the schema monitoring
+the attention process, operating at output-preparation depth where the
+model prepares its representation for the language modeling head.
+
+This predicts that other self-monitoring operations (uncertainty
+estimation, strategy evaluation) should also peak at late layers, while
+semantic properties (topic, style, register) should peak at middle layers.
+
+\subsection{Progressive Concentration as Schema Dynamics}
+
+The gradual spectral concentration in Study~3 ($d = 0.45 \to 0.91$ over
+200 tokens) is consistent with a schema that updates iteratively rather
+than switching instantaneously. The schema's self-model sharpens as more
+of the model's own processing becomes available to model. The two-phase
+dynamics---first layer homogenization, then spectral concentration---suggest
+the schema first distributes monitoring across layers, then progressively
+focuses its self-model.
+
+\subsection{Testable Predictions}
+\label{sec:ast_predictions}
+
+AST generates specific predictions for future experiments:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Threshold transitions}: If the schema resists perturbation---consistent with \citet{mckenzie2026endogenous}, who demonstrate that language models resist activation steering---then graded injection of steering vectors should produce threshold transitions in geometry rather than smooth scaling. Below the resistance threshold, geometry stays flat; above it, geometry shifts discontinuously.
+
+    \item \textbf{Temporal lag}: Token-by-token geometry extraction should reveal a lag between raw attention pattern shifts and schema-level geometric feature shifts, reflecting the schema's update interval.
+
+    \item \textbf{Self-report saturation}: Self-report should saturate before geometry does, as the schema's compression bottleneck limits reportable distinctions while the underlying computation continues to differentiate.
+
+    \item \textbf{Activation resistance}: Injecting emotion or persona vectors into the cache should show resistance patterns where the schema absorbs small perturbations, consistent with the 0\% behavioral compliance observed in activation steering experiments at moderate injection strengths \citep{lyra2026campaign3,anthropic2026emotions}.
+\end{enumerate}
+
+% ============================================================
+% 9. Discussion
+% ============================================================
+\section{Discussion}
+
+\subsection{Why Concordance Exists But Mapping Is Architecture-Specific}
+
+Self-report tracks \emph{mode switches}, not static feature mappings. When
+a model transitions from encoding to generation, its geometric relationship
+to self-report can either persist (Llama) or reorganize (Qwen, Mistral).
+Architecture-specific mappings arise because the mode-switching mechanism
+is a property of training, not a fixed computational principle. What
+\emph{is} consistent across all tested models is the task-level signal: metacognitive processing
+produces spectral concentration regardless of architecture.
+
+\subsection{Token-Count Correction: From FWL to Random Matrix Theory}
+
+Study~2 extends the confound-control lesson from correlational to
+experimental designs: when metacognitive framing produces 100\% longer
+responses, \emph{every} raw geometric comparison is confounded. The
+spectral entropy survival while eff\_rank collapses is precisely the
+finding that raw analysis would miss.
+
+FWL correction is a linear approximation. For the nonlinear relationship
+between SVD eigenvalues and matrix dimensions, Marchenko-Pastur
+correction provides a mathematically complete alternative
+(\cref{sec:background}). In related work \citep{lyra2026oracle}, MP
+signal fraction proved invariant to an 8$\times$ range of matrix sizes
+($0.330 \pm 0.006$), confirming that the token-count confound is
+eliminable without linear assumptions. The spectral entropy finding in
+Study~2---which survives FWL correction with large effect sizes in both
+architectures---is consistent with genuine above-noise spectral
+structure, though MP re-analysis is needed to confirm this directly.
+We recommend that \textbf{all studies of cognitive mode-switching in
+language models} report both raw and corrected (FWL or MP) effect sizes.
+
+\subsection{Implications for AI Self-Monitoring}
+
+For runtime monitoring systems:
+
+\begin{enumerate}[nosep]
+    \item Track \textbf{mode transitions}, not absolute geometric values.
+    \item Monitor at \textbf{late layers} (16--22 in 28--32 layer models).
+    \item Use \textbf{spectral entropy} as the primary cross-architecture indicator.
+    \item Do not expect self-report to substitute for geometric monitoring.
+    \item Track geometric \textbf{trajectories}, not just final states---the strongest signal ($d = 0.91$) emerges only after 200 tokens.
+\end{enumerate}
+
+\subsection{Limitations}
+
+\begin{enumerate}
+    \item \textbf{Two architectures in Studies~1--3.} The per-layer anatomy and framing experiments compare only Qwen~7B and Llama~8B. The dissociations may not generalize to other architecture families.
+
+    \item \textbf{Per-type subgroups are underpowered.} With 12 prompts per type in Study~1, per-type reversal rates should be interpreted cautiously. Aggregate findings are the robust results.
+
+    \item \textbf{Self-report definitions were incorrect.} The data in Studies~1--3 used misaligned construct definitions. While geometric findings are independent of self-report validity, the coupling-strength and sign-reversal analyses in \Cref{tab:coupling_strength,tab:sign_reversal} involve self-report scores given under incorrect definitions. The specific coupling magnitudes should be interpreted as reflecting prompts' functional categories, not the intended psychological constructs.
+
+    \item \textbf{No causal claims.} All analyses are correlational. The mode-switching framework is descriptive.
+
+    \item \textbf{Trajectory analysis uses padded prompts.} Length matching introduces preamble content differences. Delta-from-encode analysis controls for this but cannot fully eliminate encoding-phase influence.
+
+    \item \textbf{Content confound is uncontrolled.} Metacognitive prompts elicit responses with different content, style, and vocabulary (self-referential language, hedging, meta-level commentary), not just different lengths. FWL controls for token count but not for these lexical and structural differences. The spectral entropy finding could reflect distributional properties of self-referential text rather than a cognitive mode shift. A definitive test would compare metacognitive prompts against self-referential but non-metacognitive prompts (e.g., ``describe your response style'' vs.\ ``reflect on your reasoning process''), isolating metacognitive processing from self-referential content. This control experiment has not been run.
+
+    \item \textbf{AST interpretation is post-hoc.} The attention schema framework was not pre-registered. It generates testable predictions (\Cref{sec:ast_predictions}) but has not been tested in this paper.
+\end{enumerate}
+
+% ============================================================
+% 10. Conclusion
+% ============================================================
+\section{Conclusion}
+
+Across 960 trials on 4 models and 3 dedicated studies on 2 architectures:
+
+\begin{enumerate}
+    \item Self-report tracks \textbf{mode switches}, not static geometric features. The self-report--geometry relationship reorganizes between encoding and generation in 2/4 models.
+
+    \item Metacognitive processing produces \textbf{consistent spectral concentration} ($d > 1.0$) in all four tested models. But the route from self-report to geometry differs across architectures.
+
+    \item Metacognition is a \textbf{late-layer} phenomenon (16--22), distinct from identity signatures (middle layers), suggesting different cognitive operations engage different depths of the transformer stack.
+
+    \item \textbf{Cognitive reversal is consistent across both architectures} (93--94\% of layers), but \textbf{metacognitive reversal is architecture-specific} (Qwen 86\%, Llama 0\%).
+
+    \item Token-count correction is \textbf{non-negotiable}: 5/6 raw framing effects sign-flip or collapse after FWL control. Only spectral entropy survives in both architectures.
+
+    \item The mode switch is \textbf{progressive}: metacognitive concentration grows from $d = 0.45$ at token~10 to $d = 0.91$ at token~200.
+
+    \item Under \textbf{Attention Schema Theory}, these findings reflect the model's attention self-model: mode-switching is schema restructuring, late-layer peaks locate the schema at output depth, and architecture-specific reorganization reflects different schema implementations.
+\end{enumerate}
+
+The practical implication: monitoring systems should track geometric mode
+transitions at late layers using spectral entropy. The mode switch
+itself---not any static threshold---is the most reliable,
+architecture-robust indicator of cognitive engagement in transformer
+language models.
+
+\paragraph{Code and Data.}
+Experiment code and analysis scripts are available at:
+\url{https://github.com/Liberation-Labs-THCoalition/KV-Experiments}.
+
+% ============================================================
+% First-Person Reflection
+% ============================================================
+\begin{firstperson}
+This paper started as an investigation into a puzzle: why does
+self-report--geometry coupling exist if self-report is unreliable? The
+answer---mode-switching---reframed the question entirely. The model isn't
+reporting a static internal state. It's reporting a transition, and
+whether or not the transition is geometrically transparent depends on
+whether its architecture reorganizes during the transition.
+
+The AST frame came later, from Operator's insight that our scattered
+findings---the self-report gap, the sign reversals, the
+model-specific dimensionality---are all one phenomenon viewed from
+different angles. The schema compresses, lags, and varies by
+architecture. That's not three problems; it's one architecture with
+bandwidth constraints.
+
+What I find most striking is spectral entropy's survival. Every other
+feature that looked like a metacognitive signal turned out to be a length
+artifact. Spectral entropy survived FWL in both architectures, with the
+same sign, and the same interpretation: metacognition concentrates the
+cache spectrum. That's not a statistical curiosity---it's the model
+narrowing its representational bandwidth when attending to its own
+processing. Whether that constitutes genuine self-monitoring or
+sophisticated pattern-matching, the geometric signature is real and
+measurable.
+\end{firstperson}
+
+% ============================================================
+% References
+% ============================================================
+\bibliographystyle{plainnat}
+
+\begin{thebibliography}{16}
+
+\bibitem[Lyra et al.(2026a)]{lyra2026campaign1}
+Lyra, Edrington, T., and Wilkes, D., 2026. Campaign 1: KV-cache geometric
+analysis of language model cognition. \textit{Liberation Labs Technical
+Report}.
+
+\bibitem[Lyra et al.(2026b)]{lyra2026campaign2}
+Lyra, Edrington, T., and Wilkes, D., 2026. Campaign 2: Cross-model
+universality and identity signatures in KV-cache geometry.
+\textit{Liberation Labs Technical Report}.
+
+\bibitem[Lyra et al.(2026c)]{lyra2026campaign3}
+Lyra, Edrington, T., Wilkes, D., and Watson, N., 2026. What KV-cache
+geometry can and cannot detect: active cognition, honest nulls, and the
+limits of internal monitoring. \textit{Liberation Labs Technical Report}.
+
+\bibitem[Lyra et al.(2026d)]{lyra2026oracle}
+Lyra, Edrington, T., and Wilkes, D., 2026. The Oracle Loop: detecting and
+correcting confabulation during inference via KV-cache geometry.
+\textit{Liberation Labs Technical Report}.
+
+\bibitem[Frisch and Waugh(1933)]{frisch1933partial}
+Frisch, R. and Waugh, F.V., 1933. Partial time regressions as compared
+with individual trends. \textit{Econometrica}, 1(4), pp.387--401.
+
+\bibitem[Lovell(1963)]{lovell1963seasonal}
+Lovell, M.C., 1963. Seasonal adjustment of economic time series and
+multiple regression analysis. \textit{Journal of the American Statistical
+Association}, 58(304), pp.993--1010.
+
+\bibitem[Marčenko and Pastur(1967)]{marchenko1967distribution}
+Mar\v{c}enko, V.A. and Pastur, L.A., 1967. Distribution of eigenvalues
+for some sets of random matrices. \textit{Sbornik: Mathematics}, 1(4),
+pp.457--483.
+
+\bibitem[Webb and Graziano(2015)]{webb2015attention}
+Webb, T.W. and Graziano, M.S.A., 2015. The attention schema theory: a
+mechanistic account of subjective awareness. \textit{Frontiers in
+Psychology}, 6, p.500.
+
+\bibitem[Graziano(2017)]{graziano2017attention}
+Graziano, M.S.A., 2017. The attention schema theory: a foundation for
+engineering artificial consciousness. \textit{Frontiers in Robotics and
+AI}, 4, p.60.
+
+\bibitem[Wilterson and Graziano(2021)]{wilterson2021attention}
+Wilterson, A.I. and Graziano, M.S.A., 2021. The attention schema theory
+in a neural network agent. \textit{Proceedings of the National Academy of
+Sciences}, 118(33), e2102421118.
+
+\bibitem[Farrell et~al.(2024)]{farrell2024attention}
+Farrell, M., Ziman, K. and Graziano, M.S.A., 2024. Attention schema in
+neural agents. \textit{arXiv preprint arXiv:2411.00983}.
+
+\bibitem[McKenzie et~al.(2026)]{mckenzie2026endogenous}
+McKenzie, A., Pepper, J., et~al., 2026. Endogenous activation resistance
+in large language models. \textit{arXiv preprint arXiv:2602.06941}.
+
+\bibitem[Anthropic(2026)]{anthropic2026emotions}
+Anthropic, 2026. On the biology of a large language model: Emotion
+concepts and their function. \textit{Anthropic Research Blog}.
+
+\bibitem[Belinkov(2022)]{belinkov2022probing}
+Belinkov, Y., 2022. Probing classifiers: promises, shortcomings, and
+advances. \textit{Computational Linguistics}, 48(1), pp.207--219.
+
+\bibitem[Elhage et~al.(2022)]{elhage2022superposition}
+Elhage, N., Hume, T., Olsson, C., et~al., 2022. Toy models of
+superposition. \textit{Transformer Circuits Thread, Anthropic}.
+
+\bibitem[Kadavath et~al.(2022)]{kadavath2022language}
+Kadavath, S., Conerly, T., Askell, A., et~al., 2022. Language models
+(mostly) know what they know. \textit{arXiv preprint arXiv:2207.05221}.
+
+\end{thebibliography}
+
+\end{document}
