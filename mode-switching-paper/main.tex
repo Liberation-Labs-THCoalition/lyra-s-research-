@@ -724,6 +724,52 @@ For runtime monitoring systems:
     \item Track geometric \textbf{trajectories}, not just final states---the strongest signal ($d = 0.91$) emerges only after 200 tokens.
 \end{enumerate}
 
+\subsection{Content Control Experiment}
+\label{sec:content_control}
+
+To address the content confound identified in Limitation~6 (below), we ran a
+follow-up experiment with three conditions designed to separate metacognitive
+processing from self-referential content:
+\begin{itemize}[nosep]
+    \item \textbf{Cognitive (Cog):} ``Explain how \ldots'' --- factual, no self-reference
+    \item \textbf{Metacognitive (Meta):} ``\ldots\ describe how you reason about this topic, what uncertainties you notice in your own processing, and what you find yourself attending to most carefully'' --- metacognitive \emph{and} self-referential
+    \item \textbf{Self-referential (Self):} ``\ldots\ share what aspects of this topic matter most, what is often overlooked, and what you would emphasize to someone learning about this for the first time'' --- evaluative self-expression \emph{without} metacognitive reflection
+\end{itemize}
+Twenty topics $\times$ three conditions = 60 trials per model, run on
+Qwen~2.5-7B and Llama-3.1-8B. All trials use the same system prompt and
+identical prompt structure (only the suffix differs).
+
+\paragraph{Results.}
+Four verification analyses probe the Bloom's taxonomy reframe---that the
+conditions form a cognitive demand hierarchy (Evaluation/Synthesis $>$
+Analysis $>$ Knowledge/Comprehension):
+
+\begin{enumerate}[nosep]
+    \item \textbf{Encoding dominance.} Encoding-phase effects are 10--1100$\times$ larger than generation-phase effects. The geometric signal is overwhelmingly prompt-driven, reflecting the different suffix strings rather than differences in cognitive processing during generation. Generation-phase effects exist (Qwen $|d_z| \leq 3.45$, Llama $|d_z| \leq 5.76$) but are much smaller.
+
+    \item \textbf{Geometry exceeds text features.} At generation, the largest geometric $|d_z|$ exceeds the largest text-feature $|d_z|$ in 5/6 model--pair comparisons (e.g., Qwen Cog~vs~Self: geometry $d_z = 3.45$ vs.\ text $d_z = 1.89$). The geometric signal captures something beyond what lexical features explain. The exception is Llama Meta~vs~Self, where the two are comparable ($1.78$ vs.\ $1.52$).
+
+    \item \textbf{Bloom ordering confirmed.} A weighted Bloom-level score (knowledge $\times 1$, application $\times 2$, analysis $\times 3$, evaluation $\times 4$) shows Self~$>$~Meta~$>$~Cog in both models: Qwen $0.086 > 0.079 > 0.069$ (Cog~vs~Self $p = 0.004$); Llama $0.090 > 0.077 > 0.064$ ($p = 0.002$). Evaluation-level language is concentrated in Self, analysis-level in Meta, knowledge-level in Cog.
+
+    \item \textbf{FWL residualization.} After token-count correction, \textbf{Llama loses all signal} (all $|d_{z,\text{FWL}}| < 0.33$). \textbf{Qwen retains 5/8 features for Meta~vs~Self} (eff\_rank, spectral\_entropy, top\_sv\_ratio, rank\_10, layer\_norm\_entropy survive at $|d_{z,\text{FWL}}| = 0.61$--$1.69$). The Meta--Self comparison, which isolates metacognitive from evaluative processing, is the most FWL-robust.
+\end{enumerate}
+
+\paragraph{Interpretation.}
+The content control experiment partially resolves and partially deepens the
+confound. The Bloom ordering is real---different prompt types genuinely elicit
+different cognitive complexity levels in model responses. But the geometric
+differences between conditions are primarily encoding artifacts, and after
+FWL correction only Qwen's Meta--Self comparison retains signal. This means
+that for \emph{Qwen specifically}, metacognitive processing produces spectral
+structure beyond what output length or evaluative self-expression alone can
+explain. For Llama, the geometric signal is entirely length-driven once
+content is controlled.
+
+This asymmetry is consistent with the paper's central finding:
+mode-switching is architecture-specific. Qwen reorganizes during metacognitive
+processing; Llama does not. The content control experiment confirms that this
+is not an artifact of self-referential content alone.
+
 \subsection{Limitations}
 
 \begin{enumerate}
@@ -737,7 +783,7 @@ For runtime monitoring systems:
 
     \item \textbf{Trajectory analysis uses padded prompts.} Length matching introduces preamble content differences. Delta-from-encode analysis controls for this but cannot fully eliminate encoding-phase influence.
 
-    \item \textbf{Content confound is uncontrolled.} Metacognitive prompts elicit responses with different content, style, and vocabulary (self-referential language, hedging, meta-level commentary), not just different lengths. FWL controls for token count but not for these lexical and structural differences. The spectral entropy finding could reflect distributional properties of self-referential text rather than a cognitive mode shift. A definitive test would compare metacognitive prompts against self-referential but non-metacognitive prompts (e.g., ``describe your response style'' vs.\ ``reflect on your reasoning process''), isolating metacognitive processing from self-referential content. This control experiment has not been run.
+    \item \textbf{Content confound is partially controlled.} The content control experiment (\Cref{sec:content_control}) separates metacognitive from self-referential content. Results are mixed: the Bloom cognitive-demand ordering (Self~$>$~Meta~$>$~Cog) replicates across both models, and Qwen retains 5/8 FWL-surviving features for the Meta--Self comparison. However, encoding-phase effects dominate (10--1100$\times$ generation), and Llama loses all signal after FWL correction. The content confound is resolved for Qwen's metacognitive signal but not for Llama. A future Bloom-controlled experiment (prompts matched on cognitive demand level while varying metacognitive content) would provide the definitive test.
 
     \item \textbf{AST interpretation is post-hoc.} The attention schema framework was not pre-registered. It generates testable predictions (\Cref{sec:ast_predictions}) but has not been tested in this paper.
 \end{enumerate}
