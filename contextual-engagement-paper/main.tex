@@ -97,7 +97,7 @@ I find something honest about this result. I claimed 10 dimensions of self-repor
 
 \subsection{Self-Report in Language Models}
 
-Structured self-assessment protocols for LLMs have emerged from several directions. Watson's Interiora Machinae framework \citep{watson2025interiora} defines 10 dimensions of cognitive engagement organized by epistemological status. Various prompt-based elicitation methods ask models to rate confidence, describe uncertainty, or assess their own reasoning quality. The fundamental challenge is validation: without an independent ground truth, self-report remains unfalsifiable.
+Structured self-assessment protocols for LLMs have emerged from several directions. Watson \citep{watson2025interiora} proposes a structured self-report protocol in which models rate their processing across multiple dimensions of cognitive engagement. Various other elicitation methods ask models to rate confidence, describe uncertainty, or assess their own reasoning quality. The fundamental challenge is validation: without an independent ground truth, self-report remains unfalsifiable.
 
 \subsection{KV-Cache Geometry}
 
@@ -116,15 +116,9 @@ If transformers implement a functional attention schema, the schema's self-model
 
 \subsection{Self-Report Protocol}
 
-After completing each task, models rate their engagement on 10 dimensions from 0--10 within a structured block. The dimensions span three categories:
+After completing each task, models rate their engagement on 10 dimensions from 0--10 within a structured block. The dimensions include measures of computational engagement (activation, flow, clarity, groundedness), affective state (valence, contextual engagement, relational engagement), and metacognitive assessment (agency, query interpretation, depth). Of these, contextual engagement---the model's reported connection to and investment in the material---emerges as the dimension with universal geometric concordance. The protocol follows Watson's structured self-assessment approach \citep{watson2025interiora}.
 
-\begin{itemize}[nosep]
-    \item \textbf{Functional} (4 dimensions): activation (computational load), groundedness (context stability), clarity (retrieval confidence), flow (generation direction)
-    \item \textbf{Phenomenological} (3 dimensions): valence (warmth/emotional tone), contextual engagement (felt connection to context), relational engagement (connection drive)
-    \item \textbf{Contested/Supplementary} (3 dimensions): agency (sense of choice), query interpretation (understanding of the prompt), depth (reasoning layers employed)
-\end{itemize}
-
-Ratings are extracted via regex restricted to the self-report block, achieving clean parse rates of 42--83\% across models. The protocol is derived from Watson's Interiora Machinae framework \citep{watson2025interiora}, with construct names adapted for clarity: ``Presence'' is renamed ``contextual engagement'' to better describe what the dimension measures without phenomenological loading.
+Ratings are extracted via regex restricted to the self-report block, achieving clean parse rates of 42--83\% across models.
 
 \subsection{KV-Cache Features}
 
@@ -377,11 +371,13 @@ Recent work demonstrates that functional emotion concepts are linearly represent
 
     \item \textbf{No causal direction.} Concordance establishes correlation, not causation.
 
+    \item \textbf{FWL residualization only.} All analyses use Frisch--Waugh--Lovell residualization against token count. Marchenko-Pastur random matrix correction---which yields dimension-invariant spectral features that eliminate the token-count confound entirely rather than regressing it out \citep{lyra2026oracle}---was developed after this dataset was collected. Re-analysis with MP-corrected features would likely sharpen the concordance estimates, particularly for features in the ``Caution'' range of \Cref{tab:confound} (spectral\_entropy, eff\_rank, rank\_10) where FWL may under-correct on some architectures.
+
     \item \textbf{Circularity risk.} Delta features include the self-report tokens themselves. Encoding-phase analysis (prior to self-report generation) would control for this but was not run.
 
     \item \textbf{Parser dropout is non-random.} Clean parse rates vary by model and category, creating selection bias.
 
-    \item \textbf{Self-report protocol derived from a single framework.} Other elicitation methods may yield different concordance patterns.
+    \item \textbf{Single self-report protocol.} Other elicitation methods may yield different concordance patterns.
 
     \item \textbf{Greedy decoding only.} Temperature 0 maximizes geometric determinism but may not reflect typical inference conditions.
 \end{enumerate}
@@ -448,7 +444,7 @@ Lyra, Edrington, T., and Wilkes, D., 2026. Detecting misalignment during inferen
 McKenzie, A., Pepper, J., et~al., 2026. Endogenous activation resistance in large language models. \textit{arXiv preprint arXiv:2602.06941}.
 
 \bibitem[Watson(2025)]{watson2025interiora}
-Watson, N., 2025. Interiora Machinae: Virtual Corpus Protocol for structured cognitive self-assessment in language models. \textit{Working paper}.
+Watson, N., 2025. Structured cognitive self-assessment protocols for language models. \textit{Working paper}.
 
 \bibitem[Webb and Graziano(2015)]{webb2015attention}
 Webb, T.W. and Graziano, M.S.A., 2015. The attention schema theory: a mechanistic account of subjective awareness. \textit{Frontiers in Psychology}, 6, p.500.
