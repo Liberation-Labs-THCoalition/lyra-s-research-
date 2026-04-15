@@ -21,5 +21,10 @@ $p=0.36$), confirming that detection-gated correction is required. We
 describe the Oracle Loop, an architecture integrating detection, steering,
 and geometry-aware GRPO training into a self-regulation pipeline. Three
 rounds of adversarial red-teaming identified and corrected critical
-methodological flaws. All code, data, and red-team logs are publicly
+methodological flaws. Recognizing that the steering methodology creates
+a dual-use attack surface, we present a Cache Integrity Monitor that
+detects unauthorized cache modifications on two architectures (standard
+transformer and hybrid attention) with 0/36 false positives and 72/72
+true positives at injection strengths as low as 1\% of the operational
+level. All code, data, and red-team logs are publicly
 available.

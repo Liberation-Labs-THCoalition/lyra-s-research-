@@ -76,7 +76,7 @@ that is architecturally complete but not yet converged.
 
 \subsection{Contributions}
 
-This paper makes five contributions:
+This paper makes six contributions:
 
 \begin{enumerate}[nosep]
   \item \textbf{A deployable confabulation monitor} based on KV-cache SVD
@@ -96,6 +96,10 @@ This paper makes five contributions:
     100 trials---demonstrating that detection-gated correction works
     ($p = 0.031$) while blanket correction does not ($p = 0.36$)
     (\cref{sec:steering}).
+  \item \textbf{A Cache Integrity Monitor} that detects unauthorized
+    KV-cache modifications with 0\% false positives and 100\% true
+    positives, released concurrently to ensure the defense is available
+    alongside the attack methodology (\cref{sec:cache_defense}).
 \end{enumerate}
 
 \subsection{Scope and Honest Framing}
