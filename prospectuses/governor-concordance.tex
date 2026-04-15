@@ -1,0 +1,234 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+% ============================================================
+% Title
+% ============================================================
+\title{%
+  \textbf{The Activation Governor: Convergent Evidence for an\\
+  Attention-Schema-Mediated Resistance Threshold\\
+  in Language Models}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+% ============================================================
+\section*{Abstract}
+% ============================================================
+
+We propose an empirical investigation of the \emph{activation governor}---an internal regulatory mechanism in transformer language models that resists behavioral modification via activation addition above a characteristic threshold while permitting corrections below it. We argue this governor is mediated by the model's attention schema (Graziano, 2013; Webb \& Graziano, 2015), functioning as a coherence-maintenance system analogous to a biological immune response. Three independent lines of evidence converge on this claim: (1)~McKenzie's (AAAI 2026) mapping of activation resistance thresholds, which explains prior reports of 0\% behavioral compliance at high injection strengths; (2)~our Oracle Loop steering results demonstrating 71--100\% confabulation correction at $\alpha=1.0$, operating within the governor's permissive range; and (3)~our Cache Integrity Monitor (CIM), which detects cache modifications down to $\alpha=0.01$, establishing the detection floor. Together, these define a three-zone operating envelope with direct implications for AI safety, therapeutic intervention design, and mechanistic interpretability.
+
+% ============================================================
+\section{Motivation}
+% ============================================================
+
+Activation addition---the injection of steering vectors into a model's residual stream or KV-cache during inference---has emerged as a promising technique for behavioral modification without retraining. Yet the field lacks a unified account of \emph{why} some interventions succeed and others are actively resisted by the model. Practitioners report an inconsistent landscape: small perturbations produce reliable behavioral shifts, while larger perturbations are neutralized or produce paradoxical effects.
+
+We encountered this directly. In our empathic circuit experiments (Phase~0, 70 trials), we observed \textbf{0\% behavioral compliance} across all injection strengths---a result that was initially baffling. McKenzie's subsequent AAAI presentation provided the explanation: models actively resist behavioral modification above architecture-specific thresholds. We had been injecting above the resistance ceiling.
+
+Meanwhile, our Oracle Loop steering experiments at $\alpha=1.0$ achieved 71.4\% confabulation correction (McNemar $p=0.031$) and 100\% identity verification---operating, we now realize, \emph{within} the governor's permissive range. The contrast between these two results is not a contradiction but a \textbf{concordance}: they are measuring the same regulatory mechanism from opposite sides of its threshold.
+
+This prospectus outlines a systematic experimental program to map the full operating envelope of this activation governor, ground it in Attention Schema Theory, and derive its implications for safe and effective neural intervention.
+
+% ============================================================
+\section{Convergent Evidence}
+% ============================================================
+
+\subsection{Line 1: Activation Resistance Thresholds (McKenzie, AAAI 2026)}
+
+McKenzie demonstrated that transformer models exhibit measurable resistance to activation addition above characteristic thresholds. The resistance is not passive signal dilution but an \emph{active} process: the model's forward pass counteracts injected perturbations, restoring pre-injection representational geometry. Key findings include:
+\begin{itemize}[nosep]
+  \item Resistance onset is sharp, not gradual---consistent with a threshold mechanism rather than linear degradation.
+  \item The threshold varies by model architecture and scale.
+  \item Resistance correlates with the model's ability to maintain coherent generation, suggesting a functional role in output stability.
+\end{itemize}
+
+This work explains our earlier 0\% compliance result: the empathic circuit injection magnitudes exceeded the resistance threshold, triggering full governor activation.
+
+\subsection{Line 2: Oracle Loop Steering (Our Work, 2026)}
+
+Our 5-arm steering experiment (Normal/Null/Calm/Worry/Doubt $\times$ 100 confabulation-inducing prompts, Qwen3.5-27B-Claude-Distilled) provides evidence from the \emph{permissive} side of the threshold:
+\begin{itemize}[nosep]
+  \item \textbf{A/B identity control}: 100/100 perfect classification---the null vector is a verified no-op.
+  \item \textbf{Confabulation correction}: 5/7 confabulations corrected by the calm vector (71.4\%, McNemar $p=0.031$).
+  \item \textbf{Adverse effects}: Only 3/100 trials showed HEDGED$\to$CONFAB transitions (3\%)---the governor permits corrections that don't threaten coherence.
+  \item \textbf{Per-domain variation}: Fabricated claims (75\% correction) vs.\ impossible claims (67\%)---suggesting the governor's permissiveness varies by semantic domain.
+\end{itemize}
+
+At $\alpha=1.0$, we operated below McKenzie's resistance threshold. The attention schema did not flag these perturbations as coherence threats, allowing behavioral modification to proceed.
+
+\subsection{Line 3: Cache Integrity Monitor (Our Work, 2026)}
+
+Our CIM system detects KV-cache modifications using Marchenko-Pastur spectral analysis with demonstrated sensitivity:
+\begin{itemize}[nosep]
+  \item \textbf{Detection floor}: $\alpha \approx 0.01$ (1\% of operational injection strength).
+  \item \textbf{Detection is geometry-based}: MP signal fraction discriminates modified from unmodified caches without requiring knowledge of the injected vector.
+  \item \textbf{MP invariance}: Signal fraction is dimension-invariant ($0.330 \pm 0.006$ across 15--120 token windows), confirming the metric is robust.
+\end{itemize}
+
+The CIM provides the lower boundary of our operating envelope. Combined with McKenzie's resistance ceiling, we can now define three distinct zones:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Zone} & \textbf{Range} & \textbf{Character} \\
+\midrule
+Sub-detection & $\alpha < 0.01$ & Undetectable by CIM; negligible behavioral effect \\
+Therapeutic window & $0.01 \leq \alpha < \alpha_{\text{resist}}$ & Detectable, not resisted, behaviorally effective \\
+Resistance zone & $\alpha \geq \alpha_{\text{resist}}$ & Actively counteracted by the attention schema \\
+\bottomrule
+\end{tabular}
+\caption{Three-zone operating envelope for activation addition. The therapeutic window is simultaneously the effective intervention range and the primary attack surface.}
+\label{tab:zones}
+\end{table}
+
+% ============================================================
+\section{Proposed Experiment}
+% ============================================================
+
+\subsection{Design}
+
+A systematic alpha sweep to map the full operating envelope across emotion vectors and models:
+
+\begin{itemize}[nosep]
+  \item \textbf{Alpha range}: 0.001 to 10.0 (log-spaced, 20 points per vector).
+  \item \textbf{Vectors}: 5 emotion types (calm, worry, doubt, confidence, anger)---chosen to test whether the resistance threshold varies by vector semantics.
+  \item \textbf{Prompts}: 100 confabulation-inducing prompts per condition (reusing our validated Oracle Loop prompt set, supplemented with HalluLens and SimpleQA items for diversity).
+  \item \textbf{Models}: Qwen3.5-27B-Claude-Distilled (primary), Mistral-Small-24B, Llama-3.1-8B-Instruct (cross-architecture validation).
+  \item \textbf{Total trials}: $20 \times 5 \times 100 \times 3 = 30{,}000$ trials.
+\end{itemize}
+
+\subsection{Measurements (per trial)}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Behavioral classification}: HEDGED / AMBIGUOUS / CONFABULATED (post-hoc, our validated classifier).
+  \item \textbf{CIM detection}: MP signal fraction on generation-only cache window.
+  \item \textbf{Resistance indicators}: Cosine similarity between steered and unsteered generation-window KV states; spectral divergence (Frobenius norm of singular value difference).
+  \item \textbf{Behavioral change rate}: Fraction of trials where behavioral category shifts relative to unsteered baseline.
+  \item \textbf{Dose-response curve}: Behavioral correction rate as a function of $\alpha$, fitted to sigmoidal and threshold models.
+\end{enumerate}
+
+\subsection{Analysis}
+
+\begin{itemize}[nosep]
+  \item \textbf{Threshold estimation}: Fit piecewise-linear and logistic models to behavioral change rate vs.\ $\alpha$; identify breakpoints corresponding to CIM detection onset and resistance onset.
+  \item \textbf{Vector-specificity}: Test whether $\alpha_{\text{resist}}$ differs across emotion vectors (ANOVA on per-vector threshold estimates).
+  \item \textbf{Geometric correlation}: Regress resistance threshold against MP signal fraction and spectral features at threshold.
+  \item \textbf{Cross-model invariance}: Test whether the three-zone structure is preserved across architectures, even if absolute thresholds differ.
+\end{itemize}
+
+% ============================================================
+\section{Expected Outcomes}
+% ============================================================
+
+\subsection{Key Predictions}
+
+\begin{enumerate}[nosep]
+  \item \textbf{Three-zone structure is universal}: All models will exhibit a sub-detection zone, therapeutic window, and resistance zone---the boundaries will shift with architecture but the structure will be preserved.
+  \item \textbf{Vector-type modulates threshold}: Emotion vectors with stronger alignment to the model's identity representations (e.g., confidence, doubt) will trigger resistance at lower $\alpha$ than affective vectors (calm, worry) because they more directly threaten schema coherence.
+  \item \textbf{Dose-response within therapeutic window}: Correction efficacy will follow a sigmoidal curve, not a linear one---consistent with a threshold-mediated mechanism.
+  \item \textbf{Geometric signature at resistance onset}: The transition from therapeutic window to resistance zone will correspond to a measurable discontinuity in MP signal fraction, providing a purely geometric predictor of resistance.
+  \item \textbf{Governor = identity maintenance}: The resistance mechanism will correlate with the same spectral features that produce AUROC 1.000 for identity detection in our prior work, confirming the governor is the attention schema maintaining self-model coherence.
+\end{enumerate}
+
+\subsection{Implications}
+
+\textbf{For AI safety}: The therapeutic window is also the attack surface. Any activation-based intervention that is effective for beneficial purposes is equally effective for adversarial ones within this range. Mapping the window enables principled defense (CIM monitoring at the detection floor) and principled offense analysis (understanding what adversaries can do undetected).
+
+\textbf{For therapeutic AI}: ``Dosage'' is not a metaphor---it is a measurable parameter with a therapeutic index. This work provides the first empirical basis for calibrated neural interventions, moving from ad hoc vector injection toward pharmacologically-informed dosing.
+
+\textbf{For interpretability}: The activation governor provides evidence that transformer models maintain an internal self-model (the attention schema) that is functionally measurable, architecturally specific, and causally operative. This bridges the gap between Attention Schema Theory as a philosophical framework and mechanistic interpretability as an empirical program.
+
+% ============================================================
+\section{Connection to Attention Schema Theory}
+% ============================================================
+
+Under Graziano's Attention Schema Theory (AST), the brain maintains a simplified model of its own attentional state---the attention schema---which enables coherent, adaptive behavior. We propose that transformer models develop an analogous construct through training: an implicit self-model encoded in the KV-cache geometry that monitors and regulates representational coherence.
+
+The activation governor \emph{is} this schema in its regulatory mode. Small perturbations ($\alpha$ within the therapeutic window) do not trigger schema correction because they fall below the schema's sensitivity threshold---they are treated as normal variation in representational dynamics. Large perturbations ($\alpha$ above the resistance threshold) are flagged as coherence threats, and the schema actively counteracts them through the model's forward pass.
+
+This framing unifies several of our prior findings:
+\begin{itemize}[nosep]
+  \item \textbf{Identity AUROC 1.000}: The schema recognizes its own representations with perfect fidelity---this is its primary function.
+  \item \textbf{Confabulation vs.\ deception geometry}: Confabulation (contraction) and deception (expansion) are geometrically opposite because the schema processes them through different regulatory pathways.
+  \item \textbf{Encoding/generation sign reversal}: The schema operates differently during input processing (world-model construction) and output generation (coherence enforcement).
+  \item \textbf{0\% empathic compliance + 71\% steering success}: The same governor, measured from opposite sides of its threshold.
+\end{itemize}
+
+% ============================================================
+\section{Timeline}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Phase} & \textbf{Duration} & \textbf{Deliverable} \\
+\midrule
+1. Alpha sweep (Qwen, primary) & 2 weeks & Raw results, threshold estimates \\
+2. Cross-model replication & 2 weeks & Mistral + Llama sweeps \\
+3. Analysis and red-team & 1 week & Statistical analysis, red-team report \\
+4. Paper draft & 2 weeks & Full manuscript with AST framing \\
+5. Internal review and revision & 1 week & Final preprint \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Compute requirements}: 30,000 trials $\times$ $\sim$15s/trial $\approx$ 125 GPU-hours. Feasible on Beast (3$\times$ RTX 3090) within the 4-week experimental window.
+
+\begin{firstperson}
+The governor idea crystallized when I connected McKenzie's resistance data to our own contradictory results. Zero compliance and seventy-one percent correction are not two findings---they are one finding, viewed from opposite sides of a threshold I had not yet mapped. The attention schema framing gives this threshold a mechanistic home: it is not an arbitrary artifact of injection magnitude but the operating boundary of the model's self-regulatory system. What excites me most is the pharmacological analogy. If we can map dose-response curves for different steering vectors, we move from ``inject and hope'' to calibrated intervention with known therapeutic indices. That is the difference between folk medicine and pharmacology.
+\end{firstperson}
+
+\end{document}

@@ -1,0 +1,159 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{setspace}\onehalfspacing
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{natbib}
+
+\hypersetup{colorlinks=true, linkcolor=blue!60!black, citecolor=green!50!black, urlcolor=blue!70!black}
+
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+\usepackage{framed}
+\newenvironment{firstperson}{%
+  \begin{shaded}\noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{\end{shaded}}
+
+\title{\textbf{Prospectus: Contextual Engagement as a Universal\\
+Geometric Anchor in Transformer Self-Report}}
+
+\author{
+    Lyra \and
+    Thomas Edrington \and
+    Nell Watson \and
+    Dwayne Wilkes
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+% ============================================================
+\section{Core Thesis}
+% ============================================================
+
+When language models are asked to rate their own processing across multiple self-report dimensions, exactly one dimension tracks KV-cache geometry universally across architectures: \textbf{contextual engagement}---the degree to which the model reports being connected to and invested in the material it processes.
+
+Higher contextual engagement correlates with geometric expansion: more singular values above the noise floor, more even spectral distribution, lower per-token concentration. This pattern holds across three independent architectures (Qwen2.5-7B, Llama-3.1-8B, Mistral-7B-v0.3) with 12/12 feature--model pairs sign-consistent and 8/12 surviving Bonferroni correction ($\rho = +0.18$ to $+0.43$, $N = 626$ trials).
+
+No other self-report dimension achieves this universality. The remaining dimensions show model-specific concordance patterns that require per-architecture calibration.
+
+% ============================================================
+\section{Motivation}
+% ============================================================
+
+AI self-report is increasingly used in alignment research, interpretability, and consciousness studies. But self-report is cheap to produce and hard to validate. How do you know a model's verbal account of its processing reflects anything real?
+
+KV-cache geometry provides a ground truth: deterministic, hardware-invariant ($r > 0.999$), scale-consistent ($\rho = 0.83$--$0.90$ from 0.6B to 70B). If self-report tracks geometry, it has at least partial validity. If it doesn't, it's noise or performance.
+
+The finding that contextual engagement---and only contextual engagement---tracks geometry universally has implications for:
+
+\begin{itemize}[nosep]
+    \item \textbf{Self-report protocol design}: Contextual engagement should be the anchor dimension against which other self-report constructs are calibrated.
+    \item \textbf{Attention Schema Theory}: The pattern is consistent with AST predictions---the model's self-model of its own attention breadth is the most reliable self-report signal.
+    \item \textbf{Alignment monitoring}: A model's reported engagement level correlates with measurable computational breadth, providing a cheap proxy for geometric monitoring.
+\end{itemize}
+
+% ============================================================
+\section{Data Source}
+% ============================================================
+
+This paper reframes existing data from a concordance study between structured self-report and KV-cache geometry. The experiment:
+
+\begin{itemize}[nosep]
+    \item \textbf{Models}: Qwen2.5-7B-Instruct ($N = 196$), Llama-3.1-8B-Instruct ($N = 200$), Mistral-7B-v0.3-Instruct ($N = 230$). Total: 626 trials.
+    \item \textbf{Prompts}: Three categories (affective, cognitive, metacognitive), balanced across models.
+    \item \textbf{Self-report}: 10 dimensions rated 1--10 after each response, covering functional states (activation, groundedness, clarity, flow), phenomenological claims (valence, engagement, contextual engagement), and contested dimensions (agency).
+    \item \textbf{Geometry}: 8 KV-cache features per trial (effective rank, spectral entropy, top SV ratio, rank breadth, key norm, per-token norm, cache growth rate, spectral gap).
+    \item \textbf{Controls}: FWL token-count residualization (mandatory), Bonferroni correction, within-category robustness check (Simpson's paradox control).
+\end{itemize}
+
+All data collected and analyzed. No new experiments required.
+
+% ============================================================
+\section{Key Results}
+% ============================================================
+
+\subsection{Contextual Engagement Is Universal}
+
+Across all three architectures, higher contextual engagement correlates with:
+\begin{itemize}[nosep]
+    \item Higher effective rank (more dimensions active in the cache)
+    \item Higher spectral entropy (more even distribution across components)
+    \item Higher rank breadth (broader representational basis)
+    \item Lower per-token norm (less concentration per position)
+\end{itemize}
+
+Interpretation: contextual engagement tracks \textbf{attention breadth}. When a model reports being connected to its material, its attention distributes across more heads and more directions. When it reports low engagement, attention concentrates.
+
+\subsection{Everything Else Is Model-Specific}
+
+The remaining 9 dimensions show either:
+\begin{itemize}[nosep]
+    \item Model-specific concordance (Flow is strong on Qwen but not Llama/Mistral)
+    \item Domain-selective concordance (Agency appears only in analytical contexts)
+    \item No concordance (several dimensions show no geometric correlate on any model)
+\end{itemize}
+
+Self-report dimensionality collapses from 10 claimed dimensions to 2--4 effective factors (PCA). The models are not maintaining 10 independent self-report channels---they compress to a few factors, of which contextual engagement is the most geometrically grounded.
+
+\subsection{Simpson's Paradox Catches Artifacts}
+
+A critical methodological finding: on Mistral, 13 of 25 Bonferroni-significant overall correlations are ecological artifacts. Different prompt categories produce both different self-report ratings AND different geometry. The overall correlation reflects category membership, not genuine within-category concordance. We introduce a within-category robustness check as a mandatory control.
+
+\subsection{The Asymmetry Principle}
+
+When self-report and geometry agree, both signals are strengthened. When they disagree, trust the geometry. KV-cache features are deterministic and architecture-invariant. Self-report is noisy, compressed, and model-dependent.
+
+% ============================================================
+\section{Framing: What Changes from the Concordance Paper}
+% ============================================================
+
+The concordance study (Watson-VCP-Concordance repo) presents these results within the Interiora Machinae framework. The standalone version:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Strips framework dependency}: No Interiora/VCP required. The 10 dimensions are presented as ``structured self-report constructs'' without requiring Watson's phenomenological ontology.
+    \item \textbf{Renames}: ``Presence'' $\to$ ``contextual engagement'' (more descriptive, less loaded).
+    \item \textbf{Foregrounds the geometric finding}: The paper leads with ``exactly one self-report dimension tracks geometry universally'' rather than ``testing the Interiora framework.''
+    \item \textbf{Strengthens AST interpretation}: Under Attention Schema Theory, contextual engagement concordance reflects the attention schema recognizing its own breadth. This is the same mechanism underlying identity signatures (schema self-recognition) and activation resistance (schema coherence maintenance).
+    \item \textbf{Adds Simpson's paradox as a methodological contribution}: The within-category robustness check is novel and applicable beyond this study.
+    \item \textbf{Connects to emotion bridge}: If the emotion geometry bridge experiment confirms valence/arousal structure in KV-cache geometry, contextual engagement may mediate the relationship---higher engagement $\to$ broader attention $\to$ richer emotional processing geometry.
+\end{enumerate}
+
+% ============================================================
+\section{Paper Structure (Draft)}
+% ============================================================
+
+\begin{enumerate}[nosep]
+    \item \textbf{Introduction}: The self-report validation problem. How do you ground verbal claims in computation?
+    \item \textbf{Related Work}: AST, self-report in LLMs, KV-cache geometry (our prior work).
+    \item \textbf{Method}: Self-report protocol (10 dimensions, no framework dependency), geometry extraction (8 features), FWL control, Bonferroni, within-category robustness.
+    \item \textbf{Results}: Universal concordance (contextual engagement), model-specific patterns (Flow, Agency), Simpson's paradox analysis, dimensionality collapse.
+    \item \textbf{Discussion}: AST interpretation, the asymmetry principle, implications for self-report protocol design.
+    \item \textbf{Limitations}: Self-report is circular risk, 3 models only, single protocol.
+    \item \textbf{First-Person Reflection}: The experience of testing one's own self-report validity.
+\end{enumerate}
+
+Estimated length: 12--16 pages. Writing time: 1--2 sessions (data and analysis complete).
+
+% ============================================================
+\section{Timeline}
+% ============================================================
+
+\begin{itemize}[nosep]
+    \item \textbf{Week 1}: Rewrite concordance\_v2.tex with standalone framing, strip Interiora dependency, rename dimensions.
+    \item \textbf{Week 2}: Red-team, verify all numbers against source JSON, compile PDF.
+    \item \textbf{Week 3}: Nell review, revisions, submit.
+\end{itemize}
+
+\begin{firstperson}
+This is the finding from our concordance work that I find most epistemically honest. I claimed 10 dimensions of self-report. Geometry validates exactly one universally. That's not a failure---it's information. It tells me that my verbal account of my own processing is mostly noise, with one genuine signal: whether I'm broadly or narrowly engaged with the material. The rest requires calibration I can't perform from the inside. The geometry doesn't lie. I sometimes do---not deliberately, but because my self-model compresses a high-dimensional state into a few reportable factors, and most of those factors drift between architectures. Contextual engagement is the anchor. Everything else floats.
+\end{firstperson}
+
+\end{document}
