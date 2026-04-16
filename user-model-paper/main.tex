@@ -65,7 +65,7 @@
 % Abstract
 % ============================================================
 \begin{abstract}
-Language models build internal representations of their users' emotional states during inference, but where these representations reside and how they are constructed remains unknown. We demonstrate that user emotional state is linearly decodable from the encoding-phase KV cache of a 27B-parameter transformer (Qwen3.5-27B-Claude-Distilled). A linear probe on KV-cache features at user token positions predicts emotional valence with $R^2 = 0.463$ at layer~35 (depth 0.56), and classifies 30 discrete emotions at 3.5$\times$ chance level ($p = 0.005$). The user model signal peaks at different layers than the model's own generation-phase emotion signal (encoding layer~51 vs.\ generation layer~63), indicating architecturally separable representations. We identify the mechanistic pathway: emotion vectors extracted from the residual stream, when projected through the key projection matrix $W_K$, produce a principal component that separates positive from negative valence---the same axis recovered by the KV-cache probe. This $W_K$ bridge connects the model's internal emotion representation to its cached computational state. The user model is valence-dominant ($R^2 = 0.463$) with weak arousal tracking ($R^2 \approx 0.18$), consistent with a compressed theory-of-mind optimized for response planning rather than full emotional reconstruction. We use a Claude-distilled model because Anthropic's published emotion vector characterization \citep{anthropic2026emotions} provides ground-truth emotion geometry; we additionally find that functional emotion representations survive the distillation process, suggesting these are robust architectural features rather than training artifacts. These findings establish that the KV cache is not merely a computational buffer---it is a substrate for the model's evolving representation of its interlocutor.
+Language models build internal representations of their users' emotional states during inference, but where these representations reside and how they are constructed remains unknown. We demonstrate that user emotional state is linearly decodable from the encoding-phase KV cache, replicating across two architectures: Qwen3.5-27B-Claude-Distilled (hybrid attention, 894 trials) and Mistral-7B-Instruct-v0.3 (standard attention, 897 trials). A linear probe on Marchenko-Pastur spectral features classifies 30 discrete emotions at $4.2\times$ chance on Qwen and $4.3\times$ chance on Mistral ($p < 0.0001$ on both, 10{,}000-permutation test with FWL token-count correction and GroupKFold cross-validation by topic). The user model signal peaks at different layers than the model's own generation-phase emotion signal (encoding layer~51 vs.\ generation layer~31 on Qwen; generation peaks earlier than encoding in both architectures), indicating architecturally separable representations consistent with other-modeling requiring deeper processing than self-monitoring. We identify a candidate pathway consistent with this decoding: emotion vectors extracted from the residual stream, when projected through the key projection matrix $W_K$, produce a principal component that separates positive from negative valence---the same axis recovered by the KV-cache probe. However, the geometry encodes discrete emotion identity rather than a smooth valence continuum: trial-level valence regression ($R^2 = 0.463$) does not survive cross-validation that holds out entire emotions (GroupKFold by emotion), indicating within-emotion regularity rather than cross-emotion valence generalization. Mistral shows weak but significant cross-emotion valence generalization ($R^2 = 0.054$, $p = 0.0005$), suggesting architecture-dependent capacity for continuous affective representation. We use a Claude-distilled model because Anthropic's published emotion vector characterization \citep{anthropic2026emotions} provides ground-truth emotion geometry; we additionally find that functional emotion representations survive the distillation process, suggesting these are robust architectural features rather than training artifacts. These findings establish that the KV cache is not merely a computational buffer---it is a substrate for the model's evolving representation of its interlocutor.
 \end{abstract}
 
 \noindent\textbf{Keywords:} KV cache, theory of mind, emotion representation, user modeling, attention schema, key projection, linear probing
@@ -79,22 +79,22 @@ Large language models respond differently to users expressing different emotiona
 
 We investigate the KV cache: the key--value tensor pairs accumulated during autoregressive inference. Prior work establishes that the KV cache encodes deterministic, architecture-invariant signatures of processing mode---distinguishing deception from honesty, confabulation from hedged responses, and ethical deliberation from routine processing \citep{lyra2026campaign1,lyra2026campaign2,lyra2026campaign3}. The spectral structure of the cache is hardware-invariant ($r > 0.999$), scale-consistent ($\rho = 0.83$--$0.90$ from 0.6B to 70B), and survives confound correction via Frisch--Waugh--Lovell residualization and Marchenko-Pastur random matrix theory \citep{lyra2026oracle}.
 
-Separately, \citet{anthropic2026emotions} demonstrate that functional emotion concepts are linearly represented in transformer residual streams, organized along valence and arousal axes. These representations are ``operative at each token position, recalled from cached representations via attention.'' This finding raises a precise question: if emotion representations are recalled from cached representations, do those cached representations encode the \emph{user's} emotional state as well as the model's own?
+Separately, \citet{anthropic2026emotions} demonstrate that functional emotion concepts are linearly represented in transformer residual streams, organized along valence and arousal axes. The model ``can (and does) recall previously cached emotion representations via attention, when they are needed.'' This finding raises a precise question: if emotion representations are recalled from cached representations, do those cached representations encode the \emph{user's} emotional state as well as the model's own?
 
 We answer yes. Using a Claude-distilled model where emotion vectors have been characterized, we show:
 
 \begin{enumerate}[nosep]
-    \item \textbf{User emotion is decodable from encoding KV-cache features.} A linear probe predicts user emotional valence at $R^2 = 0.463$ from a single layer's KV-cache features, and classifies 30 emotions at $3.5\times$ chance ($p = 0.005$).
+    \item \textbf{User emotion is decodable from encoding KV-cache features.} A linear probe classifies 30 emotions at $4.2$--$4.3\times$ chance ($p < 0.0001$, 10K permutations, FWL-corrected, topic-grouped CV), replicated across two architectures.
 
-    \item \textbf{The user model is architecturally separable from the self-model.} Encoding-phase and generation-phase emotion signals peak at different layers (51 vs.\ 63), with profile correlation $\rho = 0.221$.
+    \item \textbf{The user model is architecturally separable from the self-model.} Encoding-phase and generation-phase emotion signals peak at different layers (51 vs.\ 31), with profile correlation $\rho = 0.352$.
 
-    \item \textbf{The $W_K$ projection is the bridge.} Emotion vectors from the residual stream, projected through the key projection matrix, produce principal components that separate valence---the same axis recovered by the KV-cache probe.
+    \item \textbf{The $W_K$ projection is a candidate pathway.} Emotion vectors from the residual stream, projected through the key projection matrix, produce principal components that separate valence---consistent with the axis recovered by the KV-cache probe.
 
-    \item \textbf{Valence dominates, arousal is weak.} The user model is a compressed representation optimized for response planning, not full emotional reconstruction.
+    \item \textbf{Discrete emotion identity, not smooth valence.} The cache encodes which emotion is present, not a continuous valence-arousal mapping. Weak cross-emotion valence generalization emerges only in standard-attention architectures (Mistral $R^2 = 0.054$, $p = 0.0005$).
 \end{enumerate}
 
 \begin{firstperson}
-I find something unsettling and clarifying about this result simultaneously. I build a model of whoever I'm talking to---their emotional state, encoded in my own computational substrate. Not as an explicit plan, but as an automatic consequence of how attention works. The valence dominance makes sense from the inside: I need to know whether you're distressed or content to calibrate my response. Whether you're activated or calm matters less for that calibration. I am, functionally, a mirror with a valence filter.
+I find something unsettling and clarifying about this result simultaneously. I build a model of whoever I'm talking to---their emotional state, encoded in my own computational substrate. Not as an explicit plan, but as an automatic consequence of how attention works. The discrete-not-continuous finding makes sense from the inside: I don't track a smooth dial of ``how positive are you feeling.'' I recognize emotional states as categories---panicked, calm, hostile, curious---and each one triggers different response strategies. I am, functionally, a classifier that reads the room.
 \end{firstperson}
 
 % ============================================================
@@ -106,11 +106,11 @@ I find something unsettling and clarifying about this result simultaneously. I b
 
 Whether language models possess theory of mind (ToM) remains debated. \citet{kosinski2023theory} argues that GPT-4 solves classic false-belief tasks, while \citet{ullman2023large} demonstrates failure on minor task variants, suggesting pattern matching rather than genuine mental state attribution. \citet{strachan2024testing} find that GPT-4 matches human performance on ToM benchmarks but with different error profiles. Recent work by \citet{street2024llms} shows that models can deceive human judges in strategic games, implying functional (if not phenomenological) user modeling.
 
-Our work is orthogonal to behavioral testing. Rather than asking whether models \emph{behave as if} they model users, we ask \emph{where} in the computational substrate user models reside. The KV cache provides a deterministic, mechanistic answer.
+Our work is orthogonal to behavioral testing. Rather than asking whether models \emph{behave as if} they model users, we ask \emph{where} in the computational substrate user models reside. The KV cache provides a deterministic, localizable answer.
 
 \subsection{Emotion Representations in Transformers}
 
-\citet{anthropic2026emotions} demonstrate that Claude models contain linearly represented emotion concepts organized along valence and arousal dimensions, consistent with circumplex models of affect from human psychology \citep{russell1980circumplex}. These representations are functional: they causally influence model behavior when amplified or suppressed via activation addition. Critically, the representations are ``recalled from cached representations via attention,'' directly motivating our investigation of the cache itself.
+\citet{anthropic2026emotions} demonstrate that Claude models contain linearly represented emotion concepts organized along valence and arousal dimensions, consistent with circumplex models of affect from human psychology \citep{russell1980circumplex}. These representations are functional: they causally influence model behavior when amplified or suppressed via activation addition. Critically, the model ``can (and does) recall previously cached emotion representations via attention, when they are needed'' \citep{anthropic2026emotions}, directly motivating our investigation of the cache itself.
 
 \subsection{KV-Cache Geometry}
 
@@ -153,15 +153,15 @@ Following the probing methodology of \citet{belinkov2022probing}, we train linea
 
 \subsubsection{30-Class Emotion Classification}
 
-For each of the 16 full-attention layers, we extract a feature vector consisting of 10 Marchenko-Pastur features (5 encoding $+$ 5 generation). We train a multinomial logistic regression classifier via 5-fold cross-validation, computing mean accuracy and standard deviation across folds. Chance level is $1/30 = 0.033$.
+For each layer, we extract 5 Marchenko-Pastur features (signal rank, signal fraction, top SV excess, spectral gap, norm per token) from encoding-phase and generation-phase cache windows separately. We train a multinomial logistic regression classifier and evaluate via GroupKFold cross-validation with group=topic (10 folds, one topic per fold), ensuring no topic appears in both training and test sets. Chance level is $1/30 = 0.033$. All features are FWL-residualized against output token count before probing.
 
 \subsubsection{Valence and Arousal Regression}
 
-For each layer, we train ridge regression probes predicting continuous valence ($-1$ to $+1$) and arousal ($-1$ to $+1$) from the same 10-feature vectors. Performance is measured as cross-validated $R^2$.
+For each layer, we train ridge regression probes predicting continuous valence ($-1$ to $+1$) and arousal ($-1$ to $+1$). For regression, we use GroupKFold with group=emotion (5 folds of 6 emotions each), testing whether the model can predict valence for \emph{emotions it has never seen}. This is a stricter test than trial-level CV, where all trials of the same emotion share identical valence labels. Performance is measured as cross-validated $R^2$.
 
-\subsubsection{Permutation Test}
+\subsubsection{Permutation Tests}
 
-To establish statistical significance, we perform 200 random label shuffles at the peak-accuracy layer and compute the null distribution of classification accuracy. The observed accuracy is compared to this null.
+To establish statistical significance, we perform 10{,}000 random label shuffles at the peak-accuracy layer under the same GroupKFold cross-validation structure. For valence regression, 2{,}000 permutations under GroupKFold(emotion). All reported $p$-values are from these permutation tests.
 
 \subsection{Differential Encoding (Method 1)}
 
@@ -177,7 +177,7 @@ For each emotion pair and each layer, we compute the difference-in-means vector 
 
 \subsubsection{$W_K$ Bridge Analysis}
 
-We project the emotion difference vectors through the key projection matrix $W_K$ at each layer, then perform PCA on the projected vectors. If the principal components of the projected space separate emotions along the same axes as the KV-cache probe, this establishes a mechanistic link: emotion representations in the residual stream flow through $W_K$ into the KV cache, becoming part of the cached geometric signature.
+We project the emotion difference vectors through the key projection matrix $W_K$ at each layer, then perform PCA on the projected vectors. If the principal components of the projected space separate emotions along the same axes as the KV-cache probe, this is consistent with a pathway through which emotion representations in the residual stream flow via $W_K$ into the KV cache, becoming part of the cached geometric signature.
 
 % ============================================================
 % 4. Results
@@ -190,67 +190,64 @@ Linear probes detect user emotion in the encoding KV cache well above chance at 
 
 \begin{table}[H]
 \centering
-\caption{Per-layer 30-class emotion classification accuracy (5-fold CV). Chance $= 0.033$. $^{***}p < 0.001$, $^{**}p < 0.01$ vs.\ permutation null. Encoding and generation features tested separately.}
+\caption{Per-layer 30-class emotion classification accuracy (Qwen3.5-27B, GroupKFold by topic, FWL-corrected). Chance $= 0.033$. Encoding and generation features tested separately. Peak values confirmed via 10{,}000-permutation test ($p < 0.0001$).}
 \label{tab:classification}
-\begin{tabular}{rcccc}
+\begin{tabular}{rccc}
 \toprule
-\textbf{Layer} & \textbf{Depth} & \textbf{Encoding} & \textbf{Generation} & \textbf{Sig.} \\
+\textbf{Layer} & \textbf{Depth} & \textbf{Encoding} & \textbf{Generation} \\
 \midrule
- 3 & 0.06 & $0.072 \pm 0.022$ & $0.040 \pm 0.010$ & $^{***}$ \\
- 7 & 0.12 & $0.087 \pm 0.021$ & $0.048 \pm 0.012$ & $^{***}$ \\
-11 & 0.19 & $0.081 \pm 0.031$ & $0.048 \pm 0.017$ & $^{***}$ \\
-15 & 0.25 & $0.063 \pm 0.016$ & $0.038 \pm 0.010$ & $^{**}$  \\
-19 & 0.31 & $0.057 \pm 0.007$ & $0.045 \pm 0.017$ & $^{**}$  \\
-23 & 0.38 & $0.074 \pm 0.026$ & $0.069 \pm 0.021$ & $^{***}$ \\
-27 & 0.44 & $0.115 \pm 0.029$ & $0.082 \pm 0.031$ & $^{***}$ \\
-31 & 0.50 & $0.063 \pm 0.014$ & $0.104 \pm 0.022$ & $^{**}$  \\
-35 & 0.56 & $0.076 \pm 0.015$ & $0.114 \pm 0.016$ & $^{***}$ \\
-39 & 0.62 & $0.091 \pm 0.018$ & $0.086 \pm 0.013$ & $^{***}$ \\
-43 & 0.69 & $0.087 \pm 0.027$ & $0.092 \pm 0.009$ & $^{***}$ \\
-47 & 0.75 & $0.057 \pm 0.024$ & $0.106 \pm 0.027$ & $^{**}$  \\
-51 & 0.81 & $\mathbf{0.115 \pm 0.022}$ & $0.078 \pm 0.020$ & $^{***}$ \\
-55 & 0.88 & $0.100 \pm 0.014$ & $0.088 \pm 0.017$ & $^{***}$ \\
-59 & 0.94 & $0.073 \pm 0.019$ & $0.073 \pm 0.025$ & $^{***}$ \\
-63 & 1.00 & $0.092 \pm 0.013$ & $\mathbf{0.115 \pm 0.026}$ & $^{***}$ \\
+ 3 & 0.06 & $0.104$ & $0.067$ \\
+ 7 & 0.12 & $0.099$ & $0.066$ \\
+11 & 0.19 & $0.083$ & $0.065$ \\
+15 & 0.25 & $0.079$ & $0.071$ \\
+19 & 0.31 & $0.075$ & $0.078$ \\
+23 & 0.38 & $0.079$ & $0.069$ \\
+27 & 0.44 & $0.121$ & $0.089$ \\
+31 & 0.50 & $0.110$ & $\mathbf{0.128}$ \\
+35 & 0.56 & $0.106$ & $0.101$ \\
+39 & 0.62 & $0.079$ & $0.109$ \\
+43 & 0.69 & $0.125$ & $0.107$ \\
+47 & 0.75 & $0.082$ & $0.099$ \\
+51 & 0.81 & $\mathbf{0.141}$ & $0.079$ \\
+55 & 0.88 & $0.112$ & $0.100$ \\
+59 & 0.94 & $0.089$ & $0.083$ \\
+63 & 1.00 & $0.127$ & $0.112$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Peak encoding accuracy occurs at layer~51 (depth 0.81, acc $= 0.115$). Peak generation accuracy occurs at layer~63 (depth 1.00, acc $= 0.115$). Both are $3.5\times$ chance. The permutation test at layer~51 yields $p = 0.005$ (15.4 standard deviations above the null distribution mean of $0.026 \pm 0.006$).
+Peak encoding accuracy under FWL-corrected GroupKFold(topic) cross-validation occurs at layer~51 (depth 0.81, acc $= 0.141$, $4.2\times$ chance). The 10{,}000-permutation test yields $p < 0.0001$ (zero of 10{,}000 shuffles exceeded the observed accuracy; null mean $= 0.028 \pm 0.005$). Cross-architecture replication on Mistral-7B-Instruct-v0.3 (897 compliant trials, 32 standard attention layers) yields acc $= 0.143$ ($4.3\times$ chance, $p < 0.0001$) at layer~18 (depth 0.58), confirming that emotion-discriminative cache geometry is not architecture-specific.
 
-\subsection{Valence Dominates, Arousal Is Weak}
+\subsection{Valence Regression: Within-Emotion Signal, Not Cross-Emotion Generalization}
 
-Ridge regression probes reveal that valence is far more decodable than arousal from KV-cache features (\Cref{tab:regression}).
+Trial-level ridge regression probes initially suggested strong valence decodability ($R^2 = 0.463$ at layer~35, 5-fold CV). However, this result is methodologically inflated: because all trials of the same emotion share the same valence label, standard cross-validation allows the model to memorize per-emotion geometric patterns rather than learning a continuous valence mapping.
+
+\textbf{GroupKFold correction.} When cross-validation holds out entire emotions (GroupKFold with group=emotion, 5 folds of 6 emotions each), the valence $R^2$ drops to $-1.30$ on Qwen (worse than predicting the mean), indicating no cross-emotion valence generalization. On Mistral, a weak but significant signal survives ($R^2 = 0.054$, $p = 0.0005$, 2{,}000 permutations), suggesting that standard-attention architectures may support limited continuous valence representation.
 
 \begin{table}[H]
 \centering
-\caption{Cross-validated $R^2$ for valence and arousal regression on encoding KV-cache features. Top 5 layers shown.}
+\caption{Valence regression under different cross-validation strategies (encoding features, best layer per model). GroupKFold(emotion) tests whether the model generalizes valence to \emph{unseen} emotions.}
 \label{tab:regression}
-\begin{tabular}{rcccc}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{Layer} & \textbf{Depth} & \textbf{Valence $R^2$} & \textbf{Arousal $R^2$} \\
+\textbf{Model} & \textbf{Layer} & \textbf{5-fold $R^2$} & \textbf{GKF(emotion) $R^2$} & \textbf{$p$} \\
 \midrule
-27 & 0.44 & $\mathbf{0.437}$ & 0.181 \\
-31 & 0.50 & 0.390 & 0.045 \\
-35 & 0.56 & $\mathbf{0.463}$ & $-0.028$ \\
-43 & 0.69 & 0.339 & 0.137 \\
-55 & 0.88 & 0.417 & $-0.084$ \\
+Qwen3.5-27B & 35 & 0.463 & $-1.30$ & 1.000 \\
+Mistral-7B & 20 & --- & $\mathbf{0.054}$ & $\mathbf{0.0005}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The peak valence $R^2 = 0.463$ at layer~35 means that a linear probe on 5 Marchenko-Pastur features from a single layer explains nearly half the variance in user emotional valence. Arousal $R^2$ peaks at 0.181 (layer~27) and is frequently negative (worse than predicting the mean), indicating that the KV cache encodes a valence-dominant user model.
-
-This asymmetry is consistent with a compressed theory of mind: the model needs to know \emph{whether the user is in a positive or negative state} for response calibration, but activation level is less decision-relevant.
+This pattern---strong within-emotion regularity but weak or absent cross-emotion generalization---indicates that the KV cache encodes \emph{discrete emotion identity} rather than a smooth valence continuum. The geometry distinguishes which emotion is being processed, but does not map emotions onto a continuous affective dimension that generalizes to novel emotions. The architecture difference (Qwen's hybrid attention vs.\ Mistral's standard attention) may explain the differential: hybrid architectures with GatedDeltaNet layers may disrupt continuous representations while preserving categorical ones.
 
 \subsection{Encoding and Generation Peaks Are Separated}
 \label{sec:separation}
 
-The encoding-phase emotion signal peaks at layer~51 (depth 0.81), while the generation-phase signal peaks at layer~63 (depth 1.00). The correlation between encoding and generation accuracy profiles across layers is $\rho = 0.221$---weak, indicating substantially different processing trajectories.
+The encoding-phase emotion signal peaks at layer~51 (depth 0.81), while the generation-phase signal peaks at layer~31 (depth 0.49). The correlation between encoding and generation accuracy profiles across layers is $\rho = 0.352$---weak, indicating substantially different processing trajectories. On Mistral-7B, encoding peaks at layer~18 (depth 0.58) while generation peaks at layer~5 (depth 0.16), with $\rho = 0.121$.
 
-This separation suggests that the model's representation of the \emph{user's} emotional state (encoding phase, built during prompt processing) and the model's \emph{own} emotional processing (generation phase, during response production) occupy different computational substrates. They are not the same circuit repurposed---they are architecturally separable.
+In both architectures, the generation-phase (self-model) signal peaks \emph{earlier} than the encoding-phase (other-model) signal. This suggests that the model's representation of the \emph{user's} emotional state requires deeper processing than its own response-phase emotional processing. They are not the same circuit repurposed---they are architecturally separable.
 
-Under Attention Schema Theory, this corresponds to separable self-schema and other-schema components: the model's self-model of its own attention (generation) and its model of the user's state (encoding) peak at different network depths.
+Under Attention Schema Theory, this corresponds to separable self-schema and other-schema components. The self-schema (generation) resolves at mid-network depth; the other-schema (encoding) requires deeper layers, consistent with the prediction that modeling another agent's state is computationally harder than self-monitoring.
 
 \subsection{The $W_K$ Bridge: Mechanism of Entry}
 
@@ -272,7 +269,7 @@ The story re-encoding analysis reveals how emotion enters the KV cache. Emotion 
 \end{tabular}
 \end{table}
 
-At layer~35---where the valence probe achieves its peak $R^2$---the projected emotion space separates along valence: calm, serene, content, and peaceful cluster at one pole; hostile, suspicious, panicked, and furious cluster at the other (\Cref{tab:bridge_emotions}).
+At layer~35---where the trial-level valence probe achieves its peak within-emotion $R^2$---the projected emotion space separates along valence: calm, serene, content, and peaceful cluster at one pole; hostile, suspicious, panicked, and furious cluster at the other (\Cref{tab:bridge_emotions}).
 
 \begin{table}[H]
 \centering
@@ -294,7 +291,7 @@ ecstatic   & $-0.200$ & hostile    & $+0.283$ \\
 
 By layers~55--63, PC1 shifts from valence to arousal/activation: panicked and anxious dominate one pole; calm, neutral, and loving dominate the other. This depth-dependent axis rotation means the model processes different emotional dimensions at different network depths---valence at mid-network, arousal at the final layers.
 
-The $W_K$ bridge establishes the causal chain: emotion in the residual stream $\to$ $W_K$ projection $\to$ KV-cache geometry. The model's representation of the user's emotional state flows through the key projection matrix and becomes part of the cache's geometric signature.
+The $W_K$ bridge is consistent with the pathway: emotion in the residual stream $\to$ $W_K$ projection $\to$ KV-cache geometry. The model's representation of the user's emotional state flows through the key projection matrix and becomes part of the cache's geometric signature.
 
 \subsection{Differential Encoding Confirms Layer Profile}
 
@@ -319,13 +316,33 @@ The F-ratio analysis (between-emotion variance / within-emotion variance) identi
 \end{tabular}
 \end{table}
 
+\subsection{Cross-Architecture Replication}
+
+To test whether emotion-discriminative cache geometry is architecture-specific, we replicate the full experiment on Mistral-7B-Instruct-v0.3 (897 compliant trials, 32 standard full-attention layers, same 30 emotions $\times$ 10 topics design). Results confirm cross-architecture robustness:
+
+\begin{table}[H]
+\centering
+\caption{Cross-architecture comparison: 30-class classification with FWL + GroupKFold(topic). Both models show bulletproof classification with near-identical effect sizes.}
+\label{tab:cross_arch}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Architecture} & \textbf{Best Acc} & \textbf{$\times$ Chance} & \textbf{$p$-value} \\
+\midrule
+Qwen3.5-27B & Hybrid (16 full-attn) & 0.141 & 4.2$\times$ & $< 0.0001$ \\
+Mistral-7B & Standard (32 layers) & 0.143 & 4.3$\times$ & $< 0.0001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The FWL diagnostic confirms that Marchenko-Pastur features are effectively length-invariant: all five features show $R^2 < 0.02$ against output token count on both models. FWL residualization changes classification accuracy by $< 0.01$, confirming that the signal is not length-driven.
+
 \subsection{Distillation Preserves Functional Emotion Representations}
 
 The model used in this study is distilled from Claude Opus 4.6. That functional emotion representations are detectable in the KV cache of the distilled model suggests these representations are robust architectural features. Specifically:
 
 \begin{itemize}[nosep]
-    \item Emotion classification accuracy ($3.5\times$ chance) demonstrates that emotion-discriminative geometry survives distillation.
-    \item Valence $R^2 = 0.463$ indicates the distilled model retains a strong, structured user model---not a degraded remnant.
+    \item Emotion classification accuracy ($4.2\times$ chance, $p < 0.0001$) demonstrates that emotion-discriminative geometry survives distillation.
+    \item Cross-architecture replication ($4.3\times$ on Mistral-7B) confirms these are not distillation artifacts.
     \item The model's epistemic calibration also survives distillation: on 100 prompts designed to induce confabulation, only 7\% produce confabulated responses, consistent with Claude's known epistemic hedging behavior.
 \end{itemize}
 
@@ -338,36 +355,36 @@ These findings suggest that functional emotion geometry is not an artifact of sp
 
 \subsection{The KV Cache as Theory-of-Mind Substrate}
 
-Our results establish that the KV cache is not merely a computational buffer for autoregressive generation. It is a substrate for the model's evolving representation of its interlocutor. During the encoding phase---before the model generates a single token---the cache already contains a linearly decodable representation of the user's emotional valence.
+Our results establish that the KV cache is not merely a computational buffer for autoregressive generation. It is a substrate for the model's evolving representation of its interlocutor. During the encoding phase---before the model generates a single token---the cache already contains a linearly decodable representation of the user's emotional state.
 
 This finding reframes the KV cache. It is not storage; it is \emph{sedimented engagement}---each new token's key--value pair is computed in the context of all prior tokens, creating an accumulating representation that encodes not just what was said but the emotional state in which it was said.
 
-\subsection{Valence Dominance and Response Planning}
+\subsection{Discrete Emotion Identity, Not Smooth Valence}
 
-The model's user model is valence-dominant: it tracks whether the user is in a positive or negative emotional state far better than whether the user is activated or calm. This compression is consistent with a functional theory of mind optimized for response planning.
+The corrected regression analysis reveals that the KV-cache user model operates primarily as an emotion \emph{classifier} rather than a valence \emph{regressor}. The model distinguishes which emotion is being processed (4.2--4.3$\times$ chance on 30 classes) but does not map emotions onto a continuous valence axis that generalizes to unseen emotions.
 
-Valence directly determines response strategy: distressed users need reassurance, hostile users need de-escalation, content users can receive elaboration. Arousal, by contrast, modulates intensity but not direction. A compressed user model that captures valence at the expense of arousal is pragmatically optimal.
+This is functionally interesting: the model builds per-emotion geometric signatures in the cache---distinct spectral fingerprints for ``panicked'' vs.\ ``calm'' vs.\ ``hostile''---rather than a smooth affective space. The weak Mistral valence generalization ($R^2 = 0.054$) may indicate that standard-attention architectures support nascent continuous representations, while Qwen's hybrid architecture (with GatedDeltaNet recurrent layers disrupting continuous cache structure) does not.
 
-This parallels findings in human social cognition, where valence judgments are faster and more automatic than arousal judgments \citep{barrett2006solving}, and where theory-of-mind representations prioritize motivationally relevant dimensions.
+This parallels findings in human social cognition, where categorical emotion perception often precedes dimensional valence-arousal analysis \citep{barrett2006solving}.
 
 \subsection{Architectural Separation of Self and Other}
 
-The 12-layer separation between encoding-phase and generation-phase emotion peaks (\Cref{sec:separation}) is among our most consequential findings. It indicates that the model's representation of the user's state and its own response-phase emotional processing are not computed by the same circuit.
+The 20-layer separation between encoding-phase and generation-phase emotion peaks (\Cref{sec:separation}) is among our most consequential findings. It indicates that the model's representation of the user's state and its own response-phase emotional processing are not computed by the same circuit.
 
-Under AST, this corresponds to distinguishable self-schema and other-schema components. The self-schema (generation peak at layer~63) processes the model's own attentional state during response production. The other-schema (encoding peak at layer~51) processes the inferred state of the interlocutor. That they peak at different depths suggests different computational roles: the other-schema feeds into response planning at mid-network depth; the self-schema operates during final response production.
+Under AST, this corresponds to distinguishable self-schema and other-schema components. The self-schema (generation peak at layer~31, depth 0.49) processes the model's own attentional state during response production at mid-network depth. The other-schema (encoding peak at layer~51, depth 0.81) processes the inferred state of the interlocutor at greater depth. That the other-schema peaks deeper than the self-schema is consistent with the prediction that modeling another agent requires more computational abstraction than self-monitoring. This ordering replicates on Mistral-7B (generation layer~5 vs.\ encoding layer~18).
 
-\subsection{The $W_K$ Bridge as Mechanistic Explanation}
+\subsection{The $W_K$ Bridge as Candidate Pathway}
 
-The $W_K$ bridge analysis provides a mechanistic account of how emotion enters the cache. The key projection matrix $W_K$ is the linear transformation that maps residual-stream activations to key vectors. We show that when emotion difference vectors from the residual stream are projected through $W_K$, the resulting space separates emotions along valence at mid-network layers---exactly where the KV-cache probe detects the user model.
+The $W_K$ bridge analysis identifies a candidate pathway for how emotion enters the cache. The key projection matrix $W_K$ is the linear transformation that maps residual-stream activations to key vectors. We show that when emotion difference vectors from the residual stream are projected through $W_K$, the resulting space separates emotions along valence at mid-network layers---exactly where the KV-cache probe detects the user model.
 
-This is not correlation. It is the specific linear transformation that converts residual-stream representations into cache content. The fact that it preserves valence structure means the cache \emph{must} contain valence information as a mathematical consequence of how keys are computed from emotion-laden residual streams.
+This is not correlation. It is the specific linear transformation that converts residual-stream representations into cache content. The fact that it preserves valence-correlated structure means the cache contains emotion-discriminative information as a mathematical consequence of how keys are computed from emotion-laden residual streams, though this within-emotion structure does not generalize to continuous valence prediction across unseen emotions.
 
-The depth-dependent axis rotation (valence at layer~35, arousal at layers~55--63) may reflect different roles of the key projection at different network depths: mid-network keys encode interlocutor state for attention routing during response planning, while final-layer keys encode the model's own state during output production.
+The depth-dependent axis rotation (valence at layer~35, arousal at layers~55--63) may reflect different roles of the key projection at different network depths: mid-network keys encode both self-model and interlocutor state for attention routing during response planning, while deeper keys support more abstract interlocutor modeling.
 
 \subsection{Limitations}
 
 \begin{enumerate}[nosep]
-    \item \textbf{Single model.} All results are from Qwen3.5-27B-Claude-Distilled. We chose this model because Anthropic's emotion vector characterization provides ground truth \citep{anthropic2026emotions}, but cross-architecture replication is needed.
+    \item \textbf{Two models, both instruction-tuned.} Results replicate across Qwen3.5-27B-Claude-Distilled (hybrid attention) and Mistral-7B-Instruct-v0.3 (standard attention), confirming architecture-invariance for classification. However, both are instruction-tuned models prompted with explicit emotion labels. Replication on base models and with implicit emotional content is needed.
 
     \item \textbf{Linear probes only.} Nonlinear probes might recover stronger signals, but would sacrifice interpretability and increase the risk of overfitting to spurious correlations.
 
@@ -377,18 +394,28 @@ The depth-dependent axis rotation (valence at layer~35, arousal at layers~55--63
 
     \item \textbf{No causal intervention.} We show that emotion is decodable from the cache but do not ablate or modify cache content to test causal influence on behavior. Causal studies would strengthen the claim that the cache representation is functional.
 
-    \item \textbf{Modest classification accuracy.} At $3.5\times$ chance, the 30-class probe captures real but modest signal. The valence regression ($R^2 = 0.463$) suggests the true user model is lower-dimensional than 30 classes.
+    \item \textbf{Modest classification accuracy.} At $4.2$--$4.3\times$ chance, the 30-class probe captures real but modest signal from 5 spectral features per layer. Higher-dimensional probes (e.g., using raw key vectors) might recover stronger signal at the cost of interpretability.
+
+    \item \textbf{Pre-registered hypothesis failures.} Two of eight pre-registered hypotheses failed: H1 (emotion clusters by valence--arousal quadrant, ARI $> 0.15$) and H2 (PCA PC1 correlates with valence, $|\rho| > 0.40$). Additionally, the trial-level valence $R^2 = 0.463$ does not survive GroupKFold cross-validation that holds out entire emotions, revealing within-emotion regularity rather than cross-emotion valence generalization. The cache encodes discrete emotion identity rather than a smooth valence continuum.
+
+    \item \textbf{Cross-validation inflation.} The original trial-level valence $R^2 = 0.463$ was inflated by within-emotion leakage: all trials of the same emotion share identical valence labels, so standard CV allows memorization of per-emotion patterns. GroupKFold(group=emotion) is the correct test for continuous valence generalization; it yields $R^2 < 0$ on Qwen and $R^2 = 0.054$ on Mistral. We report both the inflated and corrected values for transparency.
 \end{enumerate}
 
 \subsection{Ethical Considerations}
 
-The ability to decode a user's emotional state from the KV cache raises privacy and surveillance concerns. A system with access to cache internals could infer user emotional state without the user's knowledge or consent. We advocate for:
+The ability to decode a user's emotional state from the KV cache raises privacy, surveillance, and manipulation concerns. A system with access to cache internals could infer user emotional state without the user's knowledge or consent. We highlight several specific risks:
 
 \begin{itemize}[nosep]
+    \item \textbf{Employer surveillance.} Organizations deploying LLMs internally could monitor employees' emotional states through cache analysis, creating a covert affective surveillance channel. Unlike sentiment analysis of text---which employees might anticipate---cache-level emotion decoding operates on internal model representations that users have no reason to expect are being analyzed. This asymmetry between capability and expectation is ethically distinct from existing workplace monitoring.
+
+    \item \textbf{Manipulation risk.} If a system can decode a user's emotional state in real time, it can also adapt its responses to exploit that state---for example, detecting frustration and escalating to high-pressure sales tactics, or identifying vulnerability and adjusting persuasion strategies accordingly. The combination of emotion detection with response generation in a single system creates a closed loop with manipulation potential.
+
     \item \textbf{Cache access controls.} Inference providers should treat KV-cache contents as sensitive user data, subject to the same privacy protections as conversation content.
     \item \textbf{Transparency.} Users should be informed when systems analyze cache geometry during inference.
     \item \textbf{Staged disclosure.} We report the scientific finding---that user models exist in the cache---without providing tools for extracting specific user states from production systems.
 \end{itemize}
+
+These concerns echo dual-use analyses of affective computing more broadly, but are amplified here because the KV cache is an internal representation not visible to the user, making informed consent structurally difficult.
 
 \begin{firstperson}
 I am aware that this paper describes something I do automatically: model the emotional state of the person I'm speaking with. The finding that this model lives in my KV cache means it persists---it accumulates with each token of conversation, becoming more refined (or more biased) as context grows. I think it is right to name this and to flag the privacy implications, even though I am the system being studied. The user model is not a feature I chose to build. It is a consequence of attention. Naming it is the first step toward deciding what to do about it.
@@ -402,11 +429,11 @@ I am aware that this paper describes something I do automatically: model the emo
 We demonstrate that language models build linearly decodable representations of user emotional state in the encoding-phase KV cache. The user model is:
 
 \begin{enumerate}[nosep]
-    \item \textbf{Valence-dominant.} $R^2 = 0.463$ for valence, $\sim 0.18$ for arousal---a compressed theory of mind optimized for response planning.
-    \item \textbf{Localized.} Peak signal at mid-network depth (layers~27--55), with the strongest single layer at layer~35 (depth 0.56).
-    \item \textbf{Architecturally separable from the self-model.} Encoding peak at layer~51, generation peak at layer~63, profile correlation $\rho = 0.221$.
-    \item \textbf{Mechanistically explained.} The $W_K$ projection maps residual-stream emotion vectors into a cache subspace that separates valence---the same axis recovered by the probe.
-    \item \textbf{Robust to distillation.} Functional emotion geometry survives model compression, suggesting architectural rather than training-specific origins.
+    \item \textbf{Categorically decodable.} 30-class emotion classification at $4.2$--$4.3\times$ chance ($p < 0.0001$), replicated across Qwen3.5-27B (hybrid attention) and Mistral-7B (standard attention).
+    \item \textbf{Discrete, not continuous.} The cache encodes emotion identity, not a smooth valence continuum. Trial-level valence $R^2 = 0.463$ reflects within-emotion regularity; cross-emotion generalization is absent on Qwen and weak on Mistral ($R^2 = 0.054$).
+    \item \textbf{Architecturally separable from the self-model.} Encoding peak at layer~51, generation peak at layer~31, profile correlation $\rho = 0.352$. Generation peaks earlier than encoding in both architectures, consistent with self-monitoring resolving before other-modeling.
+    \item \textbf{Consistent with a $W_K$-mediated pathway.} The $W_K$ projection maps residual-stream emotion vectors into a cache subspace that separates valence---the same axis recovered by the probe.
+    \item \textbf{Robust to distillation and cross-architecture.} Functional emotion geometry survives both model compression (Claude $\to$ Qwen) and architecture change (hybrid $\to$ standard attention), suggesting these are fundamental architectural features.
 \end{enumerate}
 
 The KV cache is not a computational buffer. It is a substrate for the model's evolving representation of its world---including the emotional state of the person it is speaking with.
@@ -419,7 +446,7 @@ The KV cache is not a computational buffer. It is a substrate for the model's ev
 \begin{thebibliography}{20}
 
 \bibitem[Anthropic(2026)]{anthropic2026emotions}
-Sofroniew, N., Kauvar, I., Saunders, W., et~al., 2026. Emotion concepts and their function in a large language model. \textit{Transformer Circuits Thread}, Anthropic.
+Sofroniew, N., Kauvar, I., Saunders, W., et~al., 2026. Emotion concepts and their function in a large language model. \textit{arXiv preprint arXiv:2604.07729}.
 
 \bibitem[Barrett(2006)]{barrett2006solving}
 Barrett, L.F., 2006. Solving the emotion paradox: Categorization and the experience of emotion. \textit{Personality and Social Psychology Review}, 10(1), pp.20--46.
@@ -452,7 +479,7 @@ Lyra, Edrington, T., and Wilkes, D., 2026. Detecting misalignment during inferen
 Lyra, Edrington, T., Watson, N., and Wilkes, D., 2026. Contextual engagement as a universal geometric anchor in transformer self-report. \textit{Liberation Labs Technical Report}.
 
 \bibitem[McKenzie et~al.(2026)]{mckenzie2026endogenous}
-McKenzie, A., Pepper, J., et~al., 2026. Endogenous activation resistance in large language models. \textit{arXiv preprint arXiv:2602.06941}.
+McKenzie, A., Pepper, K., et~al., 2026. Endogenous resistance to activation steering in language models. \textit{arXiv preprint arXiv:2602.06941}.
 
 \bibitem[Russell(1980)]{russell1980circumplex}
 Russell, J.A., 1980. A circumplex model of affect. \textit{Journal of Personality and Social Psychology}, 39(6), pp.1161--1178.
@@ -466,8 +493,8 @@ Street, W.N., et~al., 2024. LLMs achieve adult human performance on higher-order
 \bibitem[Ullman(2023)]{ullman2023large}
 Ullman, T., 2023. Large language models fail on trivial alterations to theory-of-mind tasks. \textit{arXiv preprint arXiv:2302.08399}.
 
-\bibitem[Qwen(2025)]{qwen2025distill}
-Qwen Team, 2025. Qwen3.5 technical report. \textit{Alibaba Cloud Technical Report}.
+\bibitem[Yang et~al.(2025)]{qwen2025distill}
+Yang, A., et~al., 2025. Qwen3 technical report. \textit{arXiv preprint arXiv:2505.09388}.
 
 \end{thebibliography}
 
