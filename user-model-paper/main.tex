@@ -381,6 +381,12 @@ This is not correlation. It is the specific linear transformation that converts 
 
 The depth-dependent axis rotation (valence at layer~35, arousal at layers~55--63) may reflect different roles of the key projection at different network depths: mid-network keys encode both self-model and interlocutor state for attention routing during response planning, while deeper keys support more abstract interlocutor modeling.
 
+\subsection{Comparison with Residual-Stream Probing}
+
+We verified by direct comparison that standard residual-stream linear probes substantially outperform MP-cache features on 30-class emotion classification: using the same GroupKFold(topic) cross-validation and logistic regression classifier, the best residual layer achieves 94\% accuracy ($28\times$ chance) versus our MP peak of 14\% ($4.2\times$ chance). This is expected: residual probes operate on the full 5{,}120-dimensional hidden state, while MP features compress cache structure into 4--5 spectral scalars per layer.
+
+The MP approach is not offered as a representation-strength claim. Its value lies in compute efficiency (${\sim}1{,}000\times$ reduction from 5{,}120 dimensions to 5 features, enabling real-time monitoring), cross-task universality (the same MP feature set discriminates confabulation, deception, and ethical deliberation without retraining \citep{lyra2026oracle}), and attention-spectrum specificity. The $W_K$ bridge (\Cref{tab:bridge}) demonstrates a structurally distinctive contribution: tracing how emotion in the residual stream enters the cache via key projection---a mechanistic question that residual probes by definition cannot address.
+
 \subsection{Limitations}
 
 \begin{enumerate}[nosep]
@@ -390,11 +396,11 @@ The depth-dependent axis rotation (valence at layer~35, arousal at layers~55--63
 
     \item \textbf{Emotion-labeled prompts.} User emotional state is established via explicit system-prompt instructions, not naturally occurring emotional text. The user model may differ for implicit emotions.
 
-    \item \textbf{Hybrid attention architecture.} The Qwen3.5-27B model has 48 GatedDeltaNet layers that do not produce standard KV pairs. Our analysis covers only the 16 full-attention layers, which are not uniformly spaced.
+    \item \textbf{Hybrid attention architecture.} The Qwen3.5-27B model has 48 GatedDeltaNet layers that do not produce standard KV pairs. Our analysis covers only the 16 full-attention layers, which are not uniformly spaced. Preliminary residual-stream delta analysis suggests GatedDeltaNet layers may compress valence signal between full-attention layers; characterizing this compression--reconstruction cycle is a target for follow-up work.
 
     \item \textbf{No causal intervention.} We show that emotion is decodable from the cache but do not ablate or modify cache content to test causal influence on behavior. Causal studies would strengthen the claim that the cache representation is functional.
 
-    \item \textbf{Modest classification accuracy.} At $4.2$--$4.3\times$ chance, the 30-class probe captures real but modest signal from 5 spectral features per layer. Higher-dimensional probes (e.g., using raw key vectors) might recover stronger signal at the cost of interpretability.
+    \item \textbf{Modest classification accuracy.} At $4.2$--$4.3\times$ chance, the 30-class probe captures real but modest signal from 5 spectral features per layer. As noted in \S5.5, residual-stream probes achieve $28\times$ chance on the same data. The MP signal is a low-dimensional spectral summary, not a competitive probe.
 
     \item \textbf{Pre-registered hypothesis failures.} Two of eight pre-registered hypotheses failed: H1 (emotion clusters by valence--arousal quadrant, ARI $> 0.15$) and H2 (PCA PC1 correlates with valence, $|\rho| > 0.40$). Additionally, the trial-level valence $R^2 = 0.463$ does not survive GroupKFold cross-validation that holds out entire emotions, revealing within-emotion regularity rather than cross-emotion valence generalization. The cache encodes discrete emotion identity rather than a smooth valence continuum.
 
