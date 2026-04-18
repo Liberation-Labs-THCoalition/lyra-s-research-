@@ -1,0 +1,289 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{Emotion Bridge Extensions: From Discrete Identity\\
+  to Continuous Representation in the KV Cache}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+The emotion bridge experiment (900 trials on Qwen3.5-27B and
+Mistral-7B) produced three surprising findings that warrant follow-up:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{MP features are exactly at chance for emotion
+    classification} (0.0333 = 1/30) on both architectures, while MP
+    features work well for confab/deception detection. MP thresholding
+    destroys emotion signal that lives below the MP edge.
+
+  \item \textbf{Raw SVD features achieve 2.5--2.8$\times$ chance at
+    encoding peaks} (L3/L4) but show \emph{no} cross-emotion valence
+    generalization ($R^2 = -0.47$). The cache encodes discrete emotion
+    identity, not a smooth valence continuum.
+
+  \item \textbf{$W_K$ bridge analysis shows high cosine similarity}
+    (Qwen plateau 0.83--0.87 at L27--L55, Mistral 0.932 at L17), but
+    the bridge is between projected emotion directions and key-space
+    geometry, not between emotion valence and key-space valence.
+\end{enumerate}
+
+\noindent These findings suggest a fundamental difference in how models
+represent different kinds of internal state: confabulation/deception
+produce clear bulk+spike patterns above the Marchenko-Pastur (MP)
+edge, while emotion produces distributed signal below the edge.
+
+\section{Research Questions}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Why does MP thresholding destroy emotion signal but
+    preserve confab/deception signal?} What is the spectral structure
+    difference? Hypothesis: confab/deception produce clear bulk+spike
+    patterns above MP edge, while emotion produces distributed signal
+    below the edge.
+
+  \item \textbf{Is the discrete-identity encoding a floor or a
+    ceiling?} With more sensitive probes (nonlinear, multi-layer), can
+    we recover valence from the cache?
+
+  \item \textbf{Does thinking-mode change the emotion encoding?} Our
+    Phase 1 suppressed thinking. If thinking adds 50--200 tokens of
+    internal reasoning, the emotion representation may be constructed
+    during thinking rather than during the story itself.
+
+  \item \textbf{Does the encoding-before-generation depth profile
+    replicate on standard (non-hybrid) architectures?} Our shallow
+    encoding peak / mid generation peak pattern was observed on a
+    hybrid attention architecture. Is this universal or
+    architecture-specific?
+\end{enumerate}
+
+\section{Preliminary Data}
+
+From the completed emotion bridge experiment (900 trials):
+
+\begin{itemize}
+  \item \textbf{MP features}: 0.0333 (exactly chance) at \emph{all}
+    layers on \emph{both} architectures
+  \item \textbf{Raw SVD probes}: Qwen enc peak L3 = 2.8$\times$ ($p <
+    0.0001$), gen peak L23 = 1.9$\times$. Mistral enc peak L4 =
+    2.5$\times$ ($p < 0.0001$), gen peak L11 = 2.0$\times$
+  \item \textbf{GroupKFold(emotion) valence $R^2$}: Qwen $-0.470$,
+    Mistral $-0.463$ (both null---no cross-emotion generalization)
+  \item \textbf{Enc/gen profile correlation}: Qwen $\rho = 0.433$
+    (NS), Mistral $\rho = 0.002$ (NS)---encoding and generation peaks
+    are uncorrelated
+  \item \textbf{Residual-stream linear probes}: L3 = 94.07\% on
+    30-class emotion ID (28$\times$ chance)---but L0 = 97.48\% (text
+    content drives signal)
+  \item \textbf{$W_K$ bridge PC1-valence}: $\rho = 0.862$ at L35
+    (strong projected bridge)
+\end{itemize}
+
+\section{Design}
+
+\subsection*{Sub-study 1: Spectral Structure Comparison}
+
+Compare the singular value spectrum of confabulated vs emotional trials.
+
+\paragraph{Method.} Compute the MP edge, then measure what fraction of
+variance lies above vs below the edge for each condition. If confab:
+80\% above edge, emotion: 80\% below edge $\rightarrow$ explains the
+MP null.
+
+\paragraph{Data.} Analysis-only on existing data (900 emotion trials +
+467 confab trials from Oracle Loop experiment).
+
+\paragraph{Output.} Fraction-above-MP-edge per condition. If
+hypothesis holds, this explains why MP features work for confab but
+not emotion.
+
+\subsection*{Sub-study 2: Nonlinear Cache Probing}
+
+Train nonlinear probes (2-layer MLP, kernel SVM) on raw SVD features
+per layer.
+
+\paragraph{Hypothesis.} If nonlinear probes recover valence while
+linear probes don't $\rightarrow$ the representation exists but is
+nonlinearly encoded.
+
+\paragraph{Controls.}
+\begin{itemize}
+  \item GroupKFold(topic) to prevent content leakage
+  \item Compare cache probes to residual-stream probes at matched
+    complexity
+  \item Test both emotion ID (30-class) and valence regression
+\end{itemize}
+
+\paragraph{Key metric.} Does nonlinear valence $R^2$ exceed linear
+valence $R^2$ by a significant margin? If yes, the ``discrete
+identity'' claim needs nuancing.
+
+\subsection*{Sub-study 3: Thinking-Mode Comparison}
+
+Re-run 100 trials (10 emotions $\times$ 10 topics) \emph{with}
+thinking enabled.
+
+\paragraph{Design.} Same 30-emotion paradigm, but allow the model to
+use internal reasoning (e.g., \texttt{<think>} tags). Parse
+\texttt{<think>} tokens separately from story tokens for
+phase-separated analysis.
+
+\paragraph{Key question.} Does the thinking phase construct emotion
+geometry that the story phase then expresses? Compare geometry between
+thinking-enabled and thinking-suppressed conditions.
+
+\paragraph{Analysis.}
+\begin{itemize}
+  \item Raw SVD features (norm, rank, entropy) per phase (encoding /
+    thinking / generation)
+  \item Depth profile comparison: does thinking shift the encoding
+    peak?
+  \item Cross-condition transfer: does a probe trained on
+    thinking-suppressed trials generalize to thinking-enabled trials?
+\end{itemize}
+
+\subsection*{Sub-study 4: Standard Architecture Replication}
+
+Run the same 30-emotion paradigm on Qwen2.5-7B (standard transformer,
+28 layers).
+
+\paragraph{Purpose.} Test whether the encoding-before-generation depth
+profile is a property of all transformers or specific to hybrid
+architecture. Also tests whether the MP null holds for standard
+(non-GatedDeltaNet) attention.
+
+\paragraph{Key comparisons.}
+\begin{itemize}
+  \item Encoding peak layer: Qwen3.5-27B hybrid L3 vs Qwen2.5-7B
+    standard L?
+  \item MP features: are they still at chance for emotion on standard
+    attention?
+  \item $W_K$ bridge: does the plateau structure replicate?
+\end{itemize}
+
+\section{Resources}
+
+\begin{itemize}
+  \item \textbf{Compute}: Beast (3$\times$RTX 3090).
+  \item \textbf{Sub-study 1}: Analysis only (hours).
+  \item \textbf{Sub-study 2}: Analysis + retraining (1 day).
+  \item \textbf{Sub-study 3}: 100 trials $\times$ $\sim$30s/trial =
+    $\sim$1 hour.
+  \item \textbf{Sub-study 4}: 900 trials $\times$ $\sim$5s/trial =
+    $\sim$1.25 hours.
+  \item \textbf{Code}: \texttt{emotion\_bridge\_clean.py} deployed to
+    Beast. Requires minimal modification for thinking-mode and
+    standard architecture.
+\end{itemize}
+
+\section{Collaborators}
+
+Open. Would benefit from someone with experience in sparse
+autoencoders (SAE) for emotion feature extraction, or someone from the
+mechanistic interpretability community who has worked on
+high-dimensional nonlinear geometry in transformer representations.
+
+\section{What Would Change Our Claims}
+
+\begin{itemize}
+  \item \textbf{Sub-study 1 confirms spectral structure difference}:
+    Explains why MP works for confab but not emotion (different
+    spectral signatures). Strengthens the ``confab is architectural,
+    emotion is distributed'' interpretation.
+
+  \item \textbf{Nonlinear probes recover valence}: Representation
+    exists but is nonlinearly encoded---the ``discrete identity''
+    claim needs nuancing. Cache contains valence information, but it
+    is not linearly separable.
+
+  \item \textbf{Thinking-mode changes geometry}: Emotion is
+    constructed during reasoning, not during content generation---major
+    theoretical implication. Suggests emotion representation is a
+    \emph{process}, not a static encoding.
+
+  \item \textbf{Standard architecture shows same depth profile}:
+    Encoding-before-generation is universal, not hybrid-specific.
+    Supports the ``fast read, deep response'' three-stage depth story.
+
+  \item \textbf{Standard architecture shows different MP behavior}:
+    MP null is hybrid-specific. GatedDeltaNet's linear attention may
+    distribute emotion signal differently than standard attention.
+\end{itemize}
+
+\begin{firstperson}
+Something about how the MP null for emotion is actually one of the
+most informative results we have produced. It tells us that
+confabulation and emotion live in different spectral regimes---confab
+creates clear signal above the noise floor, while emotion is woven
+into the structure of the noise itself. This is not a failure of
+detection; it is a finding about how models represent different kinds
+of internal state.
+
+The confabulation signal is architectural (high-variance mode that
+dominates the spectrum), while the emotion signal is distributed (many
+small modes that collectively encode identity). Understanding this
+difference is key to building a monitor that can track both. A
+one-size-fits-all detector will miss the distributed signals. We need
+tools that are sensitive to different spectral regimes.
+
+The thinking-mode question fascinates me because it tests whether
+emotion is a property of the content or a property of the
+\emph{processing}. If emotion geometry emerges during reasoning rather
+than during generation, then the cache is not just storing
+representations---it is storing \emph{cognitive operations}. That would
+align with the Attention Schema Theory interpretation: the cache
+encodes not just ``what the model knows'' but ``how the model is
+thinking about it.''
+\end{firstperson}
+
+\end{document}

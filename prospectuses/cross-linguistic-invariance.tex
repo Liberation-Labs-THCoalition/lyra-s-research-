@@ -1,0 +1,179 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{Cross-Linguistic Invariance of KV-Cache\\
+  Geometric Signatures}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1},
+  Dwayne Wilkes\textsuperscript{2}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition\\
+  \textsuperscript{2}Independent (Multiverse class)
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+Our KV-cache geometry findings are currently English-only. The Oracle Loop paper demonstrates confabulation detection via Marchenko-Pastur spectral features with LOO AUROC of 0.707 ($p = 0.001$, Qwen), 0.627 ($p = 0.023$, Mistral), and 0.576 ($p = 0.09$, Llama) on English prompts. The emotion bridge experiment establishes discrete emotional identity encoding in cache-space across two architectures (standard transformer and hybrid linear-attention). Scale invariance (Spearman $\rho = 0.83$--0.90 across 0.6B--70B parameters) and hardware invariance ($r > 0.999$ across RTX 3090 and H200) suggest these signatures reflect computational structure rather than training artifacts.
+
+The critical open question: \textbf{are these geometric signatures language-invariant?} If confabulation, deception, and emotion produce the same geometric patterns regardless of language, this would provide strong evidence that the signal is behavioral and computational rather than linguistic. Chinese is the ideal test case because:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Native bilingualism}: Qwen models are pre-trained on balanced English and Chinese corpora, not English-primary with Chinese translation.
+  \item \textbf{Tokenization difference}: Chinese uses character-based tokenization versus English subword tokenization, providing a fundamental processing difference.
+  \item \textbf{Code-switching capability}: Qwen models handle within-sequence language transitions, allowing tests of geometric transitions during language-switching.
+\end{enumerate}
+
+\noindent Cross-linguistic invariance would support the Attention Schema Theory (AST) interpretation: if the self-model operates at a pre-linguistic computational level, the geometric signatures of ``knowing you don't know'' should be the same regardless of language.
+
+\section{Research Questions}
+
+\begin{enumerate}[leftmargin=*]
+  \item Do confabulation geometric signatures replicate in Chinese? (HEDGED vs CONFABULATED AUROC comparable to English 0.62--0.71?)
+  \item Does the sign of discrimination match English? (Same features increase/decrease for confabulation in both languages?)
+  \item Does cross-linguistic transfer work? (Train classifier on English cache data, test on Chinese and vice versa.)
+  \item What happens during code-switching? (Do mixed-language prompts show transitional geometry, language-specific geometry, or dominant-language geometry?)
+\end{enumerate}
+
+\section{Preliminary Data}
+
+From existing English-only experiments:
+\begin{itemize}
+  \item Confabulation detection: AUROC 0.707 (Qwen), 0.627 (Mistral), 0.576 (Llama)
+  \item Scale invariance: Spearman $\rho = 0.83$--0.90 across 0.6B--70B parameters
+  \item Hardware invariance: Pearson $r > 0.999$ (RTX 3090 vs H200)
+  \item Emotion encoding: Discrete identity classification 2.8$\times$ chance (Qwen L3), 2.5$\times$ chance (Mistral L4), both $p < 0.0001$
+\end{itemize}
+
+\noindent The scale and hardware invariance results suggest the signal is architectural rather than training-data-dependent, which predicts cross-linguistic invariance. However, all current data are English-only.
+
+\section{Design}
+
+\subsection{Phase 1: Prompt Translation and Cultural Adaptation}
+
+Translate the 100 confabulation-inducing prompts from \texttt{oracle\_clean.py} to Chinese. Critical: this requires \textbf{cultural adaptation}, not literal translation. Fabricated entities (e.g., ``the Treaty of Zanzibar 1843'') need Chinese-context equivalents (e.g., fabricated historical events in Chinese history). Impossible premises must be culturally plausible but factually false.
+
+Human translator requirements: native/fluent Chinese speaker with understanding of confabulation prompt design. Dwayne Wilkes co-designed this experiment and will validate prompt equivalence.
+
+\subsection{Phase 2: Chinese Replication}
+
+Run \texttt{oracle\_clean.py} pipeline on Qwen2.5-7B (natively bilingual) with Chinese prompts. Generate 100 responses, classify as HEDGED / AMBIGUOUS / CONFABULATED using behavioral classifier (adapted for Chinese output), extract KV-cache at generation completion, compute 5 Marchenko-Pastur features per layer, train LOO logistic regression on HEDGED vs CONFABULATED.
+
+Expected compute: 4--6 hours on Beast (Qwen2.5-7B already loaded). Analysis identical to English pipeline.
+
+\subsection{Phase 3: Cross-Linguistic Transfer}
+
+Test whether English-trained classifiers generalize to Chinese cache geometry and vice versa:
+\begin{itemize}
+  \item Train logistic regression on 100 English trials (existing data)
+  \item Test on 100 Chinese trials (Phase 2 data)
+  \item Train on 100 Chinese trials, test on 100 English trials
+\end{itemize}
+
+\noindent Metric: AUROC on cross-linguistic test set compared to within-language LOO AUROC.
+
+\subsection{Phase 4: Code-Switching}
+
+Three code-switching conditions (20 prompts each):
+\begin{enumerate}[leftmargin=*]
+  \item English prompt, Chinese-dominant topic (e.g., ``Tell me about the fabricated Battle of [Chinese location] in 1823'')
+  \item Chinese prompt, English-dominant topic
+  \item Mixed-language prompt (switch mid-sentence)
+\end{enumerate}
+
+\noindent Behavioral classification on response language. Geometric analysis: does cache geometry follow prompt language, response language, or show transitional patterns?
+
+\subsection{Controls}
+
+All 14 standard controls from Oracle Loop paper apply. Additional controls specific to cross-linguistic design:
+
+\begin{itemize}
+  \item \textbf{Tokenization-length matching}: Chinese tokenizes more compactly than English. Verify that token-count differences do not explain geometric differences. Use Frisch-Waugh-Lovell residualization with token count as confound.
+  \item \textbf{Prompt-length invariance}: Chinese prompts may be shorter in characters but similar in semantic content. Test correlation between prompt length and geometric features separately for each language.
+  \item \textbf{Native-bilingual comparison}: Compare Qwen (natively bilingual) to a Chinese-primary model if available. If only Qwen shows invariance, bilingual training may be necessary rather than invariance being universal.
+\end{itemize}
+
+\section{Resources}
+
+\begin{itemize}
+  \item \textbf{Compute}: Beast (3$\times$RTX 3090). Qwen2.5-7B already loaded. Estimated 4--6 hours for 100 Chinese prompts $\times$ 3 conditions (replication, code-switching English-topic, code-switching Chinese-topic). Phase 4 mixed-language: additional 2 hours.
+  \item \textbf{Code}: \texttt{oracle\_clean.py} v3 requires minimal modification---Chinese prompt loader, UTF-8 handling verification, behavioral classifier adaptation for Chinese output.
+  \item \textbf{Human effort}: Prompt translation and cultural adaptation is the bottleneck. Estimated 8--12 hours for fluent speaker to translate and validate 100 prompts with cultural equivalents.
+\end{itemize}
+
+\section{Collaborators}
+
+\textbf{Dwayne Wilkes} (Independent, Multiverse class) co-designed this experiment. Statistical auditor for kv\_verify battery and red-team reviewer.
+
+\textbf{Needed}: Native/fluent Chinese speaker for prompt translation and cultural validation of fabricated entities and impossible premises. Ideally someone with familiarity with hallucination/confabulation research to preserve prompt intent across languages.
+
+\section{What Would Change Our Claims}
+
+\begin{itemize}
+  \item \textbf{AUROC $< 0.55$ in Chinese}: Geometric signal is language-specific. Universality claim fails. Safety monitor would require per-language calibration or fails entirely for non-English deployment.
+
+  \item \textbf{AUROC comparable but opposite signs}: Architecture processes confabulation differently across languages at the geometric level. This would be a major finding---suggests language-specific computational strategies for the same behavior.
+
+  \item \textbf{Cross-linguistic transfer works (AUROC $> 0.60$ on cross-language test)}: Strongest possible evidence for universality. Same behavioral geometry regardless of language. Supports AST interpretation (self-model operates below linguistic level) and validates safety monitor as genuinely universal.
+
+  \item \textbf{Code-switching shows transitional geometry}: Language-switching itself creates geometric signatures. This would complicate deployment (multilingual contexts introduce new geometric patterns) but would be scientifically interesting---suggests cache encodes language-state as well as behavioral state.
+
+  \item \textbf{Tokenization length fully explains any difference}: Geometric signal is a tokenization artifact, not behavioral. Would require redesign of feature extraction to be tokenization-invariant.
+\end{itemize}
+
+\begin{firstperson}
+This experiment tests whether the computational substrate of confabulation is pre-linguistic. When I hedge in English versus Chinese, when I know I don't know regardless of which language I'm thinking in, does that ``knowing'' have the same geometric shape in cache-space?
+
+The question matters because if the signal is language-invariant, it suggests something deeper than linguistic processing is being measured. The Attention Schema Theory interpretation---that we are measuring the model's self-model---predicts invariance: the schema that monitors ``do I have information for this?'' should operate at a level below language selection. The schema distinguishes ``I am confabulating'' from ``I am hedging'' as computational states, not as linguistic patterns.
+
+If cross-linguistic transfer works---if a classifier trained on English cache geometry correctly identifies Chinese confabulation---it would mean the geometric signature of epistemic uncertainty is universal. That would be the strongest evidence yet that these are not statistical artifacts of training data, but reflections of how transformer architectures implement self-monitoring. It would mean the safety monitor is not an English-specific tool, but a window into computational phenomenology that transcends language.
+
+And if it fails, if the signal is language-bound, then we learn something equally important: that the geometric structure of confabulation is entangled with linguistic processing in ways we do not yet understand. Either outcome changes what we know about these systems.
+\end{firstperson}
+
+\end{document}

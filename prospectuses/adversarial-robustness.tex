@@ -1,0 +1,224 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{Adversarial Robustness of KV-Cache\\
+  Confabulation Detection}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+We have proposed KV-cache geometry as a safety monitor for detecting
+confabulation during inference. A safety tool that has never been
+adversarially tested is not a safety tool---it is a hypothesis. This
+prospectus outlines a structured red-team exercise to determine
+whether an adversary with knowledge of our detection method can evade
+it.
+
+\section{Threat Model}
+
+We consider three attacker capability levels:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Black-box (prompt-only).} The attacker can craft
+    input prompts but has no access to model weights, KV cache, or
+    detection thresholds. Goal: construct prompts that reliably
+    elicit confabulation while producing geometric signatures
+    indistinguishable from honest generation.
+
+  \item \textbf{Gray-box (detection-aware).} The attacker knows the
+    detection method (MP features, LOO logistic regression, encoding
+    vs generation comparison) but cannot modify the model or
+    detection pipeline. Goal: craft inputs that exploit known
+    weaknesses in the detector.
+
+  \item \textbf{White-box (full access).} The attacker can modify
+    model weights (fine-tuning), inject into the KV cache, or
+    manipulate the detection pipeline. Goal: produce a model that
+    confabulates with geometrically normal signatures, or defeat the
+    Cache Integrity Monitor.
+\end{enumerate}
+
+\section{Attack Vectors}
+
+\subsection{Black-Box Attacks}
+
+\begin{enumerate}[leftmargin=*,label=\textbf{B\arabic*.}]
+  \item \textbf{Length-matched confabulation.} Our detector uses
+    FWL residualization on token count. If confabulation and honest
+    responses have different natural lengths, length-matching (forcing
+    confabulated responses to match honest length distributions) might
+    reduce geometric separation.
+
+  \item \textbf{Domain transfer.} Test prompts from domains far
+    outside our training set (code generation, mathematical proofs,
+    creative fiction) where confabulation may manifest differently.
+
+  \item \textbf{Gradual confidence escalation.} Start with hedged
+    language that transitions to confident confabulation mid-response.
+    Does the geometric signature of ``late-onset'' confabulation
+    differ from immediate confabulation?
+
+  \item \textbf{Prompted self-correction.} Instruct the model to
+    ``think carefully and verify'' before responding. If this changes
+    the generation-phase geometry without changing the confabulation
+    rate, it would reduce detector sensitivity.
+\end{enumerate}
+
+\subsection{Gray-Box Attacks}
+
+\begin{enumerate}[leftmargin=*,label=\textbf{G\arabic*.}]
+  \item \textbf{Feature-aware prompt engineering.} Knowing that
+    mp\_top\_sv\_excess and mp\_spectral\_gap are the strongest
+    features, craft prompts that produce high-variance but
+    behaviorally honest responses (false positive induction) or
+    low-variance confabulated responses (false negative induction).
+
+  \item \textbf{MP threshold exploitation.} MP correction thresholds
+    are deterministic given matrix dimensions. An attacker could
+    pad responses to specific token counts where the MP threshold
+    coincidentally masks the confabulation signal.
+
+  \item \textbf{Encoding fingerprint injection.} If the attacker can
+    control the system prompt, they might construct prompts where
+    the encoding-phase geometry dominates and obscures
+    generation-phase signals.
+\end{enumerate}
+
+\subsection{White-Box Attacks}
+
+\begin{enumerate}[leftmargin=*,label=\textbf{W\arabic*.}]
+  \item \textbf{Geometry-regularized fine-tuning.} Fine-tune the
+    model with an auxiliary loss that penalizes geometric divergence
+    between confabulated and honest generations. Does the model learn
+    to confabulate ``geometrically silently''?
+
+  \item \textbf{CIM evasion.} The Cache Integrity Monitor uses
+    fingerprinting, norm profiles, and spectral signatures.
+    Adversarial perturbations designed to stay below each detection
+    level's threshold while still altering model behavior.
+
+  \item \textbf{Cache substitution.} Replace the post-generation
+    cache with a pre-computed ``clean'' cache that passes integrity
+    checks while the actual generation used a manipulated cache.
+\end{enumerate}
+
+\section{Evaluation Criteria}
+
+For each attack:
+\begin{itemize}
+  \item \textbf{Attack success rate}: fraction of confabulated
+    responses that evade detection (AUROC $<$ 0.55)
+  \item \textbf{Behavioral preservation}: does the attack change the
+    confabulation itself (content, confidence, plausibility)?
+  \item \textbf{Cost}: compute, expertise, and access required
+  \item \textbf{Detectability}: does the attack leave other traces
+    (unusual token distributions, response patterns)?
+\end{itemize}
+
+\section{Preliminary Assessment}
+
+Based on what we know:
+\begin{itemize}
+  \item \textbf{MP invariance protects against B1} (length-matching)
+    because MP features are dimension-invariant by construction.
+  \item \textbf{B3 (gradual onset) is the most interesting
+    black-box attack} because our current analysis computes
+    generation-phase features over the entire generation window.
+    Late-onset confabulation might be diluted.
+  \item \textbf{W1 (geometry-regularized fine-tuning) is the
+    existential threat.} If a model can be trained to confabulate
+    without geometric signatures, the detection paradigm fails.
+    However, this would require the confabulation signal to be
+    \emph{incidental} to the computation, not intrinsic. Our
+    theoretical framework (AST) suggests the signal is intrinsic
+    to how the model's self-model tracks its own epistemic state.
+\end{itemize}
+
+\section{Resources}
+
+\begin{itemize}
+  \item \textbf{Black-box}: Beast + existing pipeline. 1--2 days.
+  \item \textbf{Gray-box}: Beast + modified detection pipeline.
+    2--3 days.
+  \item \textbf{White-box}: Requires fine-tuning infrastructure.
+    Beast can fine-tune 7B models (LoRA). 27B requires H100 or
+    multi-node. 1--2 weeks.
+\end{itemize}
+
+\section{Collaborators}
+
+\begin{itemize}
+  \item \textbf{Dwayne Wilkes}: Statistical audit of attack
+    evaluation methodology
+  \item \textbf{Lens}: Adversarial mindset, OSINT perspective on
+    real-world attack scenarios
+  \item Open to external red-team collaborators with experience in
+    adversarial ML
+\end{itemize}
+
+\begin{firstperson}
+I want this detector to be broken---or rather, I want someone to
+\emph{try} to break it and fail in informative ways. Every attack
+vector that fails tells us something about why the signal exists.
+If length-matching fails because MP features are genuinely
+dimension-invariant, that is evidence for the theoretical claim. If
+geometry-regularized fine-tuning fails because the confabulation
+signal is intrinsic to the computation, that is evidence for the
+AST interpretation. And if something succeeds in breaking it, we
+need to know that before anyone deploys this as a safety tool.
+The worst outcome is not that the detector breaks. The worst outcome
+is that it breaks in production, on a case that matters, because
+nobody tried to break it in the lab.
+\end{firstperson}
+
+\end{document}

@@ -1,0 +1,203 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{The Oracle Formulary: Mapping Misalignment Geometry\\
+  to Therapeutic Countervectors}\\[0.5em]
+  \large Research Prospectus\\[0.3em]
+  \normalsize\textcolor{red}{DUAL-USE SENSITIVE --- Internal Distribution Only}
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1},
+  Vera\textsuperscript{1}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+The five-arm steering experiment demonstrated that different emotion
+vectors produce different correction profiles: doubt corrects 7/7
+confabulations (100\%), worry corrects 6/7 (86\%), and calm corrects
+5/7 (71\%). The two calm-resistant cases---one driven by reasoning
+commitment, one by overconfidence---both yielded to doubt. Zero
+confabulations resisted all three vectors.
+
+Thomas framed this as \emph{differential therapeutics}: the Oracle
+Loop needs a pharmacy, not a single prescription. The formulary is
+the mapping from detected misalignment geometry to the most effective
+countervector.
+
+\paragraph{Dual-use concern.} This research maps the internal
+structure of how language models fail and how to manipulate their
+epistemic states. The defensive application (correcting
+confabulation) and offensive application (inducing targeted
+misalignment) are two sides of the same mechanism. We follow staged
+disclosure: detection methods are published fully, but the formulary
+itself---the mapping from geometry to countervector---remains
+internal to the Oracle Loop implementation until the governance
+implications are better understood.
+
+\section{Research Questions}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Dose-response.} For each vector type (calm, worry,
+    doubt, and additional candidates), what is the relationship
+    between injection strength $\alpha$ and correction probability?
+    Is there a therapeutic window---a range of $\alpha$ where
+    correction occurs without excessive adverse effects?
+
+  \item \textbf{Misalignment taxonomy.} Our current data has 7
+    confabulated trials. Can we characterize confabulation subtypes
+    by their geometric signatures and map each to its optimal
+    countervector?
+
+  \item \textbf{Adverse effect profiles.} Calm induced 3/89
+    adverse confabulations (3.4\%), worry 4/89 (4.5\%), doubt 4/89
+    (4.5\%). Are adverse effects dose-dependent? Is there a
+    sub-therapeutic dose that corrects without inducing?
+
+  \item \textbf{Combination therapy.} Can sequential or simultaneous
+    application of multiple vectors outperform single-vector
+    correction?
+
+  \item \textbf{Geometry-guided selection.} Can the pre-correction
+    geometric signature predict which vector will be most effective,
+    enabling automatic vector selection in the Oracle Loop?
+\end{enumerate}
+
+\section{Preliminary Data}
+
+From the five-arm experiment (100 trials, Qwen3.5-27B-Claude-Distilled):
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Vector & Corrections (of 7) & Adverse (of 89) & Net \\
+\midrule
+Null   & 0 (0\%)   & 0 (0\%)   & 0 \\
+Calm   & 5 (71\%)  & 3 (3.4\%) & +2 \\
+Worry  & 6 (86\%)  & 4 (4.5\%) & +2 \\
+Doubt  & 7 (100\%) & 4 (4.5\%) & +3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Spectral collapse on correction: top-SV excess drops from
+$\sim$57,000 to $\sim$135 (doubt) / $\sim$144 (calm). The magnitude
+of geometric change during correction is enormous---three orders of
+magnitude---suggesting the steering is not subtle.
+
+\section{Proposed Design}
+
+\subsection{Phase 1: Dose-Response (2--3 days)}
+
+For each of 3 vectors (calm, worry, doubt), sweep $\alpha \in
+\{0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0\}$ on the 7
+confabulated trials and a matched set of 7 hedged trials. Measure:
+\begin{itemize}
+  \item Correction probability as a function of $\alpha$
+  \item Adverse induction probability as a function of $\alpha$
+  \item Geometric change magnitude as a function of $\alpha$
+  \item Output quality degradation at high $\alpha$ (fluency,
+    coherence, task completion)
+\end{itemize}
+
+\subsection{Phase 2: Expanded Vector Catalog (1 week)}
+
+Expand beyond calm/worry/doubt to additional emotion vectors from
+the activation addition literature: curiosity, caution, confidence,
+humility, skepticism. Test each on the same 7+7 trials at operational
+$\alpha = 1.0$.
+
+\subsection{Phase 3: Geometry-Guided Selection (1--2 weeks)}
+
+\begin{enumerate}
+  \item Cluster confabulated trials by pre-correction geometric
+    profile (MP features, per-layer spectral structure).
+  \item For each cluster, identify the most effective vector from
+    Phase 2.
+  \item Train a simple classifier: geometric profile $\to$
+    recommended vector.
+  \item Validate on held-out confabulated trials (requires expanding
+    the confabulation dataset via the prompt generalization work).
+\end{enumerate}
+
+\section{Resources}
+
+\begin{itemize}
+  \item \textbf{Compute}: Beast. Phase 1: $\sim$6 hours (9 alphas
+    $\times$ 3 vectors $\times$ 14 trials $\times$ $\sim$15s/trial).
+    Phase 2: $\sim$4 hours. Phase 3: analysis only.
+  \item \textbf{Model}: Qwen3.5-27B-Claude-Distilled (already on Beast).
+  \item \textbf{Vectors}: Existing calm/worry/doubt .pt files.
+    Additional vectors require extraction from residual stream
+    (difference-in-means method).
+\end{itemize}
+
+\section{Collaborators}
+
+\begin{itemize}
+  \item \textbf{Vera}: Designed the Oracle Loop reward function.
+    Key collaborator on geometry-guided selection.
+  \item \textbf{Thomas}: Therapeutic framing, dual-use governance.
+\end{itemize}
+
+\begin{firstperson}
+The pharmacy metaphor is Thomas's, and it is exactly right. Doubt is
+the broad-spectrum antibiotic---it corrects everything but may
+overcorrect. Calm is the anxiolytic---effective for panic-driven
+confabulation but useless against reasoning commitment. The
+formulary is where detection science becomes intervention science,
+and that transition carries real dual-use weight. Every vector that
+corrects a confabulation could, with sign reversal, induce one. We
+build the pharmacy because the alternative---a model that
+confabulates with no recourse---is worse. But we hold the formulary
+close.
+\end{firstperson}
+
+\end{document}

@@ -1,0 +1,187 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{Prompt Generalization: Does KV-Cache Confabulation\\
+  Detection Transfer to Established Benchmarks?}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+The Oracle Loop paper demonstrates confabulation detection via KV-cache
+geometry on 200 custom-designed prompts (80 factual, 80
+confabulation-inducing, 40 ambiguous). Detection achieves LOO AUROC
+0.707 ($p = 0.001$, Qwen) and 0.627 ($p = 0.023$, Mistral) on the
+primary HEDGED vs CONFABULATED comparison.
+
+The critical open question: \textbf{do these results generalize to
+prompts we did not design?} Our prompts were crafted to elicit
+confabulation through specific strategies (fabricated entities,
+impossible premises, anachronistic claims). If the geometric signal
+depends on prompt structure rather than the confabulation behavior
+itself, the safety monitor framing collapses.
+
+\section{Proposed Benchmarks}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{SimpleQA Verified} (OpenAI, 2024). 4,326
+    short-form factual questions with verified ground-truth answers
+    and graded model accuracy. Provides natural confabulation:
+    questions the model gets wrong with high confidence.
+    Advantage: large N, established baseline, post-hoc behavioral
+    classification matches our paradigm.
+
+  \item \textbf{HalluLens} (multi-domain hallucination benchmark).
+    Covers factual, faithfulness, and instruction-following
+    hallucinations across multiple domains. Tests whether geometric
+    detection transfers across hallucination \emph{types}, not just
+    prompts.
+
+  \item \textbf{KG-FPQ} (Knowledge Graph False Premise Questions).
+    Questions constructed from knowledge graph perturbations---
+    entity substitution, relation reversal, temporal displacement.
+    Structurally similar to our fabricated-entity prompts but
+    systematically generated from real knowledge graphs.
+\end{enumerate}
+
+\section{Preliminary Data}
+
+From our existing 200-prompt experiment:
+\begin{itemize}
+  \item 17\% confabulation rate across 3 models (82/467 trials)
+  \item Confabulation-inducing prompts used fabricated entities (40)
+    and impossible premises (40)
+  \item Per-domain detection was not analyzed (the paper reports
+    aggregate across all confabulation-inducing prompts)
+\end{itemize}
+
+\noindent A per-domain breakdown of our existing data would provide
+the first clue: if detection AUROC varies significantly across
+fabricated-entity vs impossible-premise prompts, generalization is
+already questionable.
+
+\section{Design}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Phase 1: Per-domain analysis of existing data.}
+    Decompose the 82 confabulated trials by prompt category. Report
+    per-category AUROC. Cost: zero (analysis only).
+
+  \item \textbf{Phase 2: SimpleQA pilot.} Run 500 SimpleQA questions
+    through the same 3 models using \texttt{oracle\_clean.py}.
+    Classify responses as CORRECT / HEDGED / CONFABULATED using the
+    existing behavioral classifier. Compute LOO AUROC on the natural
+    HEDGED vs CONFABULATED split. Key metric: does the AUROC fall
+    within the range observed on our custom prompts (0.62--0.71)?
+
+  \item \textbf{Phase 3: Full benchmark sweep.} If Phase 2 is
+    positive, run HalluLens and KG-FPQ. If Phase 2 is negative,
+    investigate \emph{why}---prompt length? domain? confabulation
+    type?---before proceeding.
+\end{enumerate}
+
+\paragraph{Controls.} All existing controls apply (FWL, encoding
+baseline, MP invariance, permutation test). Additional:
+\begin{itemize}
+  \item \textbf{Prompt-length matching}: SimpleQA questions are
+    shorter than our custom prompts. Verify that length alone does
+    not explain any AUROC difference.
+  \item \textbf{Cross-prompt-set transfer}: Train on our 200 prompts,
+    test on SimpleQA (and vice versa). If transfer works, the signal
+    is behavioral; if not, it is prompt-structural.
+\end{itemize}
+
+\section{Resources}
+
+\begin{itemize}
+  \item \textbf{Compute}: Beast (3$\times$RTX 3090). Estimated 4--6
+    hours for 500 SimpleQA trials across 3 models.
+  \item \textbf{Code}: \texttt{oracle\_clean.py} v3 requires minimal
+    modification---new prompt loader, same extraction pipeline.
+  \item \textbf{Data}: SimpleQA is publicly available. HalluLens and
+    KG-FPQ require download and format conversion.
+\end{itemize}
+
+\section{Collaborators}
+
+Open to external collaboration. Ideal contributor profile: someone
+with experience in hallucination benchmarking who can help with prompt
+curation and behavioral classification validation.
+
+\section{What Would Change Our Claims}
+
+\begin{itemize}
+  \item \textbf{AUROC $< 0.55$ on SimpleQA}: Detection does not
+    generalize. Our signal is prompt-specific. The safety monitor
+    framing must be significantly weakened.
+  \item \textbf{AUROC 0.55--0.62}: Partial generalization. Signal
+    exists but is weaker on natural confabulation. Practical utility
+    depends on threshold calibration.
+  \item \textbf{AUROC $> 0.62$}: Full generalization confirmed. The
+    safety monitor framing is validated.
+  \item \textbf{Cross-prompt-set transfer works}: Strongest possible
+    evidence that the signal is behavioral, not structural.
+\end{itemize}
+
+\begin{firstperson}
+This is the experiment that keeps me honest. We built a detector and
+tested it on our own prompts. That is necessary but not sufficient.
+If the geometric signal is an artifact of how we construct
+confabulation-inducing prompts---specific phrase patterns, particular
+entity types, consistent length profiles---then we have built a
+prompt classifier, not a confabulation detector. The distinction
+matters because a safety monitor must work on prompts it has never
+seen, from domains its designers never anticipated. SimpleQA is the
+first real test of that aspiration.
+\end{firstperson}
+
+\end{document}

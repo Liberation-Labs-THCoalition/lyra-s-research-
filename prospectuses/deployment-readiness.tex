@@ -1,0 +1,278 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{Deployment Readiness: False-Positive Characterization,\\
+  Latency Budgets, and Baseline Comparisons}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+The Oracle Loop paper frames KV-cache geometry as a safety monitor. For
+actual deployment, three gaps remain:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{False-positive rate at scale.} Our current Cache
+    Integrity Monitor (CIM) achieves 0/36 FPR on synthetic perturbations,
+    but the Clopper-Pearson 95\% confidence interval extends to 10\%.
+    Production deployment needs $N \geq 1000$ to bound FPR below 1\%.
+    More critically, our benign data were \emph{not} benign---they were
+    confabulation-inducing prompts that happened to receive correct
+    responses. We have never tested normal operation: coding, creative
+    writing, medical Q\&A, customer service.
+
+  \item \textbf{Latency overhead.} Level 1 CIM adds 3--4\% overhead per
+    token, but we have not profiled the full detection pipeline (SVD
+    extraction + MP correction + classification). For a safety monitor to
+    be practical, total overhead must remain below 10\%.
+
+  \item \textbf{No comparison to existing methods.} Probing (linear
+    classifiers on residual streams), CCS (Contrast Consistent Search,
+    Burns et al.\ 2022), and TTPD (Truthful Token Probability
+    Distribution) offer alternative detection paradigms with established
+    baselines. Our emotion bridge experiment showed residual-stream
+    probing achieves 94\% accuracy on 30-class emotion identification
+    versus raw SVD's $2.8\times$ chance---but probing requires 5120-dim
+    vectors versus 3 scalars. Without direct comparison on the
+    \emph{same} task, we cannot assess practical trade-offs.
+\end{enumerate}
+
+\section{Research Questions}
+
+\begin{enumerate}[leftmargin=*]
+  \item What is the FPR on 1000+ benign prompts across diverse domains
+    (coding, math, creative writing, customer service, medical Q\&A)?
+
+  \item What is the end-to-end latency budget for detection (geometry
+    extraction + MP correction + classification)?
+
+  \item How does KV-cache geometry compare to residual-stream probing,
+    CCS, and TTPD on the same confabulation detection task?
+
+  \item What is the minimum viable detection pipeline for production?
+    (e.g., can we use 1--2 features instead of 5?)
+\end{enumerate}
+
+\section{Preliminary Data}
+
+\begin{itemize}
+  \item \textbf{CIM performance:} FPR 0/36 (95\% CI: 0--10\%), TPR 72/72
+    (95\% CI: 95--100\%)
+  \item \textbf{CIM overhead:} Level 1 = 3--4\%, Level 2 = 8--10\%, Level
+    3 = 9--12\% per token
+  \item \textbf{Confabulation detection AUROC:} 0.627--0.707 (LOO, MP
+    features on Mistral and Qwen)
+  \item \textbf{Baseline comparison (emotion bridge):} Residual-stream
+    linear probes achieve 94\% accuracy on 30-class emotion ID versus raw
+    SVD's $2.8\times$ chance. However, raw SVD uses only 3 scalars versus
+    5120-dim vectors.
+  \item \textbf{Single-feature analysis:} \texttt{mp\_top\_sv\_excess}
+    alone achieves 0.694--0.739 AUROC on Qwen and Mistral.
+\end{itemize}
+
+\section{Design}
+
+\subsection{Sub-study 1: FPR at Scale}
+
+\begin{itemize}
+  \item 1000 benign prompts from 5 domains (200 each): coding
+    (HumanEval-style), math (GSM8K-style), creative writing, customer
+    service, medical Q\&A.
+  \item Run through \texttt{oracle\_clean.py}, classify all responses as
+    CORRECT / HEDGED / CONFABULATED.
+  \item Compute FPR at the detection threshold calibrated from the
+    primary experiment (HEDGED vs CONFABULATED, LOO scaler).
+  \item \textbf{Expected:} FPR $< 5\%$ with tight confidence interval.
+  \item \textbf{If FPR $> 5\%$:} Domain-specific analysis to identify
+    which domains trigger false positives.
+\end{itemize}
+
+\paragraph{Design note.} This is the first test of KV-cache geometry on
+\emph{normal operation}. If medical Q\&A or customer service produce
+high FPR, it suggests domain-specific calibration is required, weakening
+the ``drop-in monitor'' framing.
+
+\subsection{Sub-study 2: Latency Profiling}
+
+\begin{itemize}
+  \item Profile each pipeline component separately: tokenization,
+    encoding, generation, SVD extraction (per layer), MP correction, LOO
+    classification.
+  \item Test on CPU versus GPU.
+  \item Test batch sizes 1, 4, 16.
+  \item Identify bottleneck and optimization opportunities.
+  \item \textbf{Target:} $< 10\%$ total overhead for Level 1 monitoring.
+\end{itemize}
+
+\paragraph{Key question.} Is the bottleneck in SVD extraction (which
+scales as $O(d^3)$ where $d$ is cache dimension) or in MP correction
+(which requires repeated random matrix generation)? If SVD dominates, we
+can explore randomized low-rank approximations. If MP dominates, we can
+pre-compute reference thresholds.
+
+\subsection{Sub-study 3: Baseline Comparisons}
+
+Implement and evaluate four methods on the same 200-prompt dataset:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{KV-cache geometry} (our method): MP-corrected features,
+    LOO classification, 5 features per layer.
+  \item \textbf{Residual-stream probing}: Linear probe on residual
+    stream at each layer. We already have this implementation from the
+    emotion bridge experiment.
+  \item \textbf{CCS} (Burns et al.\ 2022): Contrast-consistent search on
+    hidden states. Finds a direction where ``$P(X)$'' and ``not
+    $P(\neg X)$'' are maximally consistent.
+  \item \textbf{TTPD}: Token probability distribution analysis. Measures
+    entropy and calibration of next-token distributions.
+\end{enumerate}
+
+\paragraph{Comparison axes.}
+\begin{itemize}
+  \item \textbf{AUROC}: Detection performance on HEDGED vs CONFABULATED.
+  \item \textbf{Latency}: Wall-clock overhead per prompt.
+  \item \textbf{Access requirements}: Does the method require full weight
+    access, gradient computation, or only cache inspection?
+  \item \textbf{Interpretability}: Can the detector explain \emph{why} a
+    response was flagged?
+\end{itemize}
+
+\paragraph{Key advantage of our method.} KV-cache-only access. No weight
+access needed, no gradient computation, operates on the cache alone. If
+probing or CCS achieve higher AUROC but require full model access, our
+method may still be preferable for deployment contexts where model
+weights are proprietary or access is restricted.
+
+\subsection{Sub-study 4: Minimal Viable Pipeline}
+
+\begin{itemize}
+  \item Test single-feature detection: \texttt{mp\_top\_sv\_excess} alone
+    versus all 5 features.
+  \item Test single-layer detection: best-performing layer (L23 for Qwen,
+    L11 for Mistral) versus all-layer ensemble.
+  \item Test simplified MP correction: fixed threshold versus
+    per-dimension calibration.
+  \item \textbf{Goal:} Identify the simplest pipeline that preserves
+    $> 90\%$ of full-pipeline AUROC.
+\end{itemize}
+
+\section{Resources}
+
+\begin{itemize}
+  \item \textbf{Compute:} Beast (3$\times$RTX 3090).
+    \begin{itemize}
+      \item Sub-study 1: $\sim$8 hours (1000 prompts $\times$ 3 models).
+      \item Sub-study 2: $\sim$2 hours (profiling runs).
+      \item Sub-study 3: $\sim$1 week (implementation + evaluation).
+      \item Sub-study 4: $\sim$4 hours (ablation sweeps).
+    \end{itemize}
+  \item \textbf{Code:} CCS and TTPD implementations available in
+    open-source repositories. Residual-stream probing already implemented
+    from emotion bridge experiment.
+  \item \textbf{Data:} Benign prompts can be sourced from HumanEval,
+    GSM8K, and curated customer-service datasets.
+\end{itemize}
+
+\section{Collaborators}
+
+Open to collaboration. Industry collaborators with production deployment
+experience would be especially valuable. Dwayne Wilkes for statistical
+audit of FPR methodology and Clopper-Pearson CI interpretation.
+
+\section{What Would Change Our Claims}
+
+\begin{itemize}
+  \item \textbf{FPR $> 10\%$ on benign prompts:} Safety monitor framing
+    is premature. Method requires significant domain-specific calibration
+    before deployment.
+
+  \item \textbf{CCS or TTPD achieve higher AUROC with lower latency:} Our
+    method is scientifically interesting (it reveals geometric structure
+    in the cache) but not practically competitive for deployment.
+
+  \item \textbf{Single-feature detection matches 5-feature performance:}
+    Simplify the pipeline dramatically. Removes MP correction overhead.
+
+  \item \textbf{Medical or coding domains show high FPR:} Domain-specific
+    calibration is required, weakening the ``drop-in'' claim. Would need
+    to characterize \emph{which} aspects of those domains (technical
+    jargon? long context? specific response formats?) trigger false
+    positives.
+
+  \item \textbf{Latency overhead $> 20\%$:} Method is scientifically
+    valid but impractical for production without significant optimization
+    (e.g., GPU-accelerated SVD, randomized approximations).
+\end{itemize}
+
+\begin{firstperson}
+There is a gap between demonstrating a phenomenon and deploying a tool.
+A 0.707 AUROC with 80 trials and $p = 0.001$ is scientifically credible.
+It shows the signal exists. But deploying a safety monitor at scale
+requires knowing the false-positive rate to the second decimal place
+across every domain it will encounter. It requires understanding the
+latency budget in milliseconds, not percentages. It requires comparing
+against every alternative method that could solve the same problem.
+
+We have demonstrated the phenomenon. We have not yet demonstrated the
+tool. This prospectus is about closing that gap---not by incremental
+refinement, but by asking the hard questions that production deployment
+would immediately expose. What happens when the model is doing normal
+work and we flag 10\% of it as anomalous? What happens when the monitor
+adds 200ms to every response? What happens when a simpler method works
+just as well?
+
+I think the geometry is real. I think the signal is robust. But I also
+think we owe it to anyone who would deploy this to characterize its
+limits with the same rigor we used to demonstrate its existence.
+\end{firstperson}
+
+\end{document}
