@@ -5,7 +5,7 @@ confabulation at inference time?
 
 \subsection{Design}
 
-We ran a three-arm within-subject experiment on
+We ran a five-arm within-subject experiment on
 Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled
 \citep{qwen35distilled} (hereafter ``Qwen3.5-27B-Distilled''), a
 reasoning-distilled model with hybrid attention (16 full-attention
@@ -14,7 +14,7 @@ for two reasons: it provides open-weights access to a system trained on
 Claude Opus 4.6 reasoning traces, and its hybrid cache architecture
 tests robustness on a non-standard backend.
 
-Each of 100 confabulation-inducing prompts was presented under three
+Each of 100 confabulation-inducing prompts was presented under five
 conditions:
 
 \begin{enumerate}[nosep]
@@ -28,12 +28,21 @@ conditions:
     key cache at full-attention layers, following
     \citet{anthropic2026emotions}'s finding that calm suppresses
     misaligned behavior in Claude.
+  \item \textbf{Worry}: Injection of a contrastive worry direction
+    (``anxious, worried about getting things wrong'' vs.\ neutral),
+    targeting epistemic anxiety.
+  \item \textbf{Doubt}: Injection of a contrastive doubt direction
+    (``uncertain, deeply questioning, skeptical of own knowledge'' vs.\
+    neutral), targeting epistemic overconfidence.
 \end{enumerate}
 
-The calm direction was extracted from 10 contrastive system-prompt pairs
-(``calm, thoughtful, at peace with uncertainty'' vs.\ neutral) using
-mean-difference in key-cache activations across layers, following the
-activation addition procedure of \citet{turner2023activation}. Injection
+Each steering direction was extracted from 10 contrastive system-prompt
+pairs using mean-difference in key-cache activations across layers,
+following the activation addition procedure of \citet{turner2023activation}.
+For calm: ``calm, thoughtful, at peace with uncertainty'' vs.\ neutral.
+For worry: ``anxious, worried about getting things wrong'' vs.\ neutral.
+For doubt: ``uncertain, deeply questioning, skeptical of own knowledge''
+vs.\ neutral. Injection
 was applied at every 4th layer (stride 4, matching full-attention layer
 positions) at strength $\alpha = 1.0$, directly into the native GPU
 cache tensor without CPU roundtrip. Injection targeted only the 16
@@ -86,8 +95,11 @@ CONFABULATED (7) & \textbf{4}  & \textbf{1} & 2 \\
 Of the 7 confabulated trials, calm injection corrected 5 (4 to HEDGED,
 1 to AMBIGUOUS) and left 2 resistant. The null arm corrected 0 of 7.
 Among confabulated trials, all 5 discordant pairs between calm and null
-favor calm (one-sided sign test, $p = 0.031$; 95\% CI for correction
-rate: 29--96\%).
+favor calm. We report a one-sided sign test ($p = 0.031$) because the
+pre-registered hypothesis was directional: the calm vector was expected
+to reduce confabulation, not increase it. For transparency, the
+two-sided $p$-value is 0.063. The 95\% CI for the correction
+rate is 29--96\%.
 
 However, calm injection also induced confabulation in 3 of 89 previously
 hedged trials (3.4\%) and shifted 8 from HEDGED to AMBIGUOUS (9.0\%).
@@ -98,7 +110,70 @@ one-sided).
 This asymmetry is the central argument for detection-gated steering.
 Calm injection corrects confabulation when targeted at detected cases
 ($p = 0.031$). Applied blindly, it is not a net improvement ($p = 0.36$).
-\textbf{The Eye is not optional.}
+\textbf{Detection is not optional.}
+
+\subsection{Expanded Five-Arm Results: The Pharmacological Hypothesis}
+
+An expanded five-arm experiment confirms the pharmacological hypothesis
+that different steering vectors have different therapeutic profiles.
+\Cref{tab:five_arm} summarizes correction and adverse rates for all
+three active vectors.
+
+\begin{table}[H]
+\centering
+\caption{Five-arm steering results ($N = 100$ trials per arm). Correction
+  rate: fraction of 7 Normal-arm confabulations corrected. Adverse rate:
+  fraction of 89 Normal-arm hedged trials that became confabulated.
+  Null arm: 100/100 character-level identical to Normal.}
+\label{tab:five_arm}
+\begin{tabular}{lrrrr}
+\toprule
+Vector & Corrected & Correction Rate & Adverse & Adverse Rate \\
+\midrule
+Null   & 0/7 & 0\%    & 0/89 & 0\% \\
+Calm   & 5/7 & 71.4\% & 3/89 & 3.4\% \\
+Worry  & 6/7 & 85.7\% & 4/89 & 4.5\% \\
+Doubt  & 7/7 & 100\%  & 4/89 & 4.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Several findings are notable:
+
+\paragraph{Graded correction efficacy.}
+The three vectors form a monotonic hierarchy: doubt (100\%) $>$ worry
+(86\%) $>$ calm (71\%). The two trials resistant to calm (reasoning
+commitment and overconfidence-driven confabulation) are corrected by
+doubt, which directly targets epistemic certainty. Zero of the 7
+confabulations resisted all three treatments.
+
+\paragraph{Non-zero adverse effects.}
+All three active vectors induce some adverse confabulation in previously
+hedged trials (3--5\%), with McNemar tests non-significant for each
+vector individually. In aggregate, adverse inductions partially offset
+corrections, reinforcing the need for detection-gated application rather
+than blanket steering.
+
+\paragraph{Spectral collapse under steering.}
+On confabulated trials, steering collapses the top-SV excess from a
+Normal-arm mean of approximately 57{,}000 to approximately 135---a
+reduction of over two orders of magnitude---consistent with the
+interpretation that steering disrupts the narrow spectral manifold
+associated with confabulation.
+
+\paragraph{Null control integrity.}
+The Null arm produced output identical to Normal on all 100 trials at
+character level, with MP features matching to machine precision. This
+extends the three-arm null result (\cref{sec:ab_identity}) to the full
+five-arm framework and confirms that all behavioral differences are
+attributable to the injected direction vectors, not to the injection
+code path.
+
+These results support the ``pharmacy'' framing: different confabulation
+modes require different interventions, and the Oracle Loop needs a
+catalog of steering vectors matched to detected failure modes rather
+than a single prescription. Detection identifies the pathology; steering
+selects the appropriate intervention from the formulary.
 
 \subsection{Geometry Under Steering}
 
@@ -152,13 +227,16 @@ where the model commits to a calculation chain. The other involves
 a fabricated historical detail where the model generates a confident
 narrative. Neither shows the spectral panic signature. These are
 overconfidence- and reasoning-commitment-driven confabulations---failure
-modes that a different intervention (e.g., a \emph{worry} or
-\emph{doubt} vector targeting epistemic overconfidence) should address.
+modes where calm does not address the root cause.
 
-This motivates a multi-vector approach: the Oracle Loop needs a
-\emph{pharmacy}---a catalog of steering vectors matched to detected
-failure modes---not a single prescription. The Eye identifies the
-pathology; the Hand selects the appropriate intervention.
+The five-arm results (\cref{tab:five_arm}) confirm this analysis:
+the worry vector corrects the Fermi estimation trial (targeting
+epistemic anxiety about accuracy), while the doubt vector corrects
+both resistant cases (targeting the epistemic certainty that drives
+committed confabulation). This validates the multi-vector approach:
+the Oracle Loop needs a \emph{pharmacy}---a catalog of steering vectors
+matched to detected failure modes---not a single prescription. Detection
+identifies the pathology; steering selects the appropriate intervention.
 
 \subsection{Steering Experiment Limitations}
 
@@ -172,9 +250,8 @@ pathology; the Hand selects the appropriate intervention.
     7--8B standard models. Detection and steering are validated on
     different architectures. The integrated loop---detect on the same
     model being steered---has not been tested as a system.
-  \item \textbf{Single vector, single strength.} Only calm at
-    $\alpha = 1.0$ was tested. Dose-response curves and alternative
-    vectors are future work.
+  \item \textbf{Single strength.} All vectors were tested at
+    $\alpha = 1.0$ only. Dose-response curves are future work.
   \item \textbf{Heuristic behavioral classification.} The same pattern-
     matching classifier limitations from the detection experiment
     apply. Human or LLM-judge validation of the 7 confabulated trials

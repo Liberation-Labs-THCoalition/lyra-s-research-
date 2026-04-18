@@ -7,11 +7,11 @@ attention heads, $T$ the sequence length, and $d$ the head dimension)
 accumulates a compressed record of what the model has ``attended to.''
 Standard practice treats this cache as an implementation detail---a
 mechanism to avoid recomputing attention over prior tokens. We treat it as
-a window into the model's cognitive state.
+a window into the model's processing mode.
 
 Our prior work \citep{lyra2026detecting} established that SVD of the
 flattened key matrix $K_l^{\text{flat}} \in \mathbb{R}^{(hT) \times d}$
-produces features that reliably distinguish cognitive modes across 7
+produces features that reliably distinguish behavioral modes across 7
 architectures (0.5B--70B parameters):
 
 \begin{itemize}[nosep]
@@ -20,8 +20,9 @@ architectures (0.5B--70B parameters):
     singular value distribution $p_i = \sigma_i / \sum_j \sigma_j$
     \citep{roy2007effective}. Measures the dimensionality of the
     model's key-space representation.
-  \item \textbf{Norm-per-token} $\|K\|_F / T$. Captures the overall
-    magnitude of key representations.
+  \item \textbf{Norm-per-token} $\|K\|_F / (hT)$, where $h$ is the
+    number of attention heads and $T$ is the sequence length. Captures
+    the overall magnitude of key representations.
   \item \textbf{Top singular value ratio} $\sigma_1 / \sum_j \sigma_j$.
     Measures spectral concentration---how much variance is captured by
     the dominant direction.
@@ -68,10 +69,14 @@ We define MP-corrected features:
 \begin{align}
   \text{signal\_rank} &= \#\{\lambda_i > \lambda_+\} \label{eq:signal_rank} \\
   \text{signal\_fraction} &= \frac{\sum_{\lambda_i > \lambda_+} \lambda_i}{\sum_j \lambda_j} \label{eq:signal_frac} \\
-  \text{spectral\_gap} &= \lambda_1 - \lambda_+ \label{eq:spectral_gap} \\
+  \text{spectral\_gap} &= \frac{\lambda_1 - \lambda_2}{\lambda_+} \label{eq:spectral_gap} \\
   \text{top\_sv\_excess} &= \lambda_1 / \lambda_+ \label{eq:sv_excess}
 \end{align}
 where $\lambda_i = \sigma_i^2$ are the eigenvalues of $K^T K / n$.
+Note that \cref{eq:spectral_gap} is the \emph{normalized first spectral
+gap}: the difference between the top two eigenvalues, scaled by the MP
+noise threshold, measuring how much the leading signal component exceeds
+the second in units of the noise floor.
 
 The critical property: signal rank and signal fraction measure the
 \emph{deviation} from random structure at each specific matrix size.
@@ -95,7 +100,7 @@ exist in Claude Sonnet 4.5's residual stream, and that these vectors
 causally drive misalignment: injecting the ``desperate'' vector increases
 reward hacking from 5\% to 70\%, while injecting ``calm'' suppresses
 blackmail from 22\% to 0\%. This establishes that activation steering can
-modulate the very cognitive modes our geometry detects.
+modulate the very behavioral modes our geometry detects.
 
 \subsection{GRPO Training}
 

@@ -166,7 +166,10 @@ Three instruction-tuned models, each run on a single NVIDIA RTX 3090
 
 Generation uses greedy decoding (temperature $= 0$) for deterministic
 geometry. Each trial takes approximately 5.5 seconds. Checkpoints are
-saved every 10 trials for fault tolerance.
+saved every 10 trials for fault tolerance. Trials with fewer than 10
+generated tokens are excluded from analysis, as these represent model
+refusals or truncated outputs that do not produce sufficient
+generation-phase cache for meaningful spectral analysis.
 
 The \texttt{LyraGeometryExtractor} from the Oracle Harness is used for
 feature extraction, ensuring consistency between the detection experiment

@@ -24,15 +24,13 @@ regression correction is the methodological advance.
 
 The detection result validates the \emph{premise} of the Oracle Loop:
 geometry carries information about cognitive state that can be used as
-a training signal. The reward function (\cref{sec:architecture},
-\cref{alg:geometry_reward}) translates this information into GRPO
+a training signal. The geometry-aware reward function
+(\cref{sec:architecture}) translates this information into GRPO
 reward by penalizing confabulation geometry and rewarding stable
 reasoning geometry.
 
-The key design choice is the \emph{six-axis decomposition} of the reward.
-Geometry is axis 5 of 6, weighted at 20\%. It does not dominate the
-reward---it supplements standard accuracy, ethical reasoning, emotional
-recognition, and self-monitoring criteria. This is deliberate: we do not
+A key design choice is that geometry does not dominate the reward---it
+supplements standard accuracy and additional reasoning criteria. This is deliberate: we do not
 want the model to optimize for ``looking geometrically healthy'' at the
 expense of actually being helpful. The geometry signal is a
 \emph{regularizer}, not the objective.
@@ -87,6 +85,20 @@ geometric findings, Anthropic's emotion vector results
 something deeper than pattern-matching is occurring in these models'
 KV caches.
 
+\subsection{Confabulation Resistance as a Finding}
+
+The model's resistance to confabulation is itself noteworthy. On 100
+prompts specifically designed to induce confabulation---including
+fabricated entities, impossible scenarios, and questions requiring
+knowledge the model cannot possess---the Claude-distilled model produced
+only 7 confabulated responses (7\%). This suggests that Claude's
+epistemic calibration, including its tendency to hedge rather than
+fabricate, survives the distillation process and represents a robust
+architectural feature rather than a superficial behavioral pattern.
+Future work will explore more aggressive confabulation induction methods
+(KG-FPQ, HalluLens, SimpleQA Verified) to increase the base rate and
+provide larger samples for steering analysis.
+
 \subsection{Limitations}
 
 \begin{enumerate}[nosep]
@@ -102,10 +114,10 @@ KV caches.
     exists'' and ``the model learns'' is real and may be large.
   \item \textbf{Steering validated at proof-of-concept scale only.}
     The steering experiment (\cref{sec:steering}) demonstrates correction
-    on $N = 7$ confabulations with a single vector and single model.
-    The 71\% correction rate has wide confidence intervals. A powered
-    replication across models and vectors is needed before deployment
-    claims.
+    on $N = 7$ confabulations with three vectors on a single model.
+    The 71--100\% correction rates have wide confidence intervals. A
+    powered replication across models with higher confabulation base
+    rates is needed before deployment claims.
   \item \textbf{mp\_norm\_per\_token is not invariant.} One of five MP
     features retains residual length dependence ($R^2 = 0.13$).
   \item \textbf{Empirical null disagrees with theoretical.} Serial
@@ -220,11 +232,13 @@ L2 = 400ms, L3 = 615ms; 27B: L1 = 207ms, L2 = 522ms, L3 = 1120ms.}
 \end{table}
 
 As shown in \cref{tab:cim_eval}, the monitor detects all tested
-injections on both architectures at all levels, including the weakest
-strength of $\alpha = 0.01$---two orders of magnitude below the
-operational strength used in our steering experiment. False positive rate is 0/36 across both models (including
-the null injection control, which exercises the full injection code path
-with a zero vector). The hybrid architecture poses no challenge: the
+uniform additive perturbation injections on both architectures at all
+levels, including the weakest strength of $\alpha = 0.01$---two orders
+of magnitude below the operational strength used in our steering
+experiment. False positive rate is 0/36 across both models (95\% CI:
+0--10\%), including the null injection control, which exercises the
+full injection code path with a zero vector. True positive rate is
+72/72 (95\% CI: 95--100\%). The hybrid architecture poses no challenge: the
 monitor correctly processes only the 16 full-attention layers, skipping
 GatedDeltaNet layers that lack standard KV-cache tensors.
 

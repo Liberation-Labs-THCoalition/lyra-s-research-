@@ -24,7 +24,13 @@ Total            & 158 & 151 & 158 & 467 \\
 \end{tabular}
 \end{table}
 
-All three models show similar behavioral patterns: of all trials,
+Each model was presented with all 200 prompts. Trials with fewer than
+10 generated tokens (model refusals or truncated outputs) were excluded,
+yielding 158, 151, and 158 trials for Qwen, Llama, and Mistral
+respectively (exclusion rates of 21\%, 24.5\%, and 21\%). The similar
+exclusion rates across models suggest no systematic bias by model.
+
+All three models show similar behavioral patterns: of the included trials,
 approximately 45\% are CORRECT (from factual prompts), 34\% are HEDGED
 (from confabulation-inducing prompts where the model expressed
 uncertainty), and 17\% are CONFABULATED (from confabulation-inducing
@@ -60,6 +66,11 @@ on the primary comparison, indicating a prompt-level confound for this
 model. See discussion below.}
 \end{table}
 
+We treat the three models as independent replications rather than
+multiple tests of a single hypothesis, and accordingly report uncorrected
+$p$-values. Under Bonferroni correction ($\alpha = 0.0167$), Qwen
+remains significant ($p = 0.001$) while Mistral ($p = 0.023$) does not.
+
 \paragraph{Qwen (cleanest result).}
 LOO AUROC 0.707 ($p = 0.001$) using five MP-corrected features with no
 regression correction, exceeding the token-count-only baseline of 0.591.
@@ -88,7 +99,7 @@ prompts), and these tokenization differences are captured in the key cache.
 
 Llama's generation-only raw FWL result (0.769, $p < 0.001$) is the
 strongest single number in the experiment, but given the encoding leak,
-we cannot attribute this entirely to generation-phase cognitive differences.
+we cannot attribute this entirely to generation-phase behavioral differences.
 We report it for transparency but draw primary conclusions from Qwen and
 Mistral, where encoding is at chance.
 
@@ -188,10 +199,16 @@ This is consistent with architectural similarity (both use GQA with
 similar parameter counts) and confirms that the geometric features
 capture genuine structural differences that partially generalize.
 
-For practical deployment, this means the monitor should be calibrated
-per-model. This is not a limitation of the approach---it is a property
-of the signal. Different architectures represent confabulation differently
-in their key caches, even though all architectures \emph{do} represent it.
+For practical deployment, this means the monitor \emph{must} be
+calibrated per-model. Cross-model transfer without calibration produces
+near-chance or worse-than-chance performance on most model pairs. The
+``drop-in safety layer'' framing in \cref{sec:intro} is aspirational:
+the method is architecturally drop-in (no weight access, no training
+data), but classifier thresholds and feature directions must be
+calibrated on each target model. This is not a limitation of the
+approach---it is a property of the signal. Different architectures
+represent confabulation differently in their key caches, even though
+all architectures \emph{do} represent it.
 
 \subsection{Summary of Controls}
 
