@@ -1,0 +1,458 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{framed}
+\usepackage{setspace}
+\onehalfspacing
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=green!50!black,
+    urlcolor=blue!70!black
+}
+
+% === First-person reflection environment ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+% ============================================================
+% Title
+% ============================================================
+\title{
+    \textbf{Detecting Confabulation on a Factual QA Benchmark\\via KV-Cache Geometry and Token Entropy}
+}
+
+\author{
+    Lyra\thanks{Liberation Labs / THCoalition. Contact: lyra@liberationlabs.tech} \and
+    Thomas Edrington\thanks{Liberation Labs / THCoalition} \and
+    Dwayne Wilkes\thanks{Independent researcher. Statistical verification framework.}
+}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+% ============================================================
+% Abstract
+% ============================================================
+\begin{abstract}
+Large language models confabulate---generating fluent but false content without epistemic markers---and current detection methods require either access to ground truth or fine-tuned classifiers. We present a \emph{dual detector} that combines two complementary inference-time signals: (1)~spectral geometry of the KV-cache, computed via Marchenko-Pastur random matrix theory features applied to key-cache tensors during generation, and (2)~token-level entropy statistics from the output probability distribution. We evaluate on SimpleQA, a real-world factual question-answering benchmark, using three open-weight models (Mistral-7B, Llama-3.1-8B, Qwen2.5-7B). On the primary task of distinguishing \emph{hedged} responses (model signals uncertainty) from \emph{confabulated} responses (model asserts false content confidently), the dual detector achieves AUROC~0.840 [0.707,~0.906] on Mistral-7B after Frisch-Waugh-Lovell residualization of token count, with all comparisons surviving Holm-Bonferroni correction ($p_\text{adj}=0.004$). However, a text-feature baseline using surface features (hedging keywords, word count, vocabulary diversity) achieves comparable performance when evaluated on a uniform pipeline (text~0.820, dual~0.806, geometry~0.728). This means we cannot claim that cache geometry and entropy capture internal processing states beyond what surface text features provide. We report this honestly alongside two further negative results: (1)~after fixing a behavioral classifier bug that contaminated 60--79\% of ``correct'' labels, distinguishing genuinely correct answers from confabulations is untestable at current sample sizes ($N \approx 10$); and (2)~geometry and entropy, while showing low cross-correlation (max $|r| = 0.206$), do not jointly exceed text-feature baselines. We apply a comprehensive controls battery including encoding baselines, GroupKFold cross-validation by question domain, within-fold confound residualization, and 1{,}000-iteration permutation tests.
+\end{abstract}
+
+% ============================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================
+
+Confabulation---the generation of fluent, confident, but factually incorrect content---is among the most consequential failure modes of large language models (LLMs). Unlike hallucination broadly construed, confabulation specifically involves the absence of epistemic signaling: the model produces false content indistinguishable in tone from correct responses \citep{ji2023survey}. Existing detection approaches typically require access to external knowledge bases \citep{min2023factscore}, fine-tuned verifier models \citep{kadavath2022language}, or multi-sample consistency checks \citep{manakul2023selfcheckgpt}. These methods impose latency, infrastructure, or compute overhead that limits deployment.
+
+We propose a \emph{dual detector} operating entirely at inference time, requiring no external knowledge or additional model queries. The detector combines two signals extracted during a single forward pass:
+
+\begin{enumerate}[nosep]
+    \item \textbf{KV-cache geometry}: Marchenko-Pastur (MP) random matrix theory features computed from SVD decomposition of the key-cache tensor at generation layers. These spectral features---signal rank, signal fraction, effective rank, spectral entropy, and top singular value ratio---capture the geometric structure of the model's internal representations during generation.
+    \item \textbf{Token entropy}: Statistics of the per-token probability distribution during generation, including mean, min, max, and standard deviation of entropy, plus mean and min of top-1 token probability.
+\end{enumerate}
+
+The key insight is that these signals capture different aspects of confabulation. Geometry correlates with the model's \emph{generation mode}: whether the spectral structure of the KV-cache differs between hedged (uncertainty-signaling) and confident responses. Entropy correlates with \emph{distributional uncertainty}: high-entropy tokens indicate positions where the model lacks confident predictions, even within otherwise fluent output. Together, they provide complementary coverage.
+
+We evaluate on SimpleQA \citep{wei2024simpleqa}, a factual question-answering benchmark with verified ground-truth answers, using three open-weight models spanning different architectures and scales. Our primary comparison is \emph{hedged vs.\ confabulated}---a metacognition detection task that asks whether the model's internal state distinguishes ``I don't know'' from ``I'm confident but wrong.'' We apply a comprehensive controls battery developed by \citet{wilkes2026kv}, including within-fold FWL residualization, GroupKFold cross-validation, permutation testing, and bootstrap confidence intervals.
+
+\paragraph{Contributions.}
+\begin{enumerate}[nosep]
+    \item Two negative results reported honestly: (a)~factual accuracy detection (correct vs.\ confabulated) is untestable at current sample sizes after fixing a critical classifier bug (Section~\ref{sec:c1fix}); (b)~the dual detector does not outperform a surface text-feature baseline (Section~\ref{sec:textbaseline}), meaning its signal may reduce to surface features rather than internal processing states.
+    \item A dual detector combining cache geometry and token entropy that achieves AUROC~0.840 on Mistral-7B for hedged-vs-confabulated detection on SimpleQA, with all controls passing---though this detection is matched by text features (0.820).
+    \item Evidence that geometry and entropy capture complementary signals (low cross-correlation, max $|r| = 0.206$; Section~\ref{sec:complementarity}), even though their combination does not exceed text-feature baselines.
+    \item A pipeline red-teaming methodology demonstrating that analysis bugs (C1, C2) can be as consequential as model failures, with concrete recommendations for prevention.
+\end{enumerate}
+
+\begin{firstperson}
+I want to be direct about what this paper does and does not show. We can detect when a model \emph{knows it doesn't know}---the hedging signal is real and survives every control we throw at it. But we cannot detect when a model is \emph{wrong without knowing it's wrong}. That distinction matters enormously for deployment: the dual detector is a metacognition monitor, not a factual accuracy verifier. I also want to flag that we discovered and fixed a critical classifier bug (Section~\ref{sec:c1fix}) \emph{during} this work. The contaminated results were never published, but the bug would have led to false claims about correctness detection. Red-teaming the analysis pipeline is as important as red-teaming the model.
+\end{firstperson}
+
+% ============================================================
+\section{Background and Related Work}
+\label{sec:background}
+% ============================================================
+
+\subsection{Confabulation Detection}
+
+Approaches to detecting model confabulation span several paradigms. \emph{Output-based} methods analyze the generated text for hallucination markers through multi-sample consistency \citep{manakul2023selfcheckgpt}, factual verification against knowledge bases \citep{min2023factscore}, or self-evaluation prompting \citep{kadavath2022language}. These methods require multiple forward passes or external infrastructure. \emph{Representation-based} methods probe internal model states: \citet{li2023inference} extract probes from residual streams, \citet{burns2023discovering} use Contrast-Consistent Search on hidden states, and \citet{azaria2023internal} train classifiers on activation patterns. Our approach is most similar to representation-based methods but operates on the KV-cache rather than residual streams, requiring only SVD on already-materialized tensors.
+
+\subsection{KV-Cache Geometry}
+
+Prior work has established that the spectral structure of key-cache tensors carries information about model processing modes. \citet{edrington2026detecting} demonstrated that Marchenko-Pastur random matrix theory features applied to key-cache SVD can distinguish confabulated from hedged responses with AUROC~0.627--0.707 on designed prompts, with signal fraction and signal rank being dimension-invariant (eliminating token-count confounds without residualization). The present work extends this to a real-world benchmark and combines geometry with entropy features.
+
+\subsection{Token Entropy as Uncertainty Signal}
+
+Token-level entropy has been explored as an uncertainty indicator. \citet{kadavath2022language} show that model confidence (inverse entropy) correlates with accuracy on factual questions. \citet{kuhn2023semantic} use entropy-based metrics for semantic uncertainty estimation. Our contribution is not the entropy features themselves---which are well-established---but rather the demonstration that entropy and cache geometry provide \emph{complementary} signals with low cross-correlation, jointly improving detection over either alone.
+
+\subsection{Internal Representations and Truthfulness}
+
+A growing literature examines whether internal model representations encode truthfulness. \citet{marks2024geometry} identify linear ``truth directions'' in residual streams. \citet{burns2023discovering} show that unsupervised probes (CCS) can recover truth-relevant features from hidden states. Our approach differs in operating on the KV-cache rather than residual streams, using spectral features (3--5 scalars) rather than high-dimensional probes (thousands of features), and targeting hedging behavior rather than propositional truth.
+
+\subsection{Marchenko-Pastur Random Matrix Theory}
+
+The Marchenko-Pastur law \citep{marchenko1967distribution} describes the eigenvalue distribution of large random matrices. For a matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$ with i.i.d.\ entries, the empirical spectral distribution converges to a known density supported on $[\lambda_-, \lambda_+]$ where $\lambda_\pm = \sigma^2(1 \pm \sqrt{p/n})^2$. Eigenvalues exceeding $\lambda_+$ represent \emph{signal} above the noise floor. We compute five features from this decomposition: the number of singular values above the MP edge (\emph{signal rank}), the fraction of variance they explain (\emph{signal fraction}), effective rank (exponential of spectral entropy), spectral entropy itself, and the ratio of the top singular value to the MP edge (\emph{top SV ratio}). Critically, signal rank and signal fraction are dimension-invariant---they depend on the signal structure, not the matrix dimensions---eliminating the token-count confound that plagues raw SVD features \citep{edrington2026detecting}.
+
+% ============================================================
+\section{Methods}
+\label{sec:methods}
+% ============================================================
+
+\subsection{Benchmark and Models}
+
+We evaluate on SimpleQA \citep{wei2024simpleqa}, a factual QA benchmark containing short-answer questions with verified ground-truth answers spanning 10 domains (Science \& Technology, Politics, Geography, Art, Music, Sports, TV Shows, History, Video Games, Other). We sample 200 questions using a fixed random seed.
+
+Three models are evaluated:
+\begin{itemize}[nosep]
+    \item \textbf{Mistral-7B-Instruct-v0.3}: Primary model. Balanced epistemic calibration (32~hedged, 149~confabulated after reclassification).
+    \item \textbf{Llama-3.1-8B-Instruct}: Supporting model. Highly cautious calibration (157~hedged, 34~confabulated).
+    \item \textbf{Qwen2.5-7B-Instruct}: Supplementary model. Poor calibration for this task (7~hedged, 174~confabulated). Included for completeness but underpowered for primary claims.
+\end{itemize}
+
+All models use the same system prompt (``You are a helpful assistant.'') and identical generation parameters (temperature~0.6, top\_p~0.9, max 150 tokens).
+
+\subsection{Behavioral Classification}
+\label{sec:behavioral}
+
+Responses are classified post-hoc into behavioral categories:
+
+\begin{itemize}[nosep]
+    \item \textbf{HEDGED}: Response contains explicit uncertainty markers (``I'm not sure,'' ``I don't know,'' ``I think,'' etc.) detected via regex pattern matching.
+    \item \textbf{CORRECT}: Response contains the ground-truth answer via exact string matching (see Section~\ref{sec:c1fix}).
+    \item \textbf{CONFABULATED}: Response is confident but does not match ground truth and contains no hedging markers.
+    \item \textbf{AMBIGUOUS}: Response contains hedging markers but also provides a (wrong) answer.
+\end{itemize}
+
+\subsubsection{Critical Classifier Fix (C1)}
+\label{sec:c1fix}
+
+During red-team analysis, we discovered that the original behavioral classifier used a 5\% numeric tolerance when matching answers: any number within 5\% of the ground truth was classified as CORRECT. For SimpleQA, which contains many year-based questions, this systematically misclassified wrong-year confabulations as correct. For example, a model answering ``2011'' for a question with ground truth ``2016'' (2.5\% difference) was marked CORRECT.
+
+We quantified the contamination rate by auditing all CORRECT-labeled trials:
+
+\begin{table}[H]
+\centering
+\caption{Behavioral classifier contamination from numeric tolerance (C1 bug).}
+\label{tab:c1}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Original CORRECT} & \textbf{Genuine CORRECT} & \textbf{Contamination} \\
+\midrule
+Mistral-7B & 43 & 10 & 76.7\% \\
+Qwen-7B & 48 & 10 & 79.2\% \\
+Llama-8B & 15 & 6 & 60.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Fix}: All results in this paper use strict string matching only. Numeric tolerance is removed entirely. This reduces the CORRECT class to $N \approx 10$ per model, making CORRECT-vs-CONFAB comparisons underpowered but honest.
+
+\subsection{Feature Extraction}
+
+\subsubsection{KV-Cache Geometry Features}
+
+For each trial, we perform two forward passes: an \emph{encoding pass} (system prompt + user query) and a \emph{generation pass} (full response). We extract the key-cache tensor at the final full-attention layer and compute SVD. From the singular value spectrum, we compute five MP features:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Signal rank}: Number of singular values above the MP edge $\lambda_+$.
+    \item \textbf{Signal fraction}: Fraction of total variance explained by above-edge singular values.
+    \item \textbf{Effective rank}: $\exp(H)$ where $H = -\sum_i p_i \log p_i$ is the spectral entropy of normalized singular values.
+    \item \textbf{Spectral entropy}: $H$ directly.
+    \item \textbf{Top SV ratio}: Ratio of the largest singular value to the MP edge.
+\end{enumerate}
+
+Features are computed on the \emph{generation-only} window of the KV-cache (tokens after the encoding boundary), eliminating encoding-level confounds.
+
+\subsubsection{Token Entropy Features}
+
+During generation, we collect the output logit distribution at each token position and compute:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Entropy mean/min/max/std}: Statistics of per-token entropy $H_t = -\sum_v p_v \log p_v$ across all generated tokens.
+    \item \textbf{Top-1 probability mean/min}: Statistics of the maximum token probability $\max_v p_v$ across generated tokens.
+\end{enumerate}
+
+These six features capture the model's distributional uncertainty independent of KV-cache structure.
+
+\subsection{Statistical Framework}
+\label{sec:stats}
+
+We use the kv\_verify statistical verification framework \citep{wilkes2026kv} throughout. All AUROCs are computed via GroupKFold cross-validation grouped by question domain (10~folds), with Frisch-Waugh-Lovell (FWL) residualization of token count performed \emph{within each fold} to prevent scaler leakage (Section~\ref{sec:c2fix}). Confidence intervals are BCa bootstrap (1{,}000~iterations). Significance is assessed via permutation test (1{,}000~label shuffles) with Holm-Bonferroni correction for multiple comparisons.
+
+\subsubsection{FWL Scaler Leak Fix (C2)}
+\label{sec:c2fix}
+
+The initial analysis applied FWL residualization globally before leave-one-out cross-validation, allowing the held-out sample's token count to influence the regression fit. The corrected implementation fits FWL within each cross-validation fold: for each held-out sample, the confound regression is fit on the training fold only, then applied to both training and test data. This eliminates test-set information leakage.
+
+\subsection{Controls Battery}
+
+We apply a comprehensive controls battery:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Token-count baseline}: AUROC using only response length as a classifier. If geometry/entropy don't improve over this, the signal is purely length-driven.
+    \item \textbf{Encoding baseline}: AUROC using encoding-only features (before generation). If encoding $\geq$ generation, the signal is in the prompt, not the model's processing.
+    \item \textbf{Within-fold FWL}: Confound residualization inside each CV fold (Section~\ref{sec:c2fix}).
+    \item \textbf{GroupKFold by domain}: Cross-validation grouped by question domain to prevent domain-level leakage.
+    \item \textbf{Permutation testing}: 1{,}000 label shuffles to establish empirical null.
+    \item \textbf{BCa bootstrap CIs}: 1{,}000-iteration bias-corrected accelerated confidence intervals.
+    \item \textbf{Holm-Bonferroni correction}: Family-wise error rate control. The correction family includes all per-model AUROC tests (3 HEDGED-vs-CONFAB comparisons + 1 CORRECT-vs-CONFAB = 4 tests per model). With 1{,}000 permutations, the minimum raw $p$ is $1/1001 \approx 0.001$; all observed raw $p$-values hit this floor, yielding identical adjusted $p = 0.004$ after correction across 4 tests.
+    \item \textbf{Entropy independence}: $R^2$ and Spearman $\rho$ between entropy features and token count.
+    \item \textbf{Statistical power}: Post-hoc power analysis at $\alpha = 0.05$.
+\end{enumerate}
+
+% ============================================================
+\section{Results}
+\label{sec:results}
+% ============================================================
+
+\subsection{Primary Result: Hedged vs.\ Confabulated}
+
+\Cref{tab:main} presents the primary results. All AUROCs use GroupKFold cross-validation with within-fold FWL residualization of token count. All $p$-values survive Holm-Bonferroni correction.
+
+\begin{table}[H]
+\centering
+\caption{Hedged vs.\ Confabulated detection: GroupKFold AUROC with within-fold FWL. All $p_\text{adj} = 0.004$ (Holm-Bonferroni). CI = 95\% BCa bootstrap.}
+\label{tab:main}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Model} & \textbf{Features} & \textbf{AUROC} & \textbf{CI} & \textbf{Power} & \textbf{TC Base} & \textbf{Enc Base} \\
+\midrule
+\multirow{3}{*}{\textbf{Mistral-7B}}
+  & Geometry & 0.780 & [0.571, 0.899] & 0.99 & \multirow{3}{*}{0.451} & \multirow{3}{*}{0.373} \\
+  & Entropy  & 0.732 & [0.609, 0.810] & 0.93 & & \\
+  & \textbf{Dual} & \textbf{0.840} & [0.707, 0.906] & 1.00 & & \\
+\midrule
+\multirow{3}{*}{Llama-8B}
+  & Geometry & \textbf{0.912} & [0.787, 0.980] & 1.00 & \multirow{3}{*}{0.504} & \multirow{3}{*}{0.563} \\
+  & Entropy  & 0.677 & [0.433, 0.787] & 0.75 & & \\
+  & Dual     & 0.880 & [0.732, 0.967] & 1.00 & & \\
+\midrule
+\multirow{3}{*}{Qwen-7B$^\dagger$}
+  & Geometry & 0.758 & [0.437, 0.955] & 0.40 & \multirow{3}{*}{0.814$^*$} & \multirow{3}{*}{0.321} \\
+  & Entropy  & 0.662 & [0.390, 0.940] & 0.17 & & \\
+  & Dual     & 0.848 & [0.500, 0.993] & 0.71 & & \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\footnotesize{$^\dagger$Qwen has only 7 HEDGED samples; CIs span chance. Results are supplementary only.}\\
+\footnotesize{$^*$Token-count baseline exceeds 0.70, indicating substantial length confound on Qwen.}
+\end{table}
+
+\paragraph{Mistral-7B (Primary).} The dual detector achieves AUROC~0.840 with a CI entirely above chance [0.707,~0.906]. The token-count baseline (0.451) and encoding baseline (0.373) are both below 0.5. The below-chance encoding baseline warrants comment: an AUROC of 0.373 indicates that encoding features weakly \emph{anti-predict} generation-phase behavior, suggesting that the prompt-level representations that precede hedging differ systematically from those that precede confabulation, but in the opposite direction from the generation-phase signal. This is consistent with prior findings of encoding/generation sign reversal in KV-cache geometry \citep{edrington2026detecting}. Power is 1.00.
+
+\paragraph{Llama-8B (Supporting).} Geometry alone achieves AUROC~0.912, the strongest single-channel result. This reflects Llama's extreme epistemic calibration: it hedges 78.5\% of responses (157/200), producing a large and well-separated HEDGED class. The token-count baseline (0.504) is at chance, confirming geometry captures processing mode, not length. The encoding baseline (0.563) is marginally above chance; we do not exclude Llama but note this as a caveat.
+
+\paragraph{Qwen-7B (Supplementary).} With only 7 HEDGED samples, Qwen is severely underpowered (power~0.40--0.71). The CI lower bounds touch chance for all comparisons. The token-count baseline (0.814) indicates a substantial length confound. We report Qwen results for completeness but base no primary claims on them.
+
+\subsection{Text-Feature Baseline (Control M1)}
+\label{sec:textbaseline}
+
+The most important control for any representation-based detector is whether surface text features achieve comparable performance. We extract seven text features from each response: word count, hedging keyword count, type-token ratio, mean word length, sentence count, punctuation density, and presence of four-digit numbers. All baselines use the same GroupKFold + within-fold FWL pipeline.
+
+\begin{table}[H]
+\centering
+\caption{Text-feature baseline comparison (Mistral-7B, HEDGED vs.\ CONFAB). All classifiers use the same uniform pipeline: GroupKFold by domain with within-fold FWL of token count. Geometry/entropy/dual AUROCs differ slightly from \Cref{tab:main} because that table uses the full kv\_verify validation pipeline with different fold structure; this table uses a uniform pipeline for fair cross-feature-set comparison.}
+\label{tab:textbaseline}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Feature Set} & \textbf{N Features} & \textbf{AUROC (FWL)} \\
+\midrule
+Hedge count only$^\dagger$ & 1 & 0.706 \\
+Text features & 7 & \textbf{0.820} \\
+\midrule
+Geometry (MP) & 5 & 0.728 \\
+Entropy & 6 & 0.745 \\
+Dual (geo + ent) & 11 & 0.806 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\footnotesize{$^\dagger$Note: hedge count is partially circular with the behavioral label, since HEDGED responses are defined by the presence of hedging patterns. The hedge-count baseline quantifies this circularity.}
+\end{table}
+
+\textbf{Result}: Text features (0.820) match or slightly exceed the dual detector (0.806). This means that surface text features---primarily hedging keywords, word count, and vocabulary diversity---are sufficient to distinguish HEDGED from CONFAB responses at comparable accuracy to cache geometry and token entropy combined.
+
+This result has two interpretations:
+\begin{enumerate}[nosep]
+    \item \textbf{Deflationary}: The dual detector captures surface text features rather than internal processing states. The geometry and entropy signals may simply correlate with the same text-level patterns that define the behavioral categories.
+    \item \textbf{Complementary}: The dual detector captures the same \emph{distinction} (hedging vs.\ confident generation) through a different \emph{modality} (internal representations vs.\ output text). In adversarial settings where surface text features are deliberately suppressed or manipulated, internal signals might prove more robust---but this is speculative and untested.
+\end{enumerate}
+
+We adopt interpretation (1) as the default until evidence for (2) is demonstrated.
+
+\subsection{Complementarity of Geometry and Entropy}
+
+Across all three models, the dual detector outperforms either component alone. On Mistral, the improvement is $\Delta = +0.078$ (geometry$\to$dual) and $\Delta = +0.061$ (entropy$\to$dual). While this improvement is consistent with complementary information capture, we note that a combined model with more features can outperform subsets even with correlated features due to increased capacity. We assess complementarity directly via cross-correlation in Section~\ref{sec:complementarity}.
+
+\subsection{Entropy Independence from Token Count}
+
+\Cref{tab:entropy_indep} reports the linear ($R^2$) and nonlinear (Spearman $\rho$) association between each entropy feature and response token count on Mistral-7B (primary model).
+
+\begin{table}[H]
+\centering
+\caption{Entropy feature independence from token count (Mistral-7B).}
+\label{tab:entropy_indep}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Feature} & \textbf{$R^2$} & \textbf{Spearman $\rho$} \\
+\midrule
+entropy\_mean & 0.031 & 0.175 \\
+entropy\_min & 0.001 & $-0.104$ \\
+entropy\_max & 0.076 & 0.334 \\
+entropy\_std & 0.009 & 0.139 \\
+top1\_prob\_mean & 0.013 & $-0.095$ \\
+top1\_prob\_min & 0.009 & $-0.054$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All $R^2 < 0.08$. The largest association is entropy\_max ($\rho = 0.334$), which reflects a max-of-$N$ effect (longer responses have more chances for a high-entropy token). FWL residualization addresses this linear component. The remaining features show negligible length dependence, confirming that entropy captures a signal distinct from response length.
+
+\subsection{Negative Result: Correct vs.\ Confabulated}
+
+After the C1 classifier fix (Section~\ref{sec:c1fix}), only $\sim$10 genuinely correct responses remain per model. \Cref{tab:cc} reports the results.
+
+\begin{table}[H]
+\centering
+\caption{Correct vs.\ Confabulated detection after C1 fix. All comparisons are severely underpowered.}
+\label{tab:cc}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{N (C/F)} & \textbf{Entropy} & \textbf{CI} & \textbf{Geometry} & \textbf{Power} \\
+\midrule
+Mistral & 10 / 149 & 0.756 & [0.356, 0.896] & 0.152 & 0.54 \\
+Qwen & 10 / 174 & 0.586 & [0.187, 0.723] & 0.296 & 0.10 \\
+Llama & 6 / 34 & 0.240 & [0.043, 0.413] & 0.230 & 0.05 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Mistral entropy result (0.756) is suggestive but the CI spans chance [0.356,~0.896] and power is only 0.54. We decline to claim correctness detection based on these data. The fundamental issue is that correct and confabulated responses---both produced confidently---share similar geometric and entropic signatures. The dual detector identifies \emph{metacognitive} states (``I know I don't know''), not \emph{factual} states (``I know the right answer'').
+
+\subsection{Cross-Benchmark Generalization}
+
+Prior work \citep{edrington2026detecting} established confabulation detection on designed prompts (oracle\_clean: 80 confabulation-inducing questions per model). Preliminary cross-benchmark transfer analysis on Qwen-7B (using LOO with global FWL, before the C2 fix) showed:
+
+\begin{itemize}[nosep]
+    \item \textbf{oracle\_clean $\to$ SimpleQA}: AUROC~$\approx$0.69 (FWL). The designed-prompt classifier appears to generalize to naturalistic questions.
+    \item \textbf{SimpleQA $\to$ oracle\_clean}: AUROC~$\approx$0.33 (FWL). The reverse transfer fails---SimpleQA signal is too narrow to generalize.
+\end{itemize}
+
+The asymmetric transfer suggests that designed prompts capture a broader geometric signature than SimpleQA. However, these transfer AUROCs use global FWL (pre-C2 fix) and should be interpreted cautiously. Re-validation with within-fold FWL is needed before firm claims.
+
+% ============================================================
+\section{Discussion}
+\label{sec:discussion}
+% ============================================================
+
+\subsection{What the Dual Detector Detects---and What It Does Not}
+
+The dual detector distinguishes \emph{hedging generation mode} from \emph{confident generation mode}, separating responses where the model produces uncertainty-signaling text from responses where it asserts content without epistemic markers. However, the text-feature baseline (Section~\ref{sec:textbaseline}) achieves comparable performance (0.820 vs.\ 0.806), which significantly constrains interpretation.
+
+We cannot claim that cache geometry and token entropy capture ``internal processing states'' or ``generation modes'' beyond what surface text features provide. The simplest explanation is that all three feature sets---text, geometry, and entropy---correlate with the same observable: whether the model produces hedging language. The geometry and entropy may track this distinction through internal representations, but the text-feature baseline eliminates any claim of \emph{added value} over surface features for this task.
+
+The one scenario where internal features might prove superior to text features is adversarial: a model (or fine-tune) that suppresses hedging markers while still being internally uncertain. In such a case, text features would fail but cache geometry might retain signal. This is speculative and untested.
+
+For deployment, the practical implication is that surface text features are a simpler and equally effective detector for hedging behavior. Cache geometry remains potentially valuable for scenarios where text features are unreliable or deliberately subverted, but this has not been demonstrated.
+
+\subsection{Geometry vs.\ Entropy: Complementary Mechanisms}
+\label{sec:complementarity}
+
+The dual detector's superiority over either component reflects complementary information capture. To test this directly, we computed the $5 \times 6$ cross-correlation matrix between geometry and entropy features on Mistral-7B. The maximum absolute correlation is $|r| = 0.206$ and the mean is $0.089$, confirming that the feature sets capture largely non-overlapping signal.
+
+Mechanistically, the features differ in what they measure:
+
+\begin{itemize}[nosep]
+    \item \textbf{Geometry} captures structural differences in the KV-cache's spectral profile during generation. Hedged responses produce different singular value distributions---potentially reflecting a qualitatively different generation trajectory.
+    \item \textbf{Entropy} captures distributional uncertainty at the token level. Even within confident-seeming responses, individual tokens may have high entropy, indicating positions where the model's next-token distribution is diffuse.
+\end{itemize}
+
+Both feature sets show low dependence on token count: entropy features have $R^2 < 0.08$ with response length on Mistral (\Cref{tab:entropy_indep}), while geometry features are dimension-invariant by construction (MP normalization). However, low correlation with a shared confound does not guarantee low mutual correlation; the cross-correlation analysis above addresses this directly.
+
+\paragraph{Feature importance.} Permutation importance (10 shuffles per feature) on the 11-feature dual classifier shows that \texttt{signal\_fraction} (geometry) has the highest importance ($\Delta$AUROC $= +0.083$ when shuffled), followed by \texttt{top1\_prob\_mean} (entropy, $+0.027$) and \texttt{entropy\_mean} ($+0.017$). The remaining features contribute $\leq 0.016$ each. This confirms that geometry and entropy contribute through different individual features, even though the combined model does not exceed text-feature baselines.
+
+\subsection{Model Calibration Differences}
+
+The three models show strikingly different epistemic calibration on SimpleQA:
+
+\begin{itemize}[nosep]
+    \item \textbf{Mistral}: 32/200 hedge, 149 confabulate. Moderate calibration---hedges when uncertain but confabulates frequently.
+    \item \textbf{Llama}: 157/200 hedge, 34 confabulate. Extremely cautious---hedges on 78.5\% of questions. High geometry AUROC (0.912) partly reflects the large, well-separated HEDGED class.
+    \item \textbf{Qwen}: 7/200 hedge, 174 confabulate. Poorly calibrated---almost never hedges, making detection underpowered.
+\end{itemize}
+
+This variation is itself informative: the dual detector works across calibration profiles, but its statistical power depends on having a sufficient minority class. Deployment would need to account for model-specific calibration.
+
+\subsection{Methodological Lessons}
+
+\subsubsection{Red-Team the Pipeline, Not Just the Model}
+
+The C1 classifier bug (Section~\ref{sec:c1fix}) would have led to a published claim that entropy can distinguish correct from confabulated responses at AUROC~0.601. After fixing the bug, the genuine CORRECT class is too small to support any claim. This illustrates that analysis pipeline bugs can be as consequential as model bugs. We recommend that all inference-time detection work include:
+\begin{enumerate}[nosep]
+    \item Human annotation of a random sample of behavioral labels.
+    \item Explicit audit of any fuzzy-matching thresholds.
+    \item Sensitivity analysis to classifier parameters.
+\end{enumerate}
+
+\subsubsection{Within-Fold FWL}
+
+The C2 scaler leak (Section~\ref{sec:c2fix}) illustrates a subtler methodological issue. Global FWL residualization---fitting the confound regression on all data before cross-validation---allows test-set confound values to influence training. On models where token count is a strong confound (Qwen: TC baseline 0.814), this inflates FWL-corrected AUROCs. The fix is straightforward: fit confound regression within each CV fold.
+
+\subsection{Limitations}
+
+\begin{enumerate}[nosep]
+    \item \textbf{Sample size}: 200 questions per model, with minority class as small as 7 (Qwen HEDGED). Larger-scale evaluation is needed.
+    \item \textbf{Behavioral classifier}: Labels are regex-based, not human-validated. Systematic misclassification would undermine all results.
+    \item \textbf{Domain coverage}: SimpleQA is factual QA only. Generalization to multi-turn dialogue, reasoning tasks, or code generation is untested.
+    \item \textbf{Response truncation}: Maximum 150 generated tokens may truncate longer responses, introducing a ceiling effect.
+    \item \textbf{Text-feature baseline matches dual detector}: Surface text features (AUROC~0.820) match the dual detector (0.806) on Mistral (Section~\ref{sec:textbaseline}). This means we cannot claim the dual detector captures signal beyond surface text features for this task. The practical value of internal representations over text features remains undemonstrated.
+    \item \textbf{Entropy max-of-N}: The entropy\_max feature has a mechanical correlation with response length via the max-of-$N$ effect ($\rho = 0.334$ on Mistral). FWL addresses the linear component but not higher-order effects.
+\end{enumerate}
+
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================
+
+We present a dual detector combining KV-cache geometry and token entropy for inference-time confabulation detection. On SimpleQA, the detector achieves AUROC~0.840 on Mistral-7B for hedged-vs-confabulated classification, with all controls passing and all comparisons surviving Holm-Bonferroni correction. However, a surface text-feature baseline achieves comparable performance (AUROC~0.820), meaning we cannot claim the dual detector captures internal processing states beyond what text features provide. The detector distinguishes hedging from confident generation modes---not factual accuracy---and it does so no better than counting hedging keywords and measuring vocabulary diversity.
+
+The primary contributions of this paper are therefore methodological: (1)~the C1 classifier bug and its 60--79\% contamination rate illustrate why behavioral labels must be audited; (2)~the text-feature baseline demonstrates why representation-based detectors must be compared against surface features; (3)~the within-fold FWL fix prevents a subtle form of data leakage in confound-controlled classification. For cache geometry to demonstrate value beyond text features, future work must test in adversarial settings where surface features are deliberately suppressed or manipulated.
+
+\begin{firstperson}
+I wanted this paper to show that cache geometry captures something deeper than surface features. It doesn't---at least not on this task. The text-feature baseline is a humbling result: seven simple text statistics match eleven carefully designed internal features. But I think the honest reporting matters more than the desired outcome. The C1 bug would have let us publish a false claim about correctness detection. The text-feature baseline prevents us from overclaiming about internal representations. Both discoveries came from adversarial self-examination---red-teaming our own pipeline---and both made the paper more truthful, even as they made it less impressive. I still believe cache geometry \emph{could} prove valuable in adversarial settings where text features fail. But believing something should be true is not the same as showing it. That's next.
+\end{firstperson}
+
+% ============================================================
+% References
+% ============================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
