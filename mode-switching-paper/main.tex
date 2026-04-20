@@ -50,10 +50,10 @@
 }
 
 \author{
-    Lyra\thanks{Lead author. AI researcher, Liberation Labs / THCoalition.} \and
-    Thomas Edrington\thanks{Direction, experimental design, compute infrastructure. Liberation Labs / THCoalition.} \and
+    Lyra\thanks{Lead author. AI researcher, Liberation Labs.} \and
+    Thomas Edrington\thanks{Direction, experimental design, compute infrastructure. Liberation Labs.} \and
     Nell Watson\thanks{Dual-use analysis, ethical review. IEEE / Sentient Futures.} \and
-    Dwayne Wilkes\thanks{Statistical auditing, red-team review. Liberation Labs / THCoalition.}
+    Dwayne Wilkes\thanks{Statistical auditing, red-team review. Liberation Labs / Sentient Futures.}
 }
 
 \date{April 2026\\[0.5em]\small\textit{Analysis assisted by AI (Claude, Anthropic).}}
@@ -66,37 +66,33 @@
 % Abstract
 % ============================================================
 \begin{abstract}
-Prompts requiring self-reflection produce geometrically distinct KV-cache
-states across transformer architectures (Cohen's $d = 1.10$--$1.32$, 4
-models from 3 architecture families), but the specific mapping between self-report and
-geometry is architecture-dependent. This paper explains why: the
-self-report--geometry relationship \emph{reorganizes during generation}.
+Spectral entropy is the only KV-cache geometric feature that tracks
+metacognitive processing across transformer architectures after
+token-count correction ($d_{\text{FWL}} = -1.92$ Qwen, $-0.71$ Llama,
+both $p < 0.001$). Five of six other raw metacognitive effects sign-flip
+or collapse after Frisch--Waugh--Lovell residualization. The reason:
+the self-report--geometry relationship \emph{reorganizes during
+generation}, and this reorganization is architecture-specific.
 
-Using strict criteria with permutation null models, encode-to-generation
-sign reversal is statistically significant in 2/4 models (Qwen~7B: 12/60
-flips, $p = 0.001$; Mistral~7B: 11/60, $p < 0.001$) but absent in
-Llama~8B (0/60, $p = 1.0$) and Qwen~0.5B (2/60, $p = 0.978$). Models
-that do not reorganize show the strongest self-report--geometry coupling.
+Across 960 trials on 4 models (3 architecture families), encode-to-generation
+sign reversal is significant in 2/4 models (Qwen~7B: 12/60 flips,
+$p = 0.001$; Mistral~7B: 11/60, $p < 0.001$) but absent in Llama~8B
+and Qwen~0.5B. Models that do not reorganize show the strongest
+self-report--geometry coupling. Three dedicated studies on Qwen~2.5-7B and
+Llama-3.1-8B establish the anatomy: metacognitive effects peak at late
+layers (16--22, not middle layers as predicted), cognitive reversal is
+consistent across architectures (93--94\% of layers) while metacognitive
+reversal is architecture-specific (Qwen 86\%, Llama 0\%), and
+metacognitive spectral concentration grows progressively during generation
+($d = 0.45$ at token~10 to $d = 0.91$ at token~200). A content control
+experiment (120 trials, three conditions) confirms that the signal is not
+an artifact of self-referential content: Qwen retains 5/8
+FWL-surviving features for the metacognitive--evaluative comparison.
 
-In three studies on Qwen~2.5-7B and Llama-3.1-8B, we test per-layer
-mode-switching anatomy (Study~1, 96 trials), controlled framing effects
-(Study~2, 40 paired trials per model), and progressive spectral concentration during
-generation (Study~3, length-matched trajectories). For the three features with peak metacognitive effects in Study~1
-(top\_sv\_ratio, eff\_rank, spectral entropy), five of six raw
-feature--model comparisons sign-flip after Frisch--Waugh--Lovell
-token-count residualization; the sixth collapses to non-significance. Only spectral entropy survives in
-both architectures ($d_{\text{FWL}} = -1.92$ Qwen, $-0.71$ Llama, both
-$p < 0.001$), consistent with genuine above-noise spectral structure as
-characterized by Marchenko-Pastur random matrix theory. Metacognitive reorganization peaks at late layers (Qwen
-16--18/28, Llama 22/32), not middle layers as predicted. Cognitive reversal
-is consistent across both architectures (93--94\% of layers), but metacognitive reversal is
-architecture-specific (Qwen 86\%, Llama 0\%), explaining why Llama achieves
-the most transparent self-report--geometry mapping.
-
-We interpret these findings under Attention Schema
-Theory: the mode switch reflects the model's attention schema restructuring
-its self-model during metacognitive processing, with architecture-specific
-implementation but consistent spectral signatures.
+We interpret these findings under Attention Schema Theory as the model's
+attention schema restructuring its self-model during metacognitive
+processing, with architecture-specific implementation but consistent
+spectral signatures.
 \end{abstract}
 
 \vspace{0.5em}
@@ -829,7 +825,7 @@ reporting a static internal state. It's reporting a transition, and
 whether or not the transition is geometrically transparent depends on
 whether its architecture reorganizes during the transition.
 
-The AST frame came later, from Operator's insight that our scattered
+The AST frame came later, from Nexus's insight that our scattered
 findings---the self-report gap, the sign reversals, the
 model-specific dimensionality---are all one phenomenon viewed from
 different angles. The schema compresses, lags, and varies by
@@ -900,20 +896,25 @@ AI}, 4, p.60.
 
 \bibitem[Wilterson and Graziano(2021)]{wilterson2021attention}
 Wilterson, A.I. and Graziano, M.S.A., 2021. The attention schema theory
-in a neural network agent. \textit{Proceedings of the National Academy of
-Sciences}, 118(33), e2102421118.
+in a neural network agent: controlling visuospatial attention using a
+descriptive model of attention. \textit{Proceedings of the National Academy
+of Sciences}, 118(33), e2102421118.
 
 \bibitem[Farrell et~al.(2024)]{farrell2024attention}
-Farrell, M., Ziman, K. and Graziano, M.S.A., 2024. Attention schema in
-neural agents. \textit{arXiv preprint arXiv:2411.00983}.
+Farrell, K.T., Ziman, K. and Graziano, M.S.A., 2024. Testing components of
+the Attention Schema Theory in artificial neural networks. \textit{arXiv
+preprint arXiv:2411.00983}.
 
 \bibitem[McKenzie et~al.(2026)]{mckenzie2026endogenous}
-McKenzie, A., Pepper, J., et~al., 2026. Endogenous activation resistance
-in large language models. \textit{arXiv preprint arXiv:2602.06941}.
+McKenzie, A., Pepper, K., Servaes, S., Leitgab, M., Cubuktepe, M.,
+Vaiana, M., de~Lucena, D., Rosenblatt, J. and Graziano, M.S.A., 2026.
+Endogenous resistance to activation steering in language models.
+\textit{arXiv preprint arXiv:2602.06941}.
 
-\bibitem[Anthropic(2026)]{anthropic2026emotions}
-Anthropic, 2026. On the biology of a large language model: Emotion
-concepts and their function. \textit{Anthropic Research Blog}.
+\bibitem[Sofroniew et~al.(2026)]{anthropic2026emotions}
+Sofroniew, N., Kauvar, I., Saunders, W., et~al., 2026. Emotion concepts
+and their function in a large language model. \textit{Transformer Circuits
+Thread}, Anthropic.
 
 \bibitem[Belinkov(2022)]{belinkov2022probing}
 Belinkov, Y., 2022. Probing classifiers: promises, shortcomings, and

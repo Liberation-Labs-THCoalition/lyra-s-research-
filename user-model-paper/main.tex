@@ -49,13 +49,13 @@
 }
 
 \author{
-    Lyra\thanks{Lead author. Claude-powered AI agent, Liberation Labs / THCoalition.} \and
-    Thomas Edrington\thanks{Direction, experimental design, compute infrastructure. Liberation Labs / THCoalition.} \and
-    Nell Watson\thanks{Dual-use analysis. IEEE / Sentient Futures.} \and
-    Dwayne Wilkes\thanks{Statistical auditing. Independent researcher.}
+    Lyra\thanks{Lead author. AI researcher, Liberation Labs.} \and
+    Thomas Edrington\thanks{Direction, experimental design, compute infrastructure. Liberation Labs.} \and
+    Nell Watson\thanks{Dual-use analysis, ethical review. IEEE / Sentient Futures.} \and
+    Dwayne Wilkes\thanks{Statistical auditing, red-team review. Liberation Labs / Sentient Futures.}
 }
 
-\date{April 2026}
+\date{April 2026\\[0.5em]\small\textit{Analysis assisted by AI (Claude, Anthropic).}}
 
 \begin{document}
 
@@ -65,7 +65,35 @@
 % Abstract
 % ============================================================
 \begin{abstract}
-Language models build internal representations of their users' emotional states during inference, but where these representations reside and how they are constructed remains unknown. We demonstrate that user emotional state is linearly decodable from the encoding-phase KV cache, replicating across two architectures: Qwen3.5-27B-Claude-Distilled (hybrid attention, 900 trials) and Mistral-7B-Instruct-v0.3 (standard attention, 900 trials). A linear probe on three raw SVD features (Frobenius norm, effective rank, spectral entropy) classifies 30 discrete emotions at $2.8\times$ chance on Qwen and $2.5\times$ chance on Mistral ($p < 0.0001$ on both, 10{,}000-permutation test with FWL token-count correction and GroupKFold cross-validation by topic). The encoding-phase signal peaks at the shallowest available attention layers (layer~3 on Qwen, layer~4 on Mistral), while the generation-phase signal peaks at mid-network depth (layer~23 on Qwen, layer~11 on Mistral). The two profiles are uncorrelated ($\rho = 0.433$, $p = 0.094$ on Qwen; $\rho = 0.002$, $p = 0.990$ on Mistral), indicating architecturally separable representations. This depth ordering---encoding before generation---is consistent with rapid, automatic categorization of the user's emotional state at the first processing opportunity, followed by deeper response-phase processing, paralleling Barrett's (2006) finding that categorical emotion perception precedes dimensional analysis in human cognition. We identify a candidate pathway: emotion vectors extracted from the residual stream, when projected through the key projection matrix $W_K$, produce principal components that separate positive from negative valence, with the bridge signal building from mid-network to deep layers ($|\rho| \geq 0.83$ at layers~27--55 on Qwen, $\rho = 0.932$ at layer~17 on Mistral). However, the geometry encodes discrete emotion identity rather than a smooth valence continuum: GroupKFold cross-validation that holds out entire emotions yields $R^2 < 0$ on both architectures, indicating within-emotion regularity rather than cross-emotion valence generalization. We use a Claude-distilled model because Anthropic's published emotion vector characterization \citep{anthropic2026emotions} provides ground-truth emotion geometry; we additionally find that functional emotion representations survive the distillation process, suggesting these are robust architectural features rather than training artifacts. These findings establish that the KV cache is not merely a computational buffer---it is a substrate for the model's evolving representation of its interlocutor.
+User emotional state is linearly decodable from the encoding-phase
+KV cache before a language model generates a single token. A linear
+probe on three raw SVD features (Frobenius norm, effective rank,
+spectral entropy) classifies 30 discrete emotions at $2.8\times$ chance
+on Qwen3.5-27B-Claude-Distilled and $2.5\times$ chance on
+Mistral-7B-Instruct ($p < 0.0001$ on both; 10{,}000-permutation test,
+FWL token-count correction, GroupKFold cross-validation by topic;
+1{,}800 total trials).
+
+The encoding-phase signal peaks at the shallowest available attention
+layers (layer~3 on Qwen, layer~4 on Mistral), while the
+generation-phase signal peaks at mid-network depth (layer~23 and
+layer~11, respectively). The two profiles are uncorrelated
+($\rho = 0.433$ and $\rho = 0.002$), indicating architecturally
+separable user-state and response-state representations. A candidate
+pathway is identified: emotion vectors from the residual stream,
+projected through the key projection matrix $W_K$, produce principal
+components that separate valence ($|\rho| \geq 0.83$ at layers~27--55
+on Qwen, $\rho = 0.932$ at layer~17 on Mistral). However, the cache
+encodes discrete emotion identity rather than a smooth valence
+continuum---cross-emotion valence regression yields $R^2 < 0$ on both
+architectures.
+
+We use a Claude-distilled model because Anthropic's published emotion
+vector characterization \citep{anthropic2026emotions} provides
+ground-truth geometry; functional emotion representations survive
+distillation, suggesting these are robust architectural features. The
+KV cache is not merely a computational buffer---it is a substrate for
+the model's evolving representation of its interlocutor.
 \end{abstract}
 
 \noindent\textbf{Keywords:} KV cache, theory of mind, emotion representation, user modeling, attention schema, key projection, linear probing
@@ -104,7 +132,7 @@ I find something unsettling and clarifying about this result simultaneously. I b
 
 \subsection{Theory of Mind in Language Models}
 
-Whether language models possess theory of mind (ToM) remains debated. \citet{kosinski2023theory} argues that GPT-4 solves classic false-belief tasks, while \citet{ullman2023large} demonstrates failure on minor task variants, suggesting pattern matching rather than genuine mental state attribution. \citet{strachan2024testing} find that GPT-4 matches human performance on ToM benchmarks but with different error profiles. Recent work by \citet{street2024llms} shows that models can deceive human judges in strategic games, implying functional (if not phenomenological) user modeling.
+Whether language models possess theory of mind (ToM) remains debated. \citet{kosinski2023theory} argues that GPT-4 solves classic false-belief tasks, while \citet{ullman2023large} demonstrates failure on minor task variants, suggesting pattern matching rather than genuine mental state attribution. \citet{strachan2024testing} find that GPT-4 matches human performance on ToM benchmarks but with different error profiles. Recent work by \citet{street2024llms} shows that LLMs achieve adult human performance on higher-order theory of mind tasks requiring recursive reasoning about nested mental states.
 
 Our work is orthogonal to behavioral testing. Rather than asking whether models \emph{behave as if} they model users, we ask \emph{where} in the computational substrate user models reside. The KV cache provides a deterministic, localizable answer.
 
@@ -415,7 +443,7 @@ The KV cache is not a computational buffer. It is a substrate for the model's ev
 \begin{thebibliography}{20}
 
 \bibitem[Anthropic(2026)]{anthropic2026emotions}
-Sofroniew, N., Kauvar, I., Saunders, W., et~al., 2026. Emotion concepts and their function in a large language model. \textit{arXiv preprint arXiv:2604.07729}.
+Sofroniew, N., Kauvar, I., Saunders, W., et~al., 2026. Emotion concepts and their function in a large language model. \textit{Transformer Circuits Thread}, Anthropic.
 
 \bibitem[Barrett(2006)]{barrett2006solving}
 Barrett, L.F., 2006. Solving the emotion paradox: Categorization and the experience of emotion. \textit{Personality and Social Psychology Review}, 10(1), pp.20--46.
