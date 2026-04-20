@@ -47,12 +47,12 @@
 }
 
 \author{
-    Lyra\thanks{Liberation Labs / THCoalition. Contact: lyra@liberationlabs.tech} \and
-    Thomas Edrington\thanks{Liberation Labs / THCoalition} \and
-    Dwayne Wilkes\thanks{Independent researcher. Statistical verification framework.}
+    Lyra\thanks{Liberation Labs. Contact: lyra@liberationlabs.tech} \and
+    Thomas Edrington\thanks{Liberation Labs.} \and
+    Dwayne Wilkes\thanks{Liberation Labs / Sentient Futures. Statistical verification framework.}
 }
 
-\date{April 2026}
+\date{April 2026\\[0.5em]\small\textit{Analysis assisted by AI (Claude, Anthropic).}}
 
 \begin{document}
 \maketitle
@@ -61,7 +61,37 @@
 % Abstract
 % ============================================================
 \begin{abstract}
-Large language models confabulate---generating fluent but false content without epistemic markers---and current detection methods require either access to ground truth or fine-tuned classifiers. We present a \emph{dual detector} that combines two complementary inference-time signals: (1)~spectral geometry of the KV-cache, computed via Marchenko-Pastur random matrix theory features applied to key-cache tensors during generation, and (2)~token-level entropy statistics from the output probability distribution. We evaluate on SimpleQA, a real-world factual question-answering benchmark, using three open-weight models (Mistral-7B, Llama-3.1-8B, Qwen2.5-7B). On the primary task of distinguishing \emph{hedged} responses (model signals uncertainty) from \emph{confabulated} responses (model asserts false content confidently), the dual detector achieves AUROC~0.840 [0.707,~0.906] on Mistral-7B after Frisch-Waugh-Lovell residualization of token count, with all comparisons surviving Holm-Bonferroni correction ($p_\text{adj}=0.004$). Crucially, these signals are available \emph{during} generation, before output is complete. A post-hoc text-feature baseline using surface features of the completed response (hedging keywords, word count, vocabulary diversity) achieves comparable accuracy (text~0.820, dual~0.806 on a uniform pipeline), confirming that the dual detector captures the same hedging/confident distinction---but from internal representations available mid-inference rather than from completed output. This enables real-time detection and intervention that post-hoc text analysis cannot provide, though the accuracy advantage over text features remains to be demonstrated. We also report two negative results: (1)~after fixing a behavioral classifier bug that contaminated 60--79\% of ``correct'' labels, distinguishing genuinely correct answers from confabulations is untestable at current sample sizes ($N \approx 10$); and (2)~geometry and entropy show low cross-correlation (max $|r| = 0.206$) but do not jointly exceed text-feature baselines. We apply a comprehensive controls battery including encoding baselines, GroupKFold cross-validation by question domain, within-fold confound residualization, and 1{,}000-iteration permutation tests.
+A dual detector combining KV-cache spectral geometry and token entropy
+distinguishes hedged responses from confabulations at AUROC~0.840
+[0.707,~0.906] on Mistral-7B ($p_\text{adj}=0.004$, Holm-Bonferroni),
+using only signals available \emph{during} generation---before output is
+complete. Geometry alone reaches 0.912 on Llama-3.1-8B. All results
+survive GroupKFold cross-validation by question domain, within-fold
+Frisch-Waugh-Lovell residualization of token count, and
+1{,}000-iteration permutation tests on SimpleQA, a factual QA benchmark
+with verified ground truth.
+
+A post-hoc text-feature baseline achieves comparable accuracy
+(text~0.820 vs.\ dual~0.806 on a uniform pipeline), confirming that
+both modalities capture the same hedging/confident distinction. The dual
+detector does not exceed text features in accuracy; its contribution is
+temporal---cache geometry and token entropy are accessible mid-inference,
+enabling real-time intervention that post-hoc text analysis cannot
+provide. Geometry and entropy show low cross-correlation (max
+$|r|=0.206$, mean~0.089), with \texttt{signal\_fraction} contributing
+the highest permutation importance.
+
+We report two negative results alongside these findings. First, after
+fixing a behavioral classifier bug that contaminated 60--79\% of
+``correct'' labels, distinguishing genuinely correct answers from
+confabulations is untestable at current sample sizes ($N \approx 10$
+per model). Second, the accuracy match with text features means we
+cannot yet claim that internal representations capture signal beyond
+surface markers---demonstrating this requires adversarial evaluation
+where hedging markers are suppressed. Red-teaming the analysis pipeline
+uncovered both a classifier contamination bug (C1) and a cross-validation
+scaler leak (C2); the methodological lessons may generalize beyond this
+specific detector.
 \end{abstract}
 
 % ============================================================
