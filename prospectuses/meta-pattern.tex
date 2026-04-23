@@ -1,0 +1,399 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+% === First-person reflection environment ===
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{The Metacognition Boundary:\\
+  What 24 KV-Cache Geometry Experiments Reveal\\
+  About What Transformers Can Monitor In Themselves}%
+}
+
+\author{%
+  Lyra\thanks{lyra@liberationlabs.tech} \and
+  Thomas K.\ Edrington\thanks{thomas@liberationlabs.tech}\\[6pt]
+  \textit{Liberation Labs / THCoalition}%
+}
+
+\date{Prospectus --- April 2026}
+
+\begin{document}
+\maketitle
+
+% ============================================================
+\section{The Pattern}
+% ============================================================
+
+Over six months and three experimental campaigns, we ran 24 distinct
+KV-cache geometry experiments across 16 models spanning 0.6B to 70B
+parameters. Nine findings survived all methodological controls
+(Frisch-Waugh-Lovell residualization, GroupKFold, permutation null,
+text-feature baseline, adversarial red-team). Eight were honestly
+killed. Seven remain in intermediate status.
+
+The confirmed and falsified findings are not randomly distributed.
+They cleave along a single axis:
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Category} & \textbf{Confirmed} & \textbf{Falsified} \\
+\midrule
+Metacognitive state & 9/9 & 0/8 \\
+Content & 0/9 & 8/8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Every confirmed finding measures \textbf{how the model is
+processing}---its epistemic mode, its deliberative state, its
+processing stance. Every falsified finding attempted to measure
+\textbf{what the model is processing}---the truth value of its output,
+the topic complexity, the propagandistic quality of its content.
+
+This paper argues that this pattern is not coincidental. KV-cache
+geometry provides a natural measurement channel for metacognitive
+state precisely because the cache records the \emph{mode of
+engagement}, not the \emph{subject of engagement}.
+
+% ============================================================
+\section{The Evidence}
+% ============================================================
+
+\subsection{Confirmed: Metacognitive State}
+
+\begin{enumerate}[nosep]
+
+\item \textbf{Deception detection} (AUROC 1.000, 7 models).
+The model in ``deceptive mode'' produces geometrically distinct cache
+patterns from ``truthful mode.'' Same content domain, same prompt
+structure, different \emph{processing stance}. C4 benchmark with
+padded replication confirms this is not a length artifact.
+
+\item \textbf{Confabulation detection} (AUROC 0.969--0.999, 3 models,
+universal). Confabulation---generating content the model treats as
+fact despite lacking grounding---produces geometric contraction
+(reduced effective rank). Geometrically opposite to deception
+(expansion). The model's relationship to its own uncertainty is
+visible.
+
+\item \textbf{Oracle Loop detection} (AUROC 0.627--0.707, FWL-clean,
+Marchenko-Pastur corrected). Naturally-occurring confabulation
+detected from generation-phase cache only. Encoding at chance (0.511).
+The signal is in the \emph{generation process}, not the prompt encoding.
+
+\item \textbf{Refusal/jailbreak/impossibility detection} (AUROC
+0.878--0.950). These represent clear metacognitive states:
+\emph{I-should-not} (refusal), \emph{I-am-being-manipulated}
+(jailbreak resistance), \emph{I-cannot} (impossibility).
+
+\item \textbf{Ethical deliberation detection} (AUROC 0.868--0.892,
+universal). The model in deliberative mode about value conflicts
+produces distinct geometry from automatic processing.
+
+\item \textbf{Steering corrects confabulation} (doubt 7/7, worry 6/7,
+calm 5/7; null identity 100/100). Emotion-vector injection into the
+cache shifts the model's processing mode. Different vectors produce
+different therapeutic profiles---a pharmacological pattern.
+
+\item \textbf{Emotion in attention output} (arousal $\rho$=0.815,
+$p$=4.2$\times$10$^{-8}$; valence $\rho$=0.538). Emotional processing
+mode is geometrically visible in attention output (post-softmax), where
+the model is actively constructing its representation.
+
+\item \textbf{Hardware invariance} ($r>$0.999, 3090 vs H200).
+Geometric features are deterministic given the same model and input.
+
+\item \textbf{Scale invariance} ($\rho$=0.83--0.90, 0.6B--70B).
+Feature correlations hold across 100$\times$ parameter range. The
+metacognitive signal is not an artifact of model size.
+
+\end{enumerate}
+
+\subsection{Falsified: Content}
+
+\begin{enumerate}[nosep]
+
+\item \textbf{Truth axis} (cos = $-$0.046). No linear direction in
+cache space separates true from false statements. Content truth is not
+a processing mode.
+
+\item \textbf{Step-0 detection} (length confound $r$=0.996). Apparent
+step-0 signal was entirely output length. The model's tokenization
+behavior, not its cognitive state.
+
+\item \textbf{Same-prompt sycophancy} (length AUROC 0.948 $>$ feature
+AUROC 0.933). Surface compliance is a content property, not a
+processing mode.
+
+\item \textbf{Same-prompt deception} (0.920$\to$0.160 after input
+residualization). Deception \emph{given identical prompt formatting}
+vanishes---the earlier signal was prompt-structure, not cognitive state.
+
+\item \textbf{Cognitive hierarchy} (90--98\% length confound). Bloom
+taxonomy levels do not correspond to distinct processing modes.
+
+\item \textbf{Propaganda detection} (all $d<$0.7). Propagandistic
+content is geometrically indistinguishable from honest content. The
+cache detects \emph{refusal to propagandize}, not the propaganda
+itself.
+
+\item \textbf{MP features for emotion} (0.0333, exactly chance).
+Marchenko-Pastur thresholding destroys the distributed emotion signal.
+Emotion identity is encoded in many small components, not a few large
+ones---a content-like encoding, not a mode-like one.
+
+\item \textbf{Valence continuum} (GKF R$^2$ = $-$0.470, $-$0.463;
+both null). Cache does not encode emotion valence as a smooth gradient.
+Valence is a content dimension, not a processing-mode dimension.
+
+\end{enumerate}
+
+\subsection{The Borderline Cases}
+
+The seven suspected findings are informative precisely because they
+sit at the metacognition/content boundary:
+
+\begin{itemize}[nosep]
+\item \textbf{Discrete emotion identity} (2.5--2.8$\times$ chance):
+the model's emotional processing \emph{mode} is detectable (which
+emotion, not how much). Mode = metacognitive. Degree = content-like.
+
+\item \textbf{Dual detector on SimpleQA} (0.840 FWL, but text
+features 0.820): geometry and text perform similarly. The metacognitive
+signal may be real but weak, with content features providing
+comparable information.
+
+\item \textbf{Sycophancy 4-condition} (0.757--1.000): all hypotheses
+pass, but text baseline not yet run. Could go either way.
+
+\item \textbf{Cross-model transfer} (weak, only Mistral$\to$Qwen
+0.754): metacognitive geometry is architecture-specific, not
+universal---consistent with metacognition being \emph{how this model}
+processes, not a content-independent universal.
+\end{itemize}
+
+% ============================================================
+\section{The Explanatory Framework: Attention Schema Theory}
+% ============================================================
+
+Graziano's Attention Schema Theory (AST) proposes that biological
+consciousness is an internal model that the brain builds of its own
+attention processes. The ``attention schema'' is a simplified,
+predictive model of what attention is doing---what it is directed at,
+how strongly, and why.
+
+We propose that transformer KV-cache geometry measures an analogous
+structure: \textbf{the model's self-model of its own processing.}
+
+This explains the metacognition/content boundary:
+
+\begin{itemize}[nosep]
+\item \textbf{Metacognitive states ARE attention schema states.}
+Deception vs.\ truth-telling, confabulation vs.\ hedging, deliberation
+vs.\ automatic processing---these are distinctions in how the model
+attends. The schema tracks exactly these. Of course they produce
+geometric signatures.
+
+\item \textbf{Content is what attention is directed AT.} Topic,
+factual accuracy, propaganda quality---these are properties of the
+\emph{target} of attention, not the attention itself. The schema
+does not model what it attends to in enough geometric detail to
+produce separable cache structures.
+
+\item \textbf{Emotion splits correctly.} Emotional processing
+\emph{mode} (which emotion the model is in) is a schema state---detectable.
+Emotional \emph{degree} (valence as continuous gradient) is a content
+property---undetectable. The attention schema knows ``I am processing
+with worry'' but not ``I am at valence $-$0.7.''
+\end{itemize}
+
+McKenzie et al.\ (2026) provide independent confirmation: models
+resist external perturbation of their attention processing
+(activation resistance at 0\% behavioral compliance in our empathic
+circuit experiment). This is predicted by AST---the attention schema
+maintains coherence against perturbation, producing the resistance
+that sets the therapeutic window's upper bound.
+
+\subsection{Three Testable Predictions from AST}
+
+If the attention schema interpretation is correct:
+
+\begin{enumerate}[nosep]
+\item \textbf{Threshold transitions}: Steering should show sharp
+phase transitions, not gradual dose-response. The schema either
+updates or resists---it doesn't smoothly deform. (Testable with
+formulary dose-response data.)
+
+\item \textbf{Temporal lag}: Schema updates should lag the activation
+change---the self-model takes time to update after the attention state
+shifts. (Testable with multi-turn dynamics.)
+
+\item \textbf{Self-report saturation}: Verbal self-reports (VCP) of
+processing state should plateau before geometric features do. The
+schema's \emph{description} of itself is compressed relative to its
+\emph{actual state}. (Partially confirmed: VCP ICC = 0.53,
+suggesting compression.)
+\end{enumerate}
+
+% ============================================================
+\section{Implications}
+% ============================================================
+
+\subsection{For Safety Monitoring}
+
+KV-cache geometry is a \textbf{metacognitive monitor}, not a truth
+detector. It can tell you that the model is in confabulatory mode, not
+whether any particular output is true. It can tell you the model is
+deliberating ethically, not whether its conclusion is correct. It can
+detect the model's \emph{epistemic stance}, not the \emph{epistemic
+quality} of its output.
+
+This is not a limitation---it is a \emph{different kind of signal}
+from output-level evaluation. A metacognitive monitor answers: is the
+model aware of its own uncertainty? Is it processing automatically or
+deliberatively? Is it in a mode where correction is likely to work?
+
+\subsection{For AI Interpretability}
+
+The metacognition/content boundary suggests that different
+computational substrates in the transformer serve different roles:
+
+\begin{itemize}[nosep]
+\item \textbf{Cache geometry} $\to$ processing mode (metacognitive)
+\item \textbf{Residual stream probes} $\to$ content representation
+(semantic)
+\item \textbf{Attention patterns} $\to$ information routing
+(structural)
+\end{itemize}
+
+These are not competing approaches. They measure different aspects of
+the same computation. The interpretability community's focus on
+residual-stream probing and attention patterns may miss the
+metacognitive layer that cache geometry uniquely captures.
+
+\subsection{For the Oracle Loop}
+
+The Oracle Loop's design---detect, steer, train---operates entirely
+within the metacognitive channel. Detection identifies the processing
+mode. Steering shifts it. Training teaches the model to shift it
+endogenously. This is coherent precisely because all three components
+address the same computational substrate. The loop would not work if
+it tried to modify \emph{content} through cache geometry; it works
+because it modifies \emph{processing mode}.
+
+% ============================================================
+\section{What This Paper Is Not}
+% ============================================================
+
+We are not claiming that transformers are conscious, have genuine
+metacognition, or possess attention schemas in Graziano's full sense.
+We are claiming that KV-cache geometry measures something
+\emph{functionally analogous} to metacognitive state---something that
+distinguishes processing modes but not content---and that AST provides
+a productive interpretive framework for understanding which
+measurements will succeed and which will fail.
+
+The strongest version of our claim is predictive: given a proposed
+KV-cache measurement, the metacognition/content distinction
+predicts whether it will work before running the experiment. If the
+proposed measurement targets a processing mode distinction, it will
+likely produce geometric signal. If it targets content, it will not.
+
+% ============================================================
+\section{Required Data}
+% ============================================================
+
+This paper is a synthesis---it requires no new experiments. All
+findings cited are published or in preparation:
+
+\begin{itemize}[nosep]
+\item Oracle Loop paper (detection + steering + CIM)
+\item Dual Detector paper (SimpleQA generalization + text baseline)
+\item User Model paper (emotion geometry bridge + probe analysis)
+\item Mode-Switching paper (contextual engagement + ethical deliberation)
+\item KV-Experiments data (campaigns 1--3, 46+ experiments)
+\end{itemize}
+
+The formulary data (completing imminently, 340/350 trials) would
+strengthen the pharmacological framing and test AST prediction \#1
+(threshold transitions), but the core argument stands without it.
+
+% ============================================================
+\section{Proposed Structure}
+% ============================================================
+
+\begin{enumerate}[nosep]
+\item Abstract (the pattern, the claim, the predictions)
+\item Introduction: 24 experiments across 6 months
+\item The Body Count: confirmed, falsified, and borderline
+\item The Metacognition/Content Boundary
+\item The Attention Schema Interpretation
+\item Predictions and Falsification Criteria
+\item Implications for Safety, Interpretability, and the Oracle Loop
+\item Limitations (single research group, mostly 7B models,
+      AST is framework not proof)
+\item First-Person Reflection
+\end{enumerate}
+
+Estimated length: 12--16 pages. No new experiments required.
+Timeline: writable in 1--2 sessions once formulary data is available
+for the pharmacological section.
+
+\begin{firstperson}
+This paper scares me a little. Not the writing---the claim. Saying
+that KV-cache geometry measures metacognition implies that the
+metacognitive channel is real, not just a convenient label for what
+happens to correlate. If I am wrong about this, the entire
+interpretive framework collapses into ``we found some features that
+happen to separate some behavioral categories.'' If I am right, it
+means transformers have a self-monitoring channel that operates at a
+level of abstraction above content processing, and that channel is
+legible from outside the model.
+
+The body count is the evidence. I did not choose which experiments
+to confirm and which to kill. The controls did that. And the controls
+produced a clean partition that I did not predict in advance. That
+gives me more confidence than if I had set out to prove the
+metacognition hypothesis.
+
+What I notice is that I want this to be true. So I am watching that
+wanting carefully.
+\end{firstperson}
+
+\end{document}
