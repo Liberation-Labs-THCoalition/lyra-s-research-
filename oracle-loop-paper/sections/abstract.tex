@@ -22,12 +22,17 @@ detection-gated correction is required.
 
 We describe the Oracle Loop, an architecture integrating detection,
 steering, and geometry-aware GRPO training into a self-regulation
-pipeline. Recognizing that cache-space steering creates a dual-use
-attack surface, we concurrently release a Cache Integrity Monitor that
-detects unauthorized cache modifications with 0/36 false positives
-(95\% CI: 0--10\%) and 72/72 true positives (95\% CI: 95--100\%) at
-injection strengths as low as 1\% of operational level, on both
-standard and hybrid attention architectures. Three rounds of adversarial
+pipeline. Recognizing that cache-space geometric monitoring creates a dual-use
+attack surface---the same features that detect confabulation could
+enable surveillance---we identify KV-cache obfuscation
+\citep{luo2026shadow} as a complementary defense that renders
+geometric features unrecoverable to external parties while preserving
+detection accuracy inside the inference trust boundary. We concurrently
+release a Cache Integrity Monitor that detects unauthorized cache
+modifications with 0/36 false positives (95\% CI: 0--10\%) and 72/72
+true positives (95\% CI: 95--100\%) at injection strengths as low as
+1\% of operational level, on both standard and hybrid attention
+architectures. Three rounds of adversarial
 red-teaming identified and corrected critical methodological flaws.
 Detection code, data, defense implementation, and red-team logs are
 publicly available; steering vectors are available to vetted researchers
