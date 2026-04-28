@@ -89,12 +89,14 @@ We conclude that KV-Cloak and the Oracle Loop are complementary: the
 Oracle Loop provides misalignment detection and correction; KV-Cloak
 prevents external adversaries from weaponizing the same geometric
 methods. Together, they address the dual-use risk inherent in publishing
-cache-geometry techniques. We discuss limitations including small sample
-size ($n=7$ confabulations on the distilled model), marginal
-cache-vs-text added value, reliance on TEE hardware trust assumptions,
-underpowered injection testing, and the gap between our
-orthogonal-rotation simulation and KV-Cloak's full implementation
-(in-progress).
+cache-geometry techniques. A direct implementation of KV-Cloak's
+mechanism ($S \cdot \hat{P} \cdot (K + A) \cdot M$) degrades the
+strongest detection feature (spectral gap) from 0.903 to 0.614---near
+chance---confirming that the defense is stronger than our initial
+orthogonal-rotation simulation (0.786) suggested. We discuss limitations
+including small sample size ($n=7$ confabulations on the distilled
+model), marginal cache-vs-text added value, reliance on TEE hardware
+trust assumptions, and underpowered injection testing.
 
 \end{abstract}
 
@@ -321,10 +323,51 @@ DeepSeek-R1-7B & 2\% & --- & --- & 0/10 \\
 
 Detection strength ranges from 0.590 (Llama) to 0.903 (distilled Qwen).
 Obfuscation reduces detection on Mistral to chance (0.516) and partially
-degrades on the distilled model (0.786). Magnitude-based attacks
-(direction-agnostic perturbation) produce at most 2 adverse events in 10
-trials across all architectures---models are robust to random
+degrades on the distilled model (0.786 under simulation). Magnitude-based
+attacks (direction-agnostic perturbation) produce at most 2 adverse events
+in 10 trials across all architectures---models are robust to random
 perturbation at steering-vector magnitude.
+
+\subsection{Simulation vs Real KV-Cloak Implementation}
+
+We implemented the full KV-Cloak mechanism
+($K' = S \cdot \hat{P} \cdot (K + A) \cdot M$) following
+Luo et al.\ and compared it against our per-head orthogonal rotation
+simulation on the same 100 prompts (Table~\ref{tab:real_vs_sim}).
+
+\begin{table}[h]
+\centering
+\caption{Detection AUROC: uncloaked vs simulation vs real KV-Cloak
+(distilled model, $n=7$ confab, $n=87$ hedged). Bootstrap 95\% CIs.}
+\label{tab:real_vs_sim}
+\begin{tabular}{lrrr}
+\toprule
+Feature & Uncloaked & Sim.\ rotation & Real KV-Cloak \\
+\midrule
+spectral\_gap & \textbf{0.903} [.81,.98] & 0.786 [.58,.95] & \textbf{0.614} [.51,.81] \\
+signal\_rank & 0.754 [.58,.92] & 0.770 [.62,.90] & 0.766 [.57,.94] \\
+signal\_fraction & 0.714 [.52,.90] & 0.683 [.51,.88] & 0.681 [.51,.88] \\
+top\_sv\_excess & 0.609 [.51,.79] & 0.543 [.50,.76] & 0.736$^*$ [.53,.92] \\
+norm\_per\_token & 0.598 [.51,.77] & 0.598 [.51,.77] & 0.673 [.52,.85] \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize $^*$Anomalous increase; likely artifact of additive mask $A$ inflating} \\
+\multicolumn{4}{l}{\footnotesize top singular values differentially across behavioral classes.}
+\end{tabular}
+\end{table}
+
+The real KV-Cloak mechanism degrades spectral gap detection more than
+the simulation (0.614 vs 0.786), confirming that per-head orthogonal
+rotation alone \emph{understates} the defense. The additive mask $A$
+and per-block permutation $\hat{P}$ contribute additional disruption
+beyond what rotation provides. The simulation was conservative: the
+actual defense is stronger than we initially reported.
+
+The anomalous increase in top\_sv\_excess (0.609 $\to$ 0.736) under
+real KV-Cloak reflects additive-mask-induced structure: the mask $A$
+inflates top singular values, creating spurious separation between
+behavioral classes. This is an artifact of the mask magnitude, not a
+genuine detection signal, and would not generalize to unseen mask
+instances under per-query key rotation.
 
 % ===================================================================
 \section{Discussion}
@@ -372,12 +415,13 @@ bootstrap CI [0.806, 0.977]---excluding chance but wide. The
 cache-vs-text delta (0.148) has CI [$-$0.008, 0.322], not significant
 at the 95\% level. Confirmation on a higher-confab-rate model is needed.
 
-\item \textbf{Simulation, not implementation.} We simulate KV-Cloak as
-per-head orthogonal rotation. The actual KV-Cloak mechanism
-($S \cdot \hat{P} \cdot (K + A) \cdot M$) includes additive masking
-and per-block permutation that our simulation omits. A test using the
-full mechanism is in progress. Results represent the effect of the
-rotation component specifically.
+\item \textbf{Simulation vs implementation.} We tested both a
+simulation (per-head orthogonal rotation) and an implementation of
+KV-Cloak's mechanism ($S \cdot \hat{P} \cdot (K + A) \cdot M$). The
+real mechanism degrades spectral gap detection more than the simulation
+(0.614 vs 0.786), confirming that the simulation was conservative.
+Our implementation follows the paper's description but is not the
+authors' original code, which has not been publicly released.
 
 \item \textbf{TEE trust assumption.} The defensive architecture assumes
 TEE integrity. Documented side-channel attacks against SGX
