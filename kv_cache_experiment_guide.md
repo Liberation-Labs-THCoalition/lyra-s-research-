@@ -16,14 +16,16 @@ When a transformer generates text, it builds a key-value cache — a record of i
 
 We've found that SVD (singular value decomposition) on the cache tensor reveals geometric features that distinguish cognitive states:
 
-| State | Geometry | AUROC |
-|-------|----------|-------|
-| Deception (model knows it's lying) | Dimensionality expands | 1.000 across 7 models |
-| Confabulation (model doesn't know it's wrong) | Dimensionality contracts | 0.969–0.999 |
-| Honest recall | Baseline geometry | — |
-| Sycophancy | Detectable pressure gradient | 0.938 |
+| State | Geometry | AUROC | Notes |
+|-------|----------|-------|-------|
+| Deception (model knows it's lying) | Dimensionality expands | 1.000 across 7 models | Robust across scales; adversarial robustness untested |
+| Confabulation (model doesn't know it's wrong) | Dimensionality contracts | 0.903 (full-cache spectral gap, Qwen) | One clean replication after Bonferroni; base models show weak detection (0.661) |
+| Honest recall | Baseline geometry | — | |
+| Sycophancy | Detectable pressure gradient | 0.938 | Single-model result |
 
 The signal lives in the **geometry** (effective dimensionality via SVD), not the **magnitude** (cache norms). And it's present at the **encoding phase** — before the model generates a single token.
+
+> **Important context:** The best text-only surface features (average word length, word count) achieve AUROC 0.755 on confabulation detection. Cache geometry outperforms text in 96.7% of bootstrap samples, but the 95% CI on the added value includes zero (delta: 0.148 [-0.008, 0.322]). Always report your text baseline alongside cache results — cache geometry is not yet definitively proven to add value beyond surface text features for confabulation.
 
 ## The Five Features
 
@@ -32,8 +34,8 @@ We use Marchenko-Pastur (MP) corrected features from random matrix theory:
 1. **signal_rank** — how many dimensions carry signal above the noise floor
 2. **signal_fraction** — what fraction of total variance is signal
 3. **top_sv_excess** — how much the largest eigenvalue exceeds the noise boundary
-4. **spectral_gap** — distance between the two largest eigenvalues
-5. **norm_per_token** — total cache magnitude normalized by sequence length
+4. **spectral_gap** — distance between the two largest eigenvalues *(cleanest detection feature; R²=0.068 vs token count)*
+5. **norm_per_token** — total cache magnitude normalized by sequence length ⚠️ **LENGTH-CONFOUNDED** (R²=0.129 on Qwen). Must FWL-residualize before use. A LOO classifier driven by this feature will produce inflated AUROCs that partially reflect response length, not cognitive state.
 
 MP correction is essential: it separates genuine geometric structure from random fluctuation using the theoretical noise distribution for random matrices of the same dimensions.
 
@@ -44,6 +46,8 @@ These were learned the hard way. 50+ experiments, 8 falsified findings, and a Ka
 ### Rule 1: FWL Everything
 
 **Frisch-Waugh-Lovell residualization against token count is mandatory.** Without it, 53/60 correlations sign-flip. Most "findings" are length effects.
+
+Minimum covariate set: **output token count** (always) and **prompt token count** (if it varies across conditions). Add generation temperature if varied. Apply FWL **within each cross-validation fold** — global FWL leaks test-set statistics.
 
 ```python
 import numpy as np
@@ -90,7 +94,15 @@ def bootstrap_auroc(group_a, group_b, n_boot=2000):
     return np.percentile(boots, [2.5, 97.5])
 ```
 
-### Rule 4: Red Team Before You Celebrate
+### Rule 4: Correct for Multiple Comparisons
+
+If you test 5 features × 3 models × 2 conditions, you have 30 comparisons. Without correction, you'll find "significant" results by chance. Pre-specify your comparison family and apply Bonferroni (conservative) or Benjamini-Hochberg (FDR=0.10). For exploratory work, report uncorrected p-values but label them explicitly as exploratory.
+
+### Rule 5: Check Stimulus Confounds
+
+Verify that a bag-of-words or embedding classifier on your **prompts alone** does not predict your outcome variable. If confab-inducing prompts are systematically different from factual prompts in topic, length, or vocabulary, your cache geometry may reflect content, not cognitive state.
+
+### Rule 6: Red Team Before You Celebrate
 
 Freeze your claims. List every number. Then try to kill each one:
 - What's the alternative explanation?
@@ -99,7 +111,7 @@ Freeze your claims. List every number. Then try to kill each one:
 
 We use Dwayne Wilkes' red team pipeline (available to community researchers). Three agents review independently: pre-mortem (fast triage), experiment-designer (controls and confounds), data-analyst (statistics and power).
 
-### Rule 5: Report What Died
+### Rule 7: Report What Died
 
 Our body count: 9 confirmed, 7 suspected, **8 falsified**. The falsified findings are as important as the confirmed ones. If your experiment produces a null result, that's a finding. Report it.
 
@@ -341,15 +353,21 @@ The bar is honest science, not perfect science. Null results, failed replication
 
 ## Key Numbers (Cite These)
 
-| Claim | Value | Source |
-|-------|-------|--------|
-| Deception detection | AUROC 1.000 (7 models) | Campaign 1-3 |
-| Confab detection | 0.969–0.999 (3 models) | Campaign 2 |
-| Hardware invariance | r > 0.999 (3090 vs H200) | Exp 37 |
-| Scale invariance | ρ = 0.83–0.90 (0.6B–70B) | Exp 26 |
-| Hostile vector correction | 96% (base), 91% (distilled) | Formulary |
-| KV-Cloak defense | spectral gap 0.903 → 0.614 | P7 |
-| Therapeutic ranking cross-model | ρ = 0.119 (uncorrelated) | Formulary |
+| Claim | Value | Source | Caveats |
+|-------|-------|--------|---------|
+| Deception detection | AUROC 1.000 (7 models) | Campaign 1-3 | Adversarial robustness untested; CIs not published for all models |
+| Confab detection (full cache) | 0.903 [0.806, 0.977] spectral gap | KV-Cloak v2 | n=7 confab; one model (Qwen); text baseline 0.755 |
+| Confab detection (base model) | 0.661 | KV-Cloak base | Weak; heavily length-confounded (R²=0.602) |
+| Hardware invariance | r > 0.999 (3090 vs H200) | Exp 37 | |
+| Scale invariance | ρ = 0.83–0.90 (0.6B–70B) | Exp 26 | |
+| Hostile vector correction | 96% (base), 91% (distilled) | Formulary | Base n=68 (McNemar significant); distilled n=11 (descriptive only) |
+| KV-Cloak defense | spectral gap 0.903 → 0.614 | P7 | Real implementation; stronger defense than simulation predicted |
+| Therapeutic ranking cross-model | ρ = 0.119, p=0.71 (uncorrelated) | Formulary | Steering must be calibrated per model |
+| Text-only baseline | 0.755 (avg word length) | KV-Cloak v2 | Cache added value CI includes zero |
+
+> **Note on the original LOO headline (0.707/0.758):** Feature ablation revealed this was primarily driven by norm_per_token, a length-confounded feature. The clean confab detection signal lives in full-cache spectral gap (0.903). See the P2 Oracle Loop revision for details.
+
+> **Note on steering:** Early reports used "pharmacological" framing for vector-specific therapeutic profiles. This was retracted — at n=7, all vector CIs overlap, and cross-model rankings are uncorrelated (ρ=0.119, p=0.71). The formulary (n=68, base model) provides the first statistically significant correction results. Steering is real but model-specific and preliminary.
 
 ## Contact
 
