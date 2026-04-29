@@ -268,6 +268,9 @@ doubt 59--100\%). To address this, we conducted a systematic formulary
 study on Qwen2.5-7B-Instruct, a base instruction-tuned model with a
 40\% confabulation rate (providing $n = 68$ confabulations from 350
 prompts), testing 12 emotion vectors spanning the valence--arousal space.
+(The 40\% confabulation rate is an artifact of confab-inducing prompts,
+not representative of deployment conditions; it provides statistical
+power unavailable at the distilled model's 3.2\% base rate.)
 
 Five vectors achieve McNemar significance after Holm-Bonferroni
 correction: hostile (96\% correction, 2.4\% adverse), desperate (90\%,
@@ -280,7 +283,8 @@ uncorrelated (Spearman $\rho = 0.119$, $p = 0.71$): calm, which
 corrects 73\% of confabulations on the distilled model, corrects only
 34\% on the base model with 28\% adverse rate. Curious, the safest
 vector on the distilled model (1.6\% adverse), becomes the most
-iatrogenic on the base model (42.7\% adverse). This model-specificity
+iatrogenic on the base model (42.7\% adverse). All comparisons at injection strength $lpha = 1.0$; dose-response
+curves remain future work. This model-specificity
 constrains the Oracle Loop architecture: the steering formulary must be
 calibrated per deployment model, and steering vectors extracted from one
 model cannot be assumed to transfer therapeutically to another.

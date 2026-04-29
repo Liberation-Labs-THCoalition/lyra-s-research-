@@ -245,6 +245,13 @@ on the 5-arm dataset (96 trials: 7 CONFABULATED, 89 HEDGED) shows:
 all 5 features AUROC 0.758 [0.573, 0.990]; without norm 0.693;
 norm alone 0.915 [0.797, 0.977]; FWL without norm 0.536 (chance).
 The classifier is primarily driven by a length-correlated feature.
+The norm feature's standalone AUROC (0.915) exceeding the 5-feature
+ensemble (0.758) reflects dilution by four near-chance features; this
+paradox motivated the shift to individual-feature analysis on the full
+cache, where spectral gap provides a clean signal without ensemble
+dependency. Note: these ablation results are directionally informative
+but not conclusive at $n = 7$ confabulations (bootstrap CI lower bound
+0.573 approaches chance).
 
 This prompted analysis of the 	extbf{full KV cache}
 (encoding + generation). Full-cache 	exttt{mp\_spectral\_gap}
