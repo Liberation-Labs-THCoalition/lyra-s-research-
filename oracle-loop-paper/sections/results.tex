@@ -234,3 +234,29 @@ The control battery passes cleanly for Qwen and Mistral. Llama fails the
 encoding baseline check (C2) and partially fails MP invariance (C7). We
 report Llama's results for completeness but base our primary claims on
 Qwen and Mistral, where all controls pass.
+
+\subsection{Feature Ablation and Full-Cache Analysis}
+\label{sec:ablation}
+
+Independent statistical audit (Wilkes, 2026) identified that the LOO
+classifier depends primarily on 	exttt{mp\_norm\_per\_token},
+which fails MP invariance on Qwen ($R^2 = 0.129$). Feature ablation
+on the 5-arm dataset (96 trials: 7 CONFABULATED, 89 HEDGED) shows:
+all 5 features AUROC 0.758 [0.573, 0.990]; without norm 0.693;
+norm alone 0.915 [0.797, 0.977]; FWL without norm 0.536 (chance).
+The classifier is primarily driven by a length-correlated feature.
+
+This prompted analysis of the 	extbf{full KV cache}
+(encoding + generation). Full-cache 	exttt{mp\_spectral\_gap}
+achieves AUROC 0.903 (95\% CI: [0.806, 0.977]; FWL: 0.877;
+$R^2 = 0.068$), exceeding a text-only baseline of 0.755
+(96.7\% of bootstrap samples favor cache; delta 0.148,
+95\% CI [$-$0.008, 0.322]). This represents the strongest
+confabulation detection finding in this work.
+Full-cache \texttt{mp\_spectral\_gap} distinguishes confabulation from
+hedged responses at AUROC 0.903 (95\% bootstrap CI: [0.806, 0.977];
+FWL-corrected: 0.877; $R^2 = 0.068$ vs token count), substantially
+exceeding a text-only surface-feature baseline of 0.755 (96.7\% of
+bootstrap samples favor cache; delta 0.148, 95\% CI [$-$0.008, 0.322]).
+This full-cache spectral signal is FWL-clean and represents the
+strongest detection finding for confabulation in this work.

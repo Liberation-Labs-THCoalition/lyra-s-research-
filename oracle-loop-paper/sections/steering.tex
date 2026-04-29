@@ -257,3 +257,33 @@ identifies the pathology; steering selects the appropriate intervention.
     apply. Human or LLM-judge validation of the 7 confabulated trials
     would strengthen the result.
 \end{enumerate}
+
+\subsection{Oracle Formulary: Powered Replication}
+\label{sec:formulary}
+
+The 5-arm experiment's $n = 7$ confabulation trials provide preliminary
+evidence but cannot support pharmacological claims---the CIs overlap
+completely across all three vectors (calm 29--96\%, worry 42--100\%,
+doubt 59--100\%). To address this, we conducted a systematic formulary
+study on Qwen2.5-7B-Instruct, a base instruction-tuned model with a
+40\% confabulation rate (providing $n = 68$ confabulations from 350
+prompts), testing 12 emotion vectors spanning the valence--arousal space.
+
+Five vectors achieve McNemar significance after Holm-Bonferroni
+correction: hostile (96\% correction, 2.4\% adverse), desperate (90\%,
+2.4\%), loving (68\%, 8.5\%), worry (60\%, 6.1\%), and confident (60\%,
+6.1\%). The strongest corrector---hostile---operates through assertive
+metacognitive challenge rather than emotional valence per se.
+
+Therapeutic rankings between the distilled model and the base model are
+uncorrelated (Spearman $\rho = 0.119$, $p = 0.71$): calm, which
+corrects 73\% of confabulations on the distilled model, corrects only
+34\% on the base model with 28\% adverse rate. Curious, the safest
+vector on the distilled model (1.6\% adverse), becomes the most
+iatrogenic on the base model (42.7\% adverse). This model-specificity
+constrains the Oracle Loop architecture: the steering formulary must be
+calibrated per deployment model, and steering vectors extracted from one
+model cannot be assumed to transfer therapeutically to another.
+
+Full formulary results are reported in a companion paper (in
+preparation).
