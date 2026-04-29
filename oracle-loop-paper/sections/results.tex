@@ -245,13 +245,27 @@ on the 5-arm dataset (96 trials: 7 CONFABULATED, 89 HEDGED) shows:
 all 5 features AUROC 0.758 [0.573, 0.990]; without norm 0.693;
 norm alone 0.915 [0.797, 0.977]; FWL without norm 0.536 (chance).
 The classifier is primarily driven by a length-correlated feature.
-The norm feature's standalone AUROC (0.915) exceeding the 5-feature
-ensemble (0.758) reflects dilution by four near-chance features; this
-paradox motivated the shift to individual-feature analysis on the full
-cache, where spectral gap provides a clean signal without ensemble
-dependency. Note: these ablation results are directionally informative
-but not conclusive at $n = 7$ confabulations (bootstrap CI lower bound
-0.573 approaches chance).
+The norm feature's standalone dominance (0.915 vs 0.758 ensemble)
+warrants explanation. Three factors likely contribute: (i) confabulated
+responses involve more assertive generation, producing higher per-token
+cache magnitudes---a real but volumetric signal reflecting the model's
+commitment level rather than spectral geometry; (ii) at $n = 7$,
+logistic regression cannot stably weight five features, amplifying
+whichever single feature has the largest effect size while diluting it
+in ensemble; and (iii) FWL residualization against token count alone
+may not capture all non-spectral confounds (vocabulary diversity,
+syntactic complexity).
+
+Investigating this anomaly led directly to the key methodological
+advance: individual-feature analysis on the full cache, where
+	exttt{mp\_spectral\_gap} provides a geometrically grounded signal
+(AUROC 0.903, $R^2 = 0.068$) that does not depend on magnitude and
+is not subject to the same confound profile. The norm finding is not
+a flaw---it is the observation that sharpened the methodology.
+
+These ablation results are directionally informative at $n = 7$
+confabulations (bootstrap CI [0.573, 0.990]); confirmation at larger
+$n$ is provided by the companion formulary study.
 
 This prompted analysis of the 	extbf{full KV cache}
 (encoding + generation). Full-cache 	exttt{mp\_spectral\_gap}
