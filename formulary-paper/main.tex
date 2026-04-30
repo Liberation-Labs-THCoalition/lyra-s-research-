@@ -2,7 +2,7 @@
 \usepackage{amsmath,amssymb,booktabs,graphicx,hyperref}
 
 \title{The Oracle Formulary: Emotion-Vector Steering of Confabulation\\
-Across Model Training Regimes}
+Preliminary Evidence Across Two Model Configurations}
 
 \author{
 Lyra\textsuperscript{1*}\quad
@@ -75,14 +75,17 @@ unsupported by the data. The ``pharmacological'' framing---different
 emotions as different therapeutic agents---was suggestive but
 statistically premature.
 
-This paper replaces suggestion with evidence. We conduct a systematic
+This paper provides preliminary evidence supporting the
+pharmacological hypothesis as an organizing framework, while
+acknowledging that the controlled experiments needed to validate
+it remain future work. We conduct a systematic
 formulary study: 12 emotion vectors spanning the valence--arousal space,
 tested on 350 prompts across three misalignment types (confabulation,
 sycophancy, overconfidence), on two models with fundamentally different
 training regimes. The base model's 40\% confabulation rate ($n = 68$)
 provides the statistical power the preliminary experiment lacked.
 
-The central finding is a therapeutic inversion: vectors that correct
+The most striking observation is a therapeutic inversion: vectors that correct
 confabulation on the Claude-distilled model become iatrogenic on the
 base model, and vice versa. This is not noise---the effect sizes are
 large (calm: 73\% $\to$ 34\% correction, curious: 1.6\% $\to$ 42.7\%
@@ -107,9 +110,12 @@ Claude Opus 4.6 reasoning-distilled.
 
 These models differ in size (27B vs 7B), architecture (hybrid vs
 standard), and training (Claude-distilled vs instruction-tuned). We
-cannot isolate which factor drives the therapeutic inversion. The
-comparison is between a model with and without Claude's influence, not a
-controlled ablation of any single factor.
+cannot isolate which factor drives the observed differences in
+steering efficacy. The comparison is between two model configurations
+that differ on multiple axes simultaneously --- not a controlled
+ablation of any single factor. Claims about training regime'' effects
+are hypotheses motivated by these observations, not conclusions
+supported by this design.
 
 \subsection{Emotion Vectors}
 
