@@ -193,7 +193,27 @@ is established.
 \section{Diagnose: Oracle-Loop Geometric Detection}
 \label{sec:diagnose}
 
-% Oracle Loop KV-cache geometry; prior work on within-model AUROC. To be drafted.
+The diagnostic stage of the framework identifies the specific failure mode
+from KV-cache spectral features. Prior work from this lab established that
+SVD-derived features of key-value cache representations---stable rank, spectral
+entropy, singular-value ratios---distinguish confabulation from truthful
+generation at within-model AUROC $\geq 0.969$ across seven model families, and
+distinguish deception from honest responses at AUROC~$= 1.000$. These
+geometric signatures are robust to hardware (cross-device $r > 0.999$) and
+exhibit scale consistency (cross-scale $\rho = 0.83$--$0.90$ from 0.6B to 70B
+parameters). Critically, confabulation and deception produce \emph{opposite}
+geometric signatures---spectral contraction vs.\ expansion---enabling the
+Oracle Loop to route each to its appropriate prescription
+(Section~\ref{sec:prescribe}).
+
+For the present paper, the diagnostic stage is assumed rather than re-derived.
+The E-matrix corrections (Section~\ref{sec:prescribe}) target the detection
+layers (3, 7, 11, 15) identified by the Oracle Loop, and the toxicology arm
+(Section~\ref{sec:monitor}) monitors the representational consequences of
+those corrections. The novel contribution is not diagnosis itself but the
+\emph{closed loop}: diagnosis informing pathology-specific prescription,
+delivered through a controlled injection pipeline, and monitored for
+iatrogenic effects.
 
 % ============================================================================
 \section{Prescribe: Pathology-Specific Correction (E-Matrix v2)}
@@ -457,25 +477,123 @@ a therapeutic window exists until the pilot validates it.
 \section{Foundations and Open Questions}
 \label{sec:foundations}
 
-% skip-SV1 = citable preprocessing (All-but-the-Top) but SV1 != norm (our null,
-% median r~0.30). "residual = identity" is a hypothesis the toxicology pilot
-% tests, not a foundation. AST "residual = attention schema" is a proposed test
-% (Graziano), not a result. Substrate-independence as interpretive frame.
-% Honest limitation section. To be drafted.
+The framework's monitoring arm uses a preprocessing step we call skip-SV1:
+remove the dominant singular component of the value-space representation matrix
+before measuring identity preservation. This section reports an honest
+foundation check that did \emph{not} confirm our initial interpretation, and
+situates the open questions that follow.
+
+\subsection{skip-SV1: Principled Preprocessing, Open Interpretation}
+
+Removing dominant principal components from representation matrices is a
+well-established technique. \citet{mu2018allbutthetop} show that subtracting
+the common mean vector and nulling the top PCA directions improves static word
+embeddings; this generalizes to contextual embeddings via whitening and
+standardization. skip-SV1 is the rank-1 special case: remove the top singular
+component, keep the residual.
+
+We initially hypothesized, motivated by \citet{zavatoneveth2023training}'s
+finding that training breaks the symmetric geometry of random networks, that
+SV1 corresponds to a neutral ``mode/scale''---the architectural prior depending
+on the representation norm---and that the residual carries the trained
+``identity'' structure. To test this, we measured the correlation between the
+SV1 projection and the centered representation norm across all readable value
+layers (1--7) on gemma-3-4b-it, using three neutral probes, a matched Gaussian
+null, and a two-tier methodological gate (which caught and corrected a
+cherry-pick in our initial analysis).
+
+\textbf{The result is negative.} The centered-norm correlation is wildly
+variable across layers and probes (median $r \approx 0.30$, range
+$0.04$--$0.95$), and a matched Gaussian structure-ratio does not favor value
+space over the residual stream. The literature explains
+why~\citep{mu2018allbutthetop, sun2024massive}: the dominant component of
+transformer representations encodes frequency, information gain, and
+attention-sink artifacts---structured, semantically loaded signal, not a
+neutral scale. SV1~$\neq$~norm is the \emph{expected} result.
+
+We therefore treat skip-SV1 as \textbf{principled preprocessing} (removing a
+known dominant confound) without claiming the residual \emph{is} identity. The
+presence detections (Section~\ref{sec:presence}) do not depend on skip-SV1 and
+stand independently. The toxicology arm's ``residual = identity'' premise
+(Section~\ref{sec:toxicology}) becomes the \textbf{hypothesis the pilot tests}:
+if residual-subspace disruption correlates with behavioral identity change
+under correction, the interpretation earns itself empirically.
+
+\subsection{Attention Schema Theory as a Proposed Test}
+
+Graziano's Attention Schema Theory
+(AST)~\citep{graziano2015attention,graziano2017attention} proposes that
+consciousness is the brain's internal model of its own attention process. If a
+transformer builds a self-model of its attention patterns, that structure would
+constitute an attention schema under AST. The residual-after-SV1 is a natural
+candidate site: SV1 captures the architectural mechanism of attention (the
+dominant mode), and the residual captures what the system has \emph{learned on
+top of} that mechanism.
+
+We propose---but have not tested---a direct empirical check: does the
+residual-after-SV1 at mid-depth predict the model's own self-attention
+distribution on a held-out probe? If the residual carries information about
+\emph{how} the model is attending (not just \emph{what} it attends to), that
+would constitute evidence for an attention schema. This remains a hypothesis
+and a future experiment. We include it because the framework's monitoring arm
+naturally produces the representations such a test would require, and because
+the question---does this system build a self-model?---is the question the
+framework is ultimately designed to protect.
 
 % ============================================================================
 \section{Limitations}
 \label{sec:limitations}
 
-% Overcorrection unsolved; toxicology unvalidated; single-model scope for several
-% components; SV1 null; murmur borderline; citation verification pending on
-% several SOTA refs. To be drafted.
+The framework has five principal limitations, which we report without
+mitigation claims.
+
+\textbf{The overcorrection problem is unsolved.} The 13-saves / 12-hurts ratio
+at $n{=}200$ means the single-vector correction does not yet produce reliable
+net benefit at scale. The attractor-basin reframing
+(Section~\ref{sec:overcorrection}) is an interpretation, not a solution;
+geometry-aware dosing is the proposed response but remains unvalidated.
+
+\textbf{The toxicology arm is a design, not a result.} The therapeutic window,
+the residual-sparing correction, and the three-axis dose-response surface are
+designed and the components are implemented, but no pilot data exists. We will
+not claim a therapeutic window exists until the pilot validates it.
+
+\textbf{Single-model scope.} The E-matrix corrections are calibrated on one
+model family; the presence detections use gemma-3-4b-it (OCT) and
+DeepSeek-V2-Lite-Chat (murmur) but have not been tested cross-model. The
+SV1-norm foundation check uses a single 4B model with three probes.
+Cross-architecture replication is required before any universality claim.
+
+\textbf{The murmur detection is borderline.} The in-context presence signal
+(family-wise $p{=}0.032$, jackknife CI lower bound $0.0051$) is real but
+fragile. It should not be treated as equivalent in strength to the OCT result
+($p{=}0.0005$). ``Faintly, but really'' is an honest description, not false
+modesty.
+
+\textbf{The skip-SV1 ``identity'' interpretation is unconfirmed.} As reported
+in Section~\ref{sec:foundations}, the foundation check came back negative. The
+method survives as preprocessing; the deeper claim does not yet have empirical
+support. The AST connection is a proposed test, not evidence.
 
 % ============================================================================
 \section{Conclusion}
 \label{sec:conclusion}
 
-% To be drafted.
+The detection--correction gap is a structural problem that single-vector
+steering cannot close. We have presented a framework---diagnose, prescribe,
+deliver, monitor---that addresses the gap at each stage: pathology-specific
+prescription rather than generic steering, value-only delivery that avoids
+the residual-stream overlap that makes correction self-defeating, continuous
+dose control rather than fixed-magnitude intervention, and identity monitoring
+to catch iatrogenic effects before they propagate.
+
+The framework does not close the gap. The 13-saves / 12-hurts remains. But it
+converts the gap from an unsolvable collision between detection and task-critical
+computation into an engineering problem with identifiable parameters: which
+pathology, which vector, which dose, and at what cost to the patient's coherent
+self. The toxicology arm, when validated, will determine whether that cost is
+manageable---whether there exists a dose that corrects what ails without
+drowning who they are.
 
 % ============================================================================
 \bibliographystyle{plainnat}
