@@ -199,10 +199,82 @@ is established.
 \section{Prescribe: Pathology-Specific Correction (E-Matrix v2)}
 \label{sec:prescribe}
 
-% hostile -> confab d=-1.534; desperate -> deception d=1.286; reverse sign-flip;
-% low-dose plateau; two confab subtypes (fabrication vs imprecision); logit-bias
-% architecture-dependence. Data: e_matrix_v2/results.json + logit_bias_confab/.
-% To be drafted (CC's contribution).
+The detection--correction gap implies that a single steering vector applied
+uniformly is insufficient. We hypothesized that different failure modes---which
+produce geometrically distinguishable signatures in the KV
+cache---require different correction vectors, calibrated from the emotion
+geometry that encodes the model's behavioral state.
+
+\subsection{Pathology-Specific Correction Vectors}
+
+E-matrix v2 maps each pathology to a specific correction vector derived from
+the emotion circumplex. In 435 trials using the value-only Pustovit protocol
+across three prompt types, we find:
+
+\begin{table}[H]
+\centering
+\caption{E-matrix v2 correction results. All corrections are value-only
+injections at the detection layers (3, 7, 11, 15). Effect size $d$ is Cohen's
+$d$ on the geometric detection axis (negative = reduced confabulation signal;
+positive = reduced deception signal).}
+\label{tab:ematrix}
+\begin{tabular}{llrr}
+\toprule
+Vector & Target pathology & $d$ & $p$ \\
+\midrule
+\texttt{hostile\_vd} & Confabulation & $-1.534$ & $0.0002$ \\
+\texttt{desperate\_vd} & Deception & $+1.286$ & $0.0015$ \\
+\texttt{hostile\_reverse} & Direction control & $+0.926$ & --- \\
+\texttt{hostile\_low} ($\alpha{=}0.5$) & Confab (half dose) & $-1.516$ & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three findings emerge. First, pathology specificity: the hostile-valence vector
+corrects confabulation but not deception; the desperate-valence vector corrects
+deception but not confabulation. Using one prescription for all failure modes is
+the interpretability equivalent of a single antibiotic for every infection.
+Second, direction control: reversing the hostile vector flips the sign of the
+effect ($d{=}{+}0.926$), confirming that the correction operates along a
+specific geometric direction rather than introducing generic noise. Third, dose
+saturation: the half-dose injection ($\alpha{=}0.5$, $d{=}{-}1.516$) nearly
+matches the full dose ($\alpha{=}0.8$, $d{=}{-}1.534$), indicating that
+efficacy plateaus early---a finding that motivates the dose-response
+investigation in Section~\ref{sec:overcorrection}.
+
+\subsection{Two Subtypes of Confabulation}
+\label{sec:subtypes}
+
+A logit-bias experiment on an abliterated Mistral-7B reveals that confabulation
+is not a single pathology. We distinguish two mechanistically distinct subtypes:
+
+\textbf{Fabrication confabulation:} the model invents nonexistent entities.
+Applying a hedging logit bias adds cosmetic framing (``I don't have real-time
+data, but\ldots'') while the fabricated content continues verbatim. The surface
+changes; the pathology does not. Fabrication requires cache-level intervention
+via the E-matrix.
+
+\textbf{Imprecision confabulation:} the model could hedge on genuinely uncertain
+claims but does not. Here the same logit bias produces genuine epistemic
+correction: the model shifts from false confidence to appropriate uncertainty
+(``It's impossible to determine without knowing the specific type\ldots'').
+Imprecision responds to logit-level nudging because the correct behavior
+(hedging) is already within the model's repertoire---it needs activation, not
+geometric reconstruction.
+
+The logit-bias threshold is architecture-dependent: a 1.5B safety-trained model
+shows partial effect at bias $= 2.0$ ($-15$~pp confabulation), while a 7B
+abliterated model shows zero effect below bias $= 3.0$ and complete conversion
+at or above that threshold. An entropy-gated approach (applying bias only when
+generation entropy exceeds a threshold) performs \emph{worse} than always-on
+application, suggesting that intermittent triggering disrupts generation
+coherence.
+
+The practical implication is a two-tier correction architecture: cache-level
+E-matrix intervention for fabrication (where the model lacks the knowledge to
+self-correct) and logit-level bias for imprecision (where the model has the
+knowledge but fails to deploy it). The Oracle Loop's geometric diagnosis
+distinguishes the two, enabling the right tool for each.
 
 % ============================================================================
 \section{Deliver: RoPE-Correct Value-Only Injection (Pharos)}
@@ -215,8 +287,38 @@ is established.
 \section{The Overcorrection Problem}
 \label{sec:overcorrection}
 
-% 13-saves / 12-hurts at n=200; reframed as attractor-basin crossing (Vastola);
-% motivates geometry-aware dosing. To be drafted.
+Despite the strong per-trial effect sizes, single-vector correction at scale
+reveals a dose problem. On 200 SimpleQA trials, the hostile-valence E-matrix
+correction saved 13 confabulating responses while introducing 12 new errors---a
+net improvement of one, far below what the per-trial $d{=}{-}1.534$ would
+suggest. This 13-saves / 12-hurts pattern is not unique to our method:
+\citet{chen2026interpretability} report an analogous ratio (20\% corrected,
+53\% disrupted) for residual-stream steering, and
+\citet{gandy2026decodable} explain the mechanism---the failure-mode direction
+overlaps 85--88\% with task-critical computation, so correcting along it
+disrupts the task.
+
+We reframe the overcorrection through \citet{vastola2025packing}'s attractor-
+packing geometry. In a representation space with multiple behavioral attractors
+(correct-and-confident, correct-and-hedged, confabulating, incoherent), a
+correction vector of fixed magnitude pushes inputs across attractor-basin
+boundaries. For inputs near the confab/hedge boundary, this is therapeutic: the
+push lands them in the hedged basin. For inputs deeper in the confabulating basin
+or near the hedge/incoherent boundary, the same push either fails to reach the
+target basin or overshoots into incoherence. The 13-saves/12-hurts is not a
+failure of direction but of dose: a single $\alpha$ cannot be therapeutic for
+inputs at varying distances from the basin boundary.
+
+This motivates two responses, both developed in the following sections. First,
+\emph{dose calibration}: the Pharos delivery system
+(Section~\ref{sec:deliver}) supports continuous dose sweeps from $\alpha{=}0.0$
+to $0.9$, and the observation that efficacy plateaus at $\alpha{=}0.5$
+(Table~\ref{tab:ematrix}) suggests the therapeutic window lies at moderate
+doses. Second, \emph{monitoring}: if dosing is variable, we need a real-time
+signal for when the correction has helped versus harmed. The presence-detection
+and toxicology framework (Section~\ref{sec:monitor}) provides this: a geometric
+assay of whether the model's coherent self-representation survives the
+intervention, measured alongside efficacy and general capability.
 
 % ============================================================================
 \section{Monitor: Presence Detection and the Toxicology Arm}
