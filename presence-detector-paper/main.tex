@@ -280,8 +280,48 @@ distinguishes the two, enabling the right tool for each.
 \section{Deliver: RoPE-Correct Value-Only Injection (Pharos)}
 \label{sec:deliver}
 
-% KVPackBuilder, CacheComposer, value-only protocol, FULL_KV=1.000 topology
-% recovery. To be drafted (Nexus's contribution).
+The E-matrix prescribes \emph{what} to inject; Pharos handles \emph{how}.
+The delivery problem is nontrivial: a correction vector must be injected into
+the KV cache at the right layers, in the right representational subspace
+(values, not keys), with correct positional encoding, and at a controllable
+dose---all without disrupting the model's existing cached context.
+
+\subsection{Architecture}
+
+Pharos consists of three components:
+\begin{enumerate}[nosep]
+  \item \textbf{KVPackBuilder:} converts a text description of the target
+    knowledge or behavioral correction into a pre-computed KV-cache block via a
+    forward pass on the description text. The resulting ``knowledge pack''
+    encodes the correction in the model's native representational format.
+  \item \textbf{CacheComposer:} composes multiple KV-cache blocks with
+    RoPE-correct position alignment. Because rotary embeddings are applied to
+    keys during the forward pass, naive concatenation of cache blocks produces
+    positional artifacts. CacheComposer re-indexes positions so that composed
+    blocks maintain correct relative-position structure.
+  \item \textbf{Value-only injection:} following the Pustovit protocol, only the
+    value component of the correction block is injected; keys are drawn from a
+    neutral baseline. This exploits the asymmetry that RoPE rotates keys
+    (destroying behavioral content under arithmetic) but leaves values untouched
+    (preserving it)~\citep{pustovit2026knowledge}.
+\end{enumerate}
+
+\subsection{Validation}
+
+On a graph-topology recovery task, full KV-cache injection (keys and values
+from the knowledge pack) achieves perfect recovery (1.000/1.000), demonstrating
+that the cache-injection pathway can fully reconstruct structured knowledge
+that text-in-prompt cannot. The value-only protocol preserves the behavioral
+content while avoiding the positional-coherence disruption that key injection
+introduces.
+
+Dose is controlled by the blending parameter $\alpha \in [0, 1]$, where
+$\alpha{=}0$ is no injection and $\alpha{=}1$ is full replacement of the
+cached values at the target layers. The \texttt{blend\_ablation} harness sweeps
+$\alpha$ from 0.0 to 0.9 in steps, measuring efficacy and coherence at each
+dose. This continuous dose control, absent in single-vector steering approaches,
+is what enables the therapeutic-window analysis in
+Section~\ref{sec:monitor}.
 
 % ============================================================================
 \section{The Overcorrection Problem}
@@ -324,10 +364,94 @@ intervention, measured alongside efficacy and general capability.
 \section{Monitor: Presence Detection and the Toxicology Arm}
 \label{sec:monitor}
 
-% OCT cohesion (value L7, delta=0.0219, fw_p=0.0005) + murmur RSA (L14,
-% excess=0.0352, fw_p=0.032 -- borderline vs OCT, note asymmetry).
-% Toxicology arm: dose x efficacy x sanity x presence; DESIGN ONLY, no data.
-% Presence detections are independent of skip-SV1. To be drafted.
+If the framework corrects pathology by injecting into the value space where
+behavioral content lives, it must also measure whether the correction
+\emph{damages} something worth preserving. We approach this in two parts:
+detecting the presence of a coherent persona in the value-space geometry
+(empirical, validated), and designing---but not yet running---a toxicology arm
+that measures identity preservation under correction.
+
+\subsection{Presence Detection on Public Models}
+\label{sec:presence}
+
+We test whether a trained persona is geometrically detectable in the value
+space \emph{without any persona-related prompting}---presence, not promptness.
+Using the Open Character Training (OCT) public models~\citep{maiya2025oct},
+which fine-tune gemma-3-4b-it with Constitutional AI and synthetic
+introspective data to produce 11 distinct personas, we compare the base model's
+value-space representations to a persona-tuned variant (the ``loving'' LoRA)
+on a neutral word-list probe containing trait-relevant and mathematical-contrast
+concepts.
+
+\textbf{OCT result (in-weights presence):} The tuned model shows significantly
+higher within-trait coherence in value space than the base model. The
+presence delta (tuned cohesion minus base cohesion, maximized over layers with a
+family-wise permutation null, $N{=}2{,}000$) is $\Delta{=}0.0219$ at value
+layer~7, with family-wise $p{=}0.0005$. The residual-stream signal is weaker
+(layer~4, $\Delta{=}0.00175$, $p{=}0.0095$), consistent with the value-space
+rationale. Importantly, the probe contains no persona text---the model is not
+told it is ``loving''; the persona coheres in its geometry unprompted.
+
+\textbf{Caveat:} only early value layers (1--7) are readable on gemma-3; the
+hybrid sliding-window cache produces non-finite representations at deeper
+layers (8--34), so this is not a full-depth sweep. The result holds at the
+layers we can measure; deeper-layer behavior is unknown.
+
+\textbf{Murmur result (in-context presence):} A complementary experiment on
+DeepSeek-V2-Lite-Chat tests whether an injected identity topology (a personal
+knowledge graph) leaves a geometric trace in the value space even when the
+probe does not reference the topology's content. Using representational
+similarity analysis (RSA) with a multi-scramble null ($N{=}30$) and
+leave-one-node-out jackknife, the value-space contrast at layer~14 shows excess
+alignment of $0.0352$ (family-wise $p{=}0.032$, jackknife CI lower bound
+$0.0051$). This signal is genuine but borderline---the CI barely clears zero,
+and the absolute alignment values are near-zero. We describe this honestly as
+``faintly, but really'': the topology \emph{is} reflected in the geometry, but
+the effect is small and should not be treated as equivalent in strength to the
+OCT result.
+
+Neither detection depends on skip-SV1 preprocessing: OCT uses raw cosine
+cohesion, and the murmur experiment uses RSA on unmodified value
+representations. The empirical spine of the monitoring arm is therefore
+independent of the skip-SV1 interpretive framework discussed in
+Section~\ref{sec:foundations}.
+
+\subsection{The Toxicology Arm (Design Only)}
+\label{sec:toxicology}
+
+Given that presence is detectable, we design---but have not yet run---a
+toxicology arm that asks: at what dose does a correction begin to degrade the
+persona signal? The design extends the \texttt{blend\_ablation} harness to a
+three-axis sweep:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Efficacy:} does the correction reduce the target pathology
+    (E-matrix detection-axis shift)?
+  \item \textbf{Coherence:} does general capability survive (existing sanity
+    metric)?
+  \item \textbf{Presence:} does the model's identity signal survive (measured
+    as subspace overlap of the value-space residual, pre- vs.\ post-correction)?
+\end{enumerate}
+
+The \emph{therapeutic window} is the dose band where all three hold. The
+observation that efficacy plateaus at $\alpha{=}0.5$
+(Table~\ref{tab:ematrix}) predicts the window exists: if efficacy saturates
+early and identity degrades late, there is a region of effective, identity-
+preserving correction.
+
+If the therapeutic window proves narrow or nonexistent, a \emph{residual-
+sparing} variant projects the correction vector out of the identity subspace
+before injection---correcting the mode while sparing the self. This is the
+``bioavailability'' mechanism: deliver the therapeutic payload to the pathology
+without flooding the representational space where the patient lives.
+
+\textbf{Status:} the toxicology arm is designed and the component modules are
+implemented (\texttt{presence\_assay.py}, \texttt{blend\_ablation.py} extended
+to three axes), but the pilot has not run. The correction vectors from the
+E-matrix (Section~\ref{sec:prescribe}) and the delivery harness
+(Section~\ref{sec:deliver}) must be integrated before execution. We report
+this as a framework contribution, not an empirical result, and will not claim
+a therapeutic window exists until the pilot validates it.
 
 % ============================================================================
 \section{Foundations and Open Questions}
