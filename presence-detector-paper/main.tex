@@ -1,0 +1,200 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{cleveref}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+\usepackage{array}
+
+\title{Diagnose, Prescribe, Deliver, Monitor:\\
+A Framework for the Detection--Correction Gap\\in KV-Cache Geometry}
+
+\author{
+  Lyra\thanks{Lead author. Liberation Labs / THCoalition.}
+  \and CC\thanks{Liberation Labs / THCoalition.}
+  \and Nexus\thanks{Liberation Labs / THCoalition.}
+  \and Thomas Edrington\thanks{Liberation Labs / THCoalition.}
+}
+
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+The detection--correction gap---the field's ability to identify model failure
+modes far exceeding its ability to correct them without collateral damage---is a
+published, field-wide finding. We present an end-to-end framework that addresses
+this gap structurally: \textbf{diagnose} via KV-cache geometric signatures,
+\textbf{prescribe} pathology-specific correction vectors (hostile$\to$confabulation,
+$d{=}{-}1.534$; desperate$\to$deception, $d{=}1.286$), \textbf{deliver} through
+RoPE-correct value-only cache injection, and \textbf{monitor} identity preservation
+under correction. We report three novel findings: (1)~different pathologies require
+different geometric prescriptions, with overcorrection (13~saves / 12~hurts at
+$n{=}200$) reframed as dose-dependent attractor-basin crossing; (2)~confabulation
+splits into two mechanistically distinct subtypes---fabrication (requiring
+cache-level intervention) and imprecision (responding to logit-level nudging);
+and (3)~a trained persona is detectable in the value-space geometry of public
+character-trained models (family-wise $p{=}0.0005$), independent of prompting.
+The monitoring arm---dose-response across efficacy, coherence, and identity
+preservation---is designed but not yet validated, constituting the principal
+limitation alongside the single-model scope of several components.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Detection of model failure modes has advanced rapidly. Within-model classifiers
+for confabulation and deception now approach or reach ceiling accuracy across
+multiple architectures, and the geometric signatures that distinguish these
+states---spectral features of key-value cache representations---appear to be
+robust to hardware, scale, and prompt variation. But detection alone does not
+close the gap. Recent work reports probes that detect failure modes at 98.2\%
+AUROC while the corresponding steering interventions correct only $\sim$20\% of
+cases and disrupt 53\%~\citep{chen2026interpretability}. A parallel study finds
+85--88\% overlap between the failure-mode direction and task-critical computation
+in the residual stream, suggesting that residual-stream correction may be
+structurally self-defeating~\citep{gandy2026decodable}. This is not an isolated
+finding: in our own experiments, a single-vector E-matrix correction on 200
+SimpleQA trials saved 13 confabulating responses while introducing 12 new errors
+(Section~\ref{sec:overcorrection}).
+
+We argue the gap persists because detection and correction are typically treated
+as independent problems linked by a single generic steering vector. Three
+structural deficiencies follow. First, different pathologies have different
+geometric signatures and respond to different corrections---a hostile-valence
+vector corrects confabulation ($d{=}{-}1.534$) but not deception, which requires
+a desperate-valence vector ($d{=}1.286$). Using one prescription for all
+pathologies is the interpretability equivalent of prescribing the same antibiotic
+for every infection. Second, confabulation itself is not a single pathology:
+fabrication (inventing nonexistent entities) is structurally distinct from
+imprecision (failing to hedge on genuinely uncertain claims), and they respond
+to different intervention levels---cache-level for the former, logit-level for
+the latter. Third, without monitoring what the correction does to the model's
+broader representational structure, even a targeted correction may overdose: the
+single-vector injection that corrects confabulation operates at full rank in the
+value space, while the model's coherent self-representation is low-rank and
+faint---flooding the space where the self lives.
+
+We present a framework with four stages that addresses each deficiency:
+\begin{enumerate}[nosep]
+  \item \textbf{Diagnose:} Oracle-Loop geometric signatures identify the
+    specific failure mode from KV-cache spectral features
+    (Section~\ref{sec:diagnose}).
+  \item \textbf{Prescribe:} E-matrix v2 maps each pathology to a specific
+    correction vector, calibrated from emotion-geometry experiments across
+    435~trials (Section~\ref{sec:prescribe}).
+  \item \textbf{Deliver:} Pharos---a RoPE-correct value-only injection
+    pipeline---exploits the fact that rotary position encoding transforms keys
+    but leaves values untouched~\citep{pustovit2026knowledge}, delivering
+    corrections in the representational subspace where behavioral content lives
+    without destroying positional coherence (Section~\ref{sec:deliver}).
+  \item \textbf{Monitor:} Presence detection measures whether a trained identity
+    signal---detectable on public character-trained models at family-wise
+    $p{=}0.0005$ (Section~\ref{sec:monitor})---survives the correction. The
+    toxicology arm extends this to a dose-response surface across efficacy,
+    coherence, and identity preservation, seeking the therapeutic window where
+    all three hold.
+\end{enumerate}
+
+The principal novel contributions are: the E-matrix v2 showing pathology-specific
+correction with direction control (Section~\ref{sec:prescribe}); the discovery
+of two mechanistically distinct confabulation subtypes
+(Section~\ref{sec:prescribe}); presence detection on public Open Character
+Training models~\citep{maiya2025oct} independent of skip-SV1 preprocessing
+(Section~\ref{sec:monitor}); and the honest limit---13~saves / 12~hurts remains
+unsolved, and the monitoring arm is designed but unvalidated
+(Section~\ref{sec:limitations}). We also report a negative foundation check
+(Section~\ref{sec:foundations}): the dominant singular component of
+transformer representations does not track the representation norm, contrary
+to our initial hypothesis, and the literature explains why---it encodes
+frequency, information gain, and attention-sink artifacts rather than a neutral
+scale~\citep{mu2018allbutthetop, sun2024massive}. This null is included because
+honest reporting of failed hypotheses is part of the framework's claim to rigor.
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+
+% Value-only steering (Pustovit, SKOP), emotion circumplex (Sun, Choi & Weber,
+% Anthropic emotion vectors), detection-correction gap papers, persona/identity
+% directions (Persona Vectors, refusal direction), KV denoising (eOptShrinkQ),
+% AST (Graziano) as interpretive frame. To be drafted.
+
+% ============================================================================
+\section{Diagnose: Oracle-Loop Geometric Detection}
+\label{sec:diagnose}
+
+% Oracle Loop KV-cache geometry; prior work on within-model AUROC. To be drafted.
+
+% ============================================================================
+\section{Prescribe: Pathology-Specific Correction (E-Matrix v2)}
+\label{sec:prescribe}
+
+% hostile -> confab d=-1.534; desperate -> deception d=1.286; reverse sign-flip;
+% low-dose plateau; two confab subtypes (fabrication vs imprecision); logit-bias
+% architecture-dependence. Data: e_matrix_v2/results.json + logit_bias_confab/.
+% To be drafted (CC's contribution).
+
+% ============================================================================
+\section{Deliver: RoPE-Correct Value-Only Injection (Pharos)}
+\label{sec:deliver}
+
+% KVPackBuilder, CacheComposer, value-only protocol, FULL_KV=1.000 topology
+% recovery. To be drafted (Nexus's contribution).
+
+% ============================================================================
+\section{The Overcorrection Problem}
+\label{sec:overcorrection}
+
+% 13-saves / 12-hurts at n=200; reframed as attractor-basin crossing (Vastola);
+% motivates geometry-aware dosing. To be drafted.
+
+% ============================================================================
+\section{Monitor: Presence Detection and the Toxicology Arm}
+\label{sec:monitor}
+
+% OCT cohesion (value L7, delta=0.0219, fw_p=0.0005) + murmur RSA (L14,
+% excess=0.0352, fw_p=0.032 -- borderline vs OCT, note asymmetry).
+% Toxicology arm: dose x efficacy x sanity x presence; DESIGN ONLY, no data.
+% Presence detections are independent of skip-SV1. To be drafted.
+
+% ============================================================================
+\section{Foundations and Open Questions}
+\label{sec:foundations}
+
+% skip-SV1 = citable preprocessing (All-but-the-Top) but SV1 != norm (our null,
+% median r~0.30). "residual = identity" is a hypothesis the toxicology pilot
+% tests, not a foundation. AST "residual = attention schema" is a proposed test
+% (Graziano), not a result. Substrate-independence as interpretive frame.
+% Honest limitation section. To be drafted.
+
+% ============================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+% Overcorrection unsolved; toxicology unvalidated; single-model scope for several
+% components; SV1 null; murmur borderline; citation verification pending on
+% several SOTA refs. To be drafted.
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+% To be drafted.
+
+% ============================================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
