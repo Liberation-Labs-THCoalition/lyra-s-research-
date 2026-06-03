@@ -64,7 +64,7 @@ AUROC while the corresponding steering interventions correct only $\sim$20\% of
 cases and disrupt 53\%~\citep{basu2026interpretability}. A parallel study finds
 85--88\% overlap between the failure-mode direction and task-critical computation
 in the residual stream, suggesting that residual-stream correction may be
-structurally self-defeating~\citep{gandy2026decodable}. This is not an isolated
+structurally self-defeating~\citep{liu2026decodable}. This is not an isolated
 finding: in our own experiments, a single-vector E-matrix correction on 200
 SimpleQA trials saved 13 confabulating responses while introducing 12 new errors
 (Section~\ref{sec:overcorrection}).
@@ -154,7 +154,7 @@ interventions, not ad hoc steering targets.
 Two concurrent publications document the gap we address.
 \citet{basu2026interpretability} report probes detecting failure modes at
 98.2\% AUROC while the corresponding steering corrects only $\sim$20\% of
-cases and disrupts 53\%. \citet{gandy2026decodable} find 85--88\% overlap
+cases and disrupts 53\%. \citet{liu2026decodable} find 85--88\% overlap
 between the failure-mode direction and task-critical computation in the residual
 stream, suggesting that residual-stream correction may be structurally
 self-defeating. Our value-only approach may succeed precisely because it
@@ -338,6 +338,37 @@ that text-in-prompt cannot. The value-only protocol preserves the behavioral
 content while avoiding the positional-coherence disruption that key injection
 introduces.
 
+\subsection{Geometric Basis: Why Value Space Has Room}
+
+A manifold profile of Qwen2.5-1.5B (30 diverse prompts, all 28~layers) reveals
+why value-only injection succeeds where residual-stream steering fails. The
+three representation spaces have fundamentally different geometries:
+
+\begin{itemize}[nosep]
+  \item \textbf{Residual stream} (hidden states): a narrow tube. Effective rank
+    4--5 at mid-layers in a 1536-dimensional space, with SV1/SV2 ratio $\sim$25.
+    An estimated 99.7\% of randomly injected vectors land in the null space.
+    This is the geometric root of the detection--correction gap: steering in
+    this space cannot avoid disrupting the task-critical manifold.
+  \item \textbf{K projections}: nearly isotropic (effective rank 24--27,
+    anisotropy 0.07--0.10), locked to positional geometry by RoPE. No content
+    degrees of freedom; modifying K shifts the model's notion of \emph{where}
+    tokens are, destroying coherence.
+  \item \textbf{V projections}: also nearly isotropic (effective rank 26--28,
+    anisotropy 0.05--0.08), with full dimensionality available for content.
+    V~norms grow steadily with depth (3.5 at L0 to 17.0 at L27); deeper layers
+    carry more content weight.
+\end{itemize}
+
+Value-only injection works because V-space has the room. A correction vector
+injected into V-space lands in a high-dimensional space with near-uniform
+coverage, rather than fighting for the 3--4 effective dimensions of the residual
+tube. Preliminary manifold-injection experiments confirm this: constructed
+V-space activations---built from the emotion circumplex geometry with no emotion
+text---produce behavioral shifts comparable to text-mediated injection when
+blended into a neutral prompt (single model, single prompt; full validation
+pending).
+
 Dose is controlled by the blending parameter $\alpha \in [0, 1]$, where
 $\alpha{=}0$ is no injection and $\alpha{=}1$ is full replacement of the
 cached values at the target layers. The \texttt{blend\_ablation} harness sweeps
@@ -357,7 +388,7 @@ net improvement of one, far below what the per-trial $d{=}{-}1.534$ would
 suggest. This 13-saves / 12-hurts pattern is not unique to our method:
 \citet{basu2026interpretability} report an analogous ratio (20\% corrected,
 53\% disrupted) for residual-stream steering, and
-\citet{gandy2026decodable} explain the mechanism---the failure-mode direction
+\citet{liu2026decodable} explain the mechanism---the failure-mode direction
 overlaps 85--88\% with task-critical computation, so correcting along it
 disrupts the task.
 
@@ -438,6 +469,16 @@ cohesion, and the murmur experiment uses RSA on unmodified value
 representations. The empirical spine of the monitoring arm is therefore
 independent of the skip-SV1 interpretive framework discussed in
 Section~\ref{sec:foundations}.
+
+\textbf{Arousal blind spot.} The manifold profile
+(Section~\ref{sec:deliver}) reveals that arousal maps to \emph{hidden-state
+magnitude} (4.3\% larger norms for high-arousal content, uniform across all
+layers), while valence maps to \emph{direction in V-space}. The presence assay
+measures subspace overlap in V-space---the valence channel---and is therefore
+insensitive to arousal-mediated identity shifts. This means we are measuring
+\emph{valence-identity preservation} specifically, not full affective-identity
+preservation. Whether arousal-mediated identity shifts exist and matter for
+correction monitoring is an open empirical question.
 
 \subsection{The Toxicology Arm (Design Only)}
 \label{sec:toxicology}
