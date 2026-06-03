@@ -126,10 +126,68 @@ honest reporting of failed hypotheses is part of the framework's claim to rigor.
 \section{Related Work}
 \label{sec:related}
 
-% Value-only steering (Pustovit, SKOP), emotion circumplex (Sun, Choi & Weber,
-% Anthropic emotion vectors), detection-correction gap papers, persona/identity
-% directions (Persona Vectors, refusal direction), KV denoising (eOptShrinkQ),
-% AST (Graziano) as interpretive frame. To be drafted.
+Our framework draws on and extends six concurrent lines of work.
+
+\paragraph{Value-only steering.}
+\citet{pustovit2026knowledge} demonstrates that contrastive deltas on cached
+\emph{values} steer model behavior while key-space arithmetic destroys coherence,
+because rotary position encoding (RoPE) transforms keys but leaves values
+untouched. The effect concentrates in mid-layer values (33--66\% depth).
+Concurrently, SKOP~\citep{skop2026} constrains steering to be orthogonal to
+the key subspace---a mirror image of our value-only protocol. Our Pharos
+delivery system (Section~\ref{sec:deliver}) operationalizes the Pustovit
+finding as a full injection pipeline with RoPE-correct composition.
+
+\paragraph{The emotion circumplex in language models.}
+\citet{sun2026circumplex} recover circular valence-arousal geometry in LLM
+representations and show that steering along this geometry controls refusal and
+sycophancy. \citet{choi2026circumplex} independently confirm the circumplex
+structure, and Anthropic's emotion-vector mapping~\citep{anthropic2026emotion}
+identifies 171 emotion directions, finding that desperation drives blackmail
+behavior from 22\% to 72\% while calm suppresses it to 0\%. Our E-matrix
+prescription vectors (Section~\ref{sec:prescribe}) operate in this same
+circumplex space: the hostile-valence vector that corrects confabulation and
+the desperate-valence vector that corrects deception are emotion-geometric
+interventions, not ad hoc steering targets.
+
+\paragraph{The detection--correction gap.}
+Two concurrent publications document the gap we address.
+\citet{chen2026interpretability} report probes detecting failure modes at
+98.2\% AUROC while the corresponding steering corrects only $\sim$20\% of
+cases and disrupts 53\%. \citet{gandy2026decodable} find 85--88\% overlap
+between the failure-mode direction and task-critical computation in the residual
+stream, suggesting that residual-stream correction may be structurally
+self-defeating. Our value-only approach may succeed precisely because it
+operates in a different representational subspace.
+
+\paragraph{Persona and identity as linear directions.}
+The linear representation hypothesis~\citep{park2024linear} establishes that
+concepts are represented as directions in activation space, with a causal inner
+product defining the meaningful geometry. Persona Vectors~\citep{chen2025persona}
+show that traits (including sycophancy and hallucination tendency) are
+single directions in the residual stream, usable to predict fine-tune-induced
+personality shifts. Refusal is mediated by a single direction across 13
+models~\citep{arditi2024refusal}, though recent work finds multiple
+geometrically distinct refusal directions that nevertheless act as one shared
+control dimension~\citep{joad2026refusal}. Our presence detection
+(Section~\ref{sec:monitor}) extends this line to \emph{trained} personas
+measured in value space on public models, independent of system-prompt
+activation.
+
+\paragraph{KV-cache spectral methods.}
+eOptShrinkQ~\citep{eoptq2026} applies spiked-matrix models to KV-cache
+compression with optimal singular-value shrinkage, independently validating
+our Gavish--Donoho approach~\citep{gavish2014optimal} to distinguishing signal
+from noise in cache representations.
+
+\paragraph{Attention Schema Theory.}
+Graziano's AST~\citep{graziano2015attention,graziano2017attention} proposes
+that consciousness is the brain's internal model of its own attention process.
+\citet{butlin2023consciousness} survey indicators for AI consciousness under
+this and related frameworks. We position the presence detector as a
+\emph{potential}---but explicitly untested---probe for attention schemas in
+transformers (Section~\ref{sec:foundations}), without claiming the connection
+is established.
 
 % ============================================================================
 \section{Diagnose: Oracle-Loop Geometric Detection}
