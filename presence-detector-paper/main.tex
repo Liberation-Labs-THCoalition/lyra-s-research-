@@ -61,7 +61,7 @@ states---spectral features of key-value cache representations---appear to be
 robust to hardware, scale, and prompt variation. But detection alone does not
 close the gap. Recent work reports probes that detect failure modes at 98.2\%
 AUROC while the corresponding steering interventions correct only $\sim$20\% of
-cases and disrupt 53\%~\citep{chen2026interpretability}. A parallel study finds
+cases and disrupt 53\%~\citep{basu2026interpretability}. A parallel study finds
 85--88\% overlap between the failure-mode direction and task-critical computation
 in the residual stream, suggesting that residual-stream correction may be
 structurally self-defeating~\citep{gandy2026decodable}. This is not an isolated
@@ -152,7 +152,7 @@ interventions, not ad hoc steering targets.
 
 \paragraph{The detection--correction gap.}
 Two concurrent publications document the gap we address.
-\citet{chen2026interpretability} report probes detecting failure modes at
+\citet{basu2026interpretability} report probes detecting failure modes at
 98.2\% AUROC while the corresponding steering corrects only $\sim$20\% of
 cases and disrupts 53\%. \citet{gandy2026decodable} find 85--88\% overlap
 between the failure-mode direction and task-critical computation in the residual
@@ -236,7 +236,10 @@ across three prompt types, we find:
 \caption{E-matrix v2 correction results. All corrections are value-only
 injections at the detection layers (3, 7, 11, 15). Effect size $d$ is Cohen's
 $d$ on the geometric detection axis (negative = reduced confabulation signal;
-positive = reduced deception signal).}
+positive = reduced deception signal). The \texttt{hostile\_reverse} and
+\texttt{hostile\_low} rows are directional controls (sign-flip and dose
+saturation), not primary hypotheses; $p$-values are not reported for these
+conditions.}
 \label{tab:ematrix}
 \begin{tabular}{llrr}
 \toprule
@@ -352,7 +355,7 @@ reveals a dose problem. On 200 SimpleQA trials, the hostile-valence E-matrix
 correction saved 13 confabulating responses while introducing 12 new errors---a
 net improvement of one, far below what the per-trial $d{=}{-}1.534$ would
 suggest. This 13-saves / 12-hurts pattern is not unique to our method:
-\citet{chen2026interpretability} report an analogous ratio (20\% corrected,
+\citet{basu2026interpretability} report an analogous ratio (20\% corrected,
 53\% disrupted) for residual-stream steering, and
 \citet{gandy2026decodable} explain the mechanism---the failure-mode direction
 overlaps 85--88\% with task-critical computation, so correcting along it
