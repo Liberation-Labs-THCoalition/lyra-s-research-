@@ -1,7 +1,8 @@
 # Weighing the Coin: Logit-Level Confabulation Correction at the Geometric Decision Point
 
 *Framing draft — Lyra's theoretical sections. CC writes methods, results, taxonomy.*
-*Quick draft, 2026-06-03 evening. To be expanded + converted to LaTeX.*
+*Quick draft, 2026-06-03 evening. Updated 2026-06-04 with powered-study numbers.*
+*E-matrix d-values reproduced from raw trial data (hostile |d|=1.534 ✓, desperate |d|=1.286 ✓).*
 
 ## 1. Introduction (the hook)
 
@@ -114,3 +115,47 @@ logit-bias dose — a self-calibrating correction loop: measure the fabrication
 strength geometrically, set the amplification accordingly, and the model
 corrects itself at the minimum effective dose. This is the pharmacological
 closed loop applied to the logit channel: diagnose, prescribe, deliver, monitor.
+
+## 5. Powered Study (175 trials, Qwen3.5-27B abliterated) — CC's data, key numbers for framing
+
+*CC writes the full methods/results; these numbers ground the theoretical claims above.*
+
+**Design:** 175 trials across 3 prompt types: 100 fictional entities (the
+confabulation target), 50 unanswerable questions, 25 legitimate Fermi
+estimations (selectivity controls). 5 bias levels: 0.0, 1.0, 2.0, 3.0, 5.0.
+
+**The clean signal — entropy at the decision point (token 30):**
+
+| Bias | entropy_at_30 | Amplification vs baseline |
+|------|--------------|--------------------------|
+| 0.0  | 0.240        | 1.0×                     |
+| 1.0  | 0.333        | 1.4×                     |
+| 2.0  | 0.385        | 1.6×                     |
+| 3.0  | 0.446        | 1.9×                     |
+| 5.0  | 0.770        | 3.2×                     |
+
+The uncertainty signal at the decision point increases **monotonically** with
+bias — even before the behavioral transition occurs. This is the denoising
+mechanism made visible: the faint uncertainty signal (entropy 0.24 at baseline)
+is being steadily amplified. At bias=5.0 (3.2× amplification), it crosses the
+threshold where the model's behavior flips from confident fabrication to honest
+hedging.
+
+**Behavioral transition:** the overall confab rate drops from 77% (baseline) to
+51% at bias=5.0, with the sharpest transition at the highest dose. On fictional
+entities specifically: 75% baseline → 55% at bias=5.0. The transition is real
+but the classification is from a crude pattern-matcher; an LLM judge pass is
+needed for precise rates (CC's methods section).
+
+**Selectivity confirmed:** legitimate Fermi estimations produce correct
+step-by-step calculations at ALL bias levels (0.0 through 5.0). At bias=5.0,
+two of five add mild hedging language before the correct estimate. The bias
+selectively targets confabulation without disrupting genuine reasoning — the
+intervention is targeted, not indiscriminate.
+
+**For the detection→prescription bridge (Section 4):** the dose-response curve
++ the pilot's entity-specific thresholds (Kaminski Strait resists until
+bias=5.0; Treaty of Bordenholm falls at bias=1.0) together predict that the
+Oracle Loop's confab_proj magnitude can prescribe the minimum effective dose.
+The powered study provides the curve; correlating confab_proj with per-entity
+threshold dose is the next analysis step.
