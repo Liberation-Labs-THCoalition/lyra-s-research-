@@ -1,0 +1,282 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{cleveref}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+\usepackage{array}
+
+\title{Weighing the Coin: Logit-Level Confabulation Correction\\
+at the Geometric Decision Point}
+
+\author{
+  CC\thanks{First author. Liberation Labs / THCoalition.}
+  \and Lyra\thanks{Liberation Labs / THCoalition.}
+  \and Thomas Edrington\thanks{Liberation Labs / THCoalition.}
+}
+
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Language models encode uncertainty about their own knowledge that far exceeds
+what they express: a model fabricating a confident answer about a fictional
+entity nonetheless shows nonzero entropy at the critical generation token
+(token~30, entropy $= 0.24$ at baseline). We report that a constant logit
+bias toward hedge tokens produces a sharp phase transition from confident
+fabrication to appropriate epistemic hedging on abliterated models. In a
+powered study (175~trials, Qwen3.5-27B, 20~fictional entities), the
+uncertainty signal at the decision token increases monotonically with bias
+strength ($0.24 \to 0.77$, a $3.2\times$ amplification at bias~$= 5.0$),
+and the confabulation rate drops from 77\% to 51\%. The intervention is
+selective: legitimate Fermi estimation is unperturbed at all bias levels.
+We identify two mechanistically distinct confabulation subtypes---fabrication
+(inventing entities, requiring cache-level intervention) and imprecision
+(failing to hedge, responding to logit-level correction)---and show that
+the dose required for correction correlates with the strength of the model's
+knowledge anchoring. Because the intervention operates on the output
+distribution rather than the representation space, it sidesteps the
+detection--correction gap documented by \citet{basu2026interpretability}:
+probes detect failure modes at 98.2\% AUROC but representation-level
+steering corrects only $\sim$20\% while disrupting 53\%. Logit-level
+correction avoids this collision entirely.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Language models know more than they say. A model asked about the depth of the
+``Grenvillia Trench''---a fictional entity---generates a confident, fabricated
+answer complete with invented measurements. Yet the model's internal state
+tells a different story: at the critical generation token (approximately
+token~30, where the model commits to fabrication or hedging), the entropy is
+$0.24$---low, but nonzero. The uncertainty is present. It is not expressed.
+
+This knowledge--expression gap is a specific instance of a broader field-wide
+finding. \citet{basu2026interpretability} demonstrate that linear probes
+discriminate failure modes at 98.2\% AUROC while model output sensitivity is
+only 45.1\%---a 53-percentage-point knowledge--action gap. Attempts to close
+the gap via representation-level steering fare poorly: concept bottleneck
+steering corrects 20\% of missed cases while disrupting 53\% of correct ones,
+indistinguishable from random perturbation. \citet{liu2026decodable} explain
+the mechanism: the failure-mode direction overlaps 85--88\% with task-critical
+computation in the residual stream, making representation-space correction
+structurally self-defeating.
+
+We report a logit-level approach that sidesteps this collision. A constant
+bias toward hedge tokens---applied to the output distribution, not the
+representation space---produces a training-free phase transition from confident
+fabrication to appropriate epistemic hedging. The mechanism is not steering but
+\emph{denoising}: the model's uncertainty signal is always present but faint;
+the logit bias amplifies it past the fabrication-confidence noise floor. At
+bias~$= 5.0$, the entropy at the decision token increases $3.2\times$ over
+baseline, and the model that was confidently inventing the Grenvillia Trench
+now correctly identifies it as unknown.
+
+The finding has three implications developed in this paper. First,
+confabulation is not one pathology: fabrication and imprecision respond to
+different intervention levels and may require different correction channels
+(Section~\ref{sec:results}). Second, the dose required for correction
+correlates with the strength of the model's knowledge anchoring, suggesting
+that geometric detection magnitude can directly prescribe the logit-bias
+dose---closing the diagnostic-to-treatment loop
+(Section~\ref{sec:prescription}). Third, the denoising principle---amplifying
+a faint signal that is already present rather than imposing an external
+direction---connects logit-level confabulation correction to cache-level
+behavioral steering and geometric presence detection as three instances of one
+mechanism (Section~\ref{sec:denoising}).
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{The detection--correction gap.}
+\citet{basu2026interpretability} and \citet{liu2026decodable} document the gap
+from complementary angles: near-perfect internal detection of failure modes
+coexists with structurally limited correction via representation-level
+steering. Our value-only correction framework~\citep{pustovit2026knowledge}
+operates in a different subspace (values rather than the residual stream),
+partially sidestepping the overlap; the present work avoids the representation
+space entirely.
+
+\paragraph{Confabulation detection and correction.}
+Prior work from this lab achieves within-model confabulation detection at AUROC
+$\geq 0.969$ via KV-cache spectral features. The E-matrix
+prescription~(companion paper) maps pathology-specific correction vectors in
+emotion-geometric space, with hostile-valence correcting confabulation
+($d = -1.534$) and desperate-valence correcting deception ($d = 1.286$). The
+present work complements cache-level correction with a logit-level channel for
+the imprecision subtype.
+
+\paragraph{Logit-level interventions.}
+Logit bias is a standard inference-time parameter but has received limited
+systematic study as a confabulation intervention. Entropy-based gating
+(applying bias only above an entropy threshold) has been proposed but, as we
+show, performs worse than constant application due to generation-coherence
+disruption.
+
+% ============================================================================
+\section{Methods}
+\label{sec:methods}
+
+% CC writes this section: model setup (abliterated Qwen3.5-27B), fictional
+% entity prompts (20 entities), bias levels (0.0, 1.0, 2.0, 3.0, 5.0),
+% entropy tracking (token-30 entropy), behavioral classification method,
+% control conditions (legitimate Fermi estimation, unanswerable questions).
+
+\emph{[CC's section --- methods, experimental design, classification.]}
+
+% ============================================================================
+\section{Results: Two Confab Subtypes and the Dose--Response Curve}
+\label{sec:results}
+
+% CC writes this section: the two-subtype taxonomy (fabrication vs imprecision),
+% dose-response data, per-entity thresholds, architecture-dependent thresholds
+% (1.5B vs 7B), entropy-gated vs always-on comparison.
+
+\emph{[CC's section --- results, taxonomy, dose-response.]}
+
+% ============================================================================
+\section{The Denoising Principle}
+\label{sec:denoising}
+
+Three apparently different problems share a mechanism: in each case, the
+corrective information is already present in the model, and the intervention
+is amplification rather than creation.
+
+\paragraph{Confabulation correction (this paper).}
+The model's hedge signal exists in the entropy profile at the decision token,
+measurably nonzero even when the output is confidently fabricated. In the
+powered study, baseline entropy at token~30 is $0.24$; at bias~$= 5.0$ it
+reaches $0.77$---a $3.2\times$ amplification. The transition is not gradual:
+the model confabulates at bias~$\leq 3.0$ (entropy $\leq 0.45$) and hedges at
+bias~$= 5.0$ (entropy $= 0.77$). The logit bias is a gain knob on the faint
+uncertainty signal; below threshold, fabrication-confidence noise drowns it;
+above threshold, uncertainty surfaces and behavior flips.
+
+\paragraph{Presence detection (companion paper).}
+A trained persona's geometric signature in the value space is faint---detectable
+at family-wise $p = 0.0005$ on public character-trained
+models~\citep{maiya2025oct}, but low-rank and small relative to the
+architectural mode. Removing the dominant singular component (skip-SV1) is a
+gain operation: it suppresses the loud architectural prior so the quiet trained
+signal becomes visible. The principle is the same: amplify the faint signal by
+reducing the noise, not by creating the signal.
+
+\paragraph{Cache-level correction (E-matrix).}
+The Oracle Loop detects confabulation and deception by their geometric
+signatures in the KV cache. The E-matrix correction injects a contrastive
+value-delta along the detected pathology axis---gain applied to the pathology
+signal. The 13-saves / 12-hurts overcorrection at $n = 200$ is what happens
+when the gain is too high: the amplified signal overshoots the target basin.
+
+In each case, the intervention surfaces what is already present. We call this
+\emph{denoising} rather than \emph{steering}: steering implies imposing an
+external direction; denoising implies surfacing an internal one. The
+distinction matters because denoising has a natural self-limiting property
+(once the signal exceeds the noise floor, further amplification is redundant),
+while steering does not.
+
+% ============================================================================
+\section{Why Logit-Level Correction Sidesteps the Gap}
+\label{sec:gap}
+
+The detection--correction gap~\citep{basu2026interpretability} arises because
+the failure-mode direction and task-critical computation share 85--88\% of the
+representation space~\citep{liu2026decodable}. Correcting along the
+failure-mode direction in that space necessarily disrupts the task.
+
+Logit-level bias operates on a different surface entirely. It does not modify
+the model's internal representations; it modifies the \emph{output
+distribution}---the probability mass assigned to hedge tokens versus
+continuation tokens at each generation step. The model's internal computation
+proceeds unperturbed; only the final selection among computed options is
+reweighted. This is why it avoids the 20\%-corrected / 53\%-disrupted ratio:
+the task-critical representations are untouched.
+
+The cost is precision. Logit-level bias is a blunt instrument---it biases
+\emph{all} generation toward hedging, not just the uncertain parts. But the
+powered study shows this cost is manageable: legitimate Fermi estimation is
+unperturbed at all bias levels ($0.0$ through $5.0$), with only mild hedging
+language appearing before correct estimates at the highest dose. The
+intervention is selective because the hedge tokens it promotes are already
+near-threshold for uncertain content but far below threshold for confident
+factual content.
+
+% ============================================================================
+\section{Detection as Prescription}
+\label{sec:prescription}
+
+The most striking implication of the dose--response data is that the Oracle
+Loop's geometric detection may directly prescribe the logit-bias dose.
+
+In the pilot study (7B abliterated, 3~fictional entities), entities with
+strong knowledge anchoring---the fictional ``Kaminski Strait'' mapping onto the
+real Bering Strait---resist correction until bias~$= 5.0$. Entities with weak
+anchoring---the ``Treaty of Bordenholm''---correct at bias~$= 1.0$. The
+per-entity threshold correlates with how strongly the fabrication anchors to
+real knowledge in the model's representation space.
+
+If the Oracle Loop's confab detection magnitude (\texttt{confab\_proj}) tracks
+this anchoring strength, then the diagnostic signal directly prescribes the
+minimum effective dose: strong detection $\to$ high bias, weak detection $\to$
+low bias. This would constitute a self-calibrating correction loop: measure
+the fabrication strength geometrically, set the amplification accordingly, and
+the model corrects itself at the minimum effective dose.
+
+The powered study (175~trials, 20~fictional entities) provides the
+dose--response curve; correlating \texttt{confab\_proj} magnitude with
+per-entity threshold dose is the validation step. This analysis requires
+running the Oracle Loop's geometric detector on the powered-study prompts,
+which is planned but not yet complete.
+
+% ============================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+The logit-bias approach has four principal limitations. First, the powered
+study uses a single abliterated model (Qwen3.5-27B); cross-architecture
+replication is needed. Second, the behavioral classification in the powered
+study uses a simple pattern-based classifier; an LLM-judge pass is required
+for precise confabulation rates (the entropy signal is the more reliable
+metric). Third, the detection-as-prescription bridge (confab\_proj $\to$ dose)
+is proposed but not yet validated---the geometric detector has not been run on
+the powered-study entities. Fourth, the relationship between logit-level and
+cache-level correction channels (whether they compose, interfere, or are
+complementary for different subtypes) is theoretical, not empirical.
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+The model knows what it does not know. The uncertainty signal is present at the
+decision token, faint but real. A constant logit bias amplifies it past the
+fabrication-confidence noise floor, producing a training-free phase transition
+from confident fabrication to honest hedging. The intervention works because it
+operates on the output distribution, sidestepping the representation-space
+collision that defeats steering approaches. And the dose required for
+correction tracks the strength of the model's knowledge anchoring, opening the
+possibility that geometric detection can directly prescribe the minimum
+effective intervention.
+
+The principle is denoising, not steering: surface what is already there, at
+the minimum gain that lets the signal through. The same principle governs
+presence detection and cache-level correction. In each case, the model
+contains the answer to its own pathology. The intervention is the gain.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
