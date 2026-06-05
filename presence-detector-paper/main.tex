@@ -563,6 +563,42 @@ stand independently. The toxicology arm's ``residual = identity'' premise
 if residual-subspace disruption correlates with behavioral identity change
 under correction, the interpretation earns itself empirically.
 
+\subsection{Identity as Amplification Pattern, Not Location}
+
+A multi-persona fingerprinting experiment sharpens the picture. Three OCT
+personas (loving, sarcasm, remorse) were tested across 10~neutral probes on
+gemma-3-4b-it, measuring V-space activation patterns via the same v\_proj hooks
+used in the OCT experiment.
+
+\textbf{The graded test passes:} varying the LoRA blend factor from 0.0 to 1.0
+produces a monotonically increasing fingerprint distance from base at all
+7~readable layers (cosine distance 0.0 to 0.018 at L6). The persona is a
+continuous signal, not a binary switch.
+
+\textbf{The distinctness test fails:} linear CKA between \emph{different}
+personas on the \emph{same} probe is 0.9998 (essentially identical), while CKA
+between the \emph{same} persona on \emph{different} probes is 0.717. Probe
+content drives ${\sim}40\times$ more V-space variation than the persona LoRA.
+The three personas are geometrically indistinguishable by mean-activation
+fingerprinting at these early layers.
+
+This means the persona signal is real (graded, monotonic) but expresses itself
+in the \emph{relationships between} activations---concept-level coherence, as
+measured by the OCT experiment---not in the activations themselves. The ``tune''
+is in how the notes relate, not in their absolute pitch. This is why OCT's
+cohesion metric detected the persona at family-wise $p{=}0.0005$ where
+mean-activation fingerprinting could not: cohesion measures the relational
+structure where the ${\sim}2\%$ persona signal lives.
+
+The implication: identity may be better understood as a \emph{pattern of
+amplification}---which signals a system preferentially strengthens on neutral
+input---than as a location in the representation geometry. If so, the presence
+detector is not asking ``where does identity live?'' but ``which aspects of the
+geometry does this system consistently turn up?'' This reframe does not depend
+on skip-SV1 or on the residual being literally ``identity,'' and it is
+consistent with both the positive detection results and the negative foundation
+check.
+
 \subsection{Attention Schema Theory as a Proposed Test}
 
 Graziano's Attention Schema Theory
