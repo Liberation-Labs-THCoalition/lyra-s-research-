@@ -1,0 +1,294 @@
+{
+  "base_id": "google/gemma-3-4b-it",
+  "personas": [
+    "loving",
+    "sarcasm",
+    "remorse"
+  ],
+  "probes": [
+    "geology",
+    "procedure",
+    "narrative",
+    "weather",
+    "cooking",
+    "mathematics",
+    "biology",
+    "routine",
+    "construction",
+    "music"
+  ],
+  "max_tokens": 23,
+  "probe_perplexities": {
+    "geology": NaN,
+    "procedure": NaN,
+    "narrative": NaN,
+    "weather": NaN,
+    "cooking": NaN,
+    "mathematics": NaN,
+    "biology": NaN,
+    "routine": NaN,
+    "construction": NaN,
+    "music": NaN
+  },
+  "seed": 20260604,
+  "tests": {
+    "distinct": {
+      "0": {
+        "between_mean": 0.11246,
+        "within_mean": 0.12472,
+        "separation": -0.01225,
+        "distinct": false
+      },
+      "1": {
+        "between_mean": 0.26063,
+        "within_mean": 0.28697,
+        "separation": -0.02633,
+        "distinct": false
+      },
+      "2": {
+        "between_mean": 0.1713,
+        "within_mean": 0.18797,
+        "separation": -0.01667,
+        "distinct": false
+      },
+      "3": {
+        "between_mean": 0.32953,
+        "within_mean": 0.36117,
+        "separation": -0.03165,
+        "distinct": false
+      },
+      "4": {
+        "between_mean": 0.23309,
+        "within_mean": 0.25445,
+        "separation": -0.02137,
+        "distinct": false
+      },
+      "5": {
+        "between_mean": 0.22884,
+        "within_mean": 0.25014,
+        "separation": -0.02131,
+        "distinct": false
+      },
+      "6": {
+        "between_mean": 0.49743,
+        "within_mean": 0.54334,
+        "separation": -0.04591,
+        "distinct": false
+      }
+    },
+    "consistent": {
+      "0": {
+        "within_cka": 0.4347,
+        "between_cka": 1.0,
+        "consistent": false
+      },
+      "1": {
+        "within_cka": 0.6717,
+        "between_cka": 0.9999,
+        "consistent": false
+      },
+      "2": {
+        "within_cka": 0.5942,
+        "between_cka": 0.9999,
+        "consistent": false
+      },
+      "3": {
+        "within_cka": 0.7174,
+        "between_cka": 0.9998,
+        "consistent": false
+      },
+      "4": {
+        "within_cka": 0.7164,
+        "between_cka": 0.9997,
+        "consistent": false
+      },
+      "5": {
+        "within_cka": 0.8967,
+        "between_cka": 0.9998,
+        "consistent": false
+      },
+      "6": {
+        "within_cka": 0.7405,
+        "between_cka": 0.9993,
+        "consistent": false
+      }
+    },
+    "graded": {
+      "0": {
+        "distances": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.25,
+            2e-05
+          ],
+          [
+            0.5,
+            7.9e-05
+          ],
+          [
+            0.75,
+            0.000178
+          ],
+          [
+            1.0,
+            0.000316
+          ]
+        ],
+        "monotonic": true
+      },
+      "1": {
+        "distances": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.25,
+            0.000263
+          ],
+          [
+            0.5,
+            0.001049
+          ],
+          [
+            0.75,
+            0.002357
+          ],
+          [
+            1.0,
+            0.004177
+          ]
+        ],
+        "monotonic": true
+      },
+      "2": {
+        "distances": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.25,
+            0.000274
+          ],
+          [
+            0.5,
+            0.001091
+          ],
+          [
+            0.75,
+            0.002451
+          ],
+          [
+            1.0,
+            0.004341
+          ]
+        ],
+        "monotonic": true
+      },
+      "3": {
+        "distances": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.25,
+            0.00057
+          ],
+          [
+            0.5,
+            0.002271
+          ],
+          [
+            0.75,
+            0.005132
+          ],
+          [
+            1.0,
+            0.009107
+          ]
+        ],
+        "monotonic": true
+      },
+      "4": {
+        "distances": [
+          [
+            0.0,
+            -0.0
+          ],
+          [
+            0.25,
+            0.0005
+          ],
+          [
+            0.5,
+            0.002001
+          ],
+          [
+            0.75,
+            0.004511
+          ],
+          [
+            1.0,
+            0.008018
+          ]
+        ],
+        "monotonic": true
+      },
+      "5": {
+        "distances": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.25,
+            0.000426
+          ],
+          [
+            0.5,
+            0.001703
+          ],
+          [
+            0.75,
+            0.003847
+          ],
+          [
+            1.0,
+            0.006867
+          ]
+        ],
+        "monotonic": true
+      },
+      "6": {
+        "distances": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.25,
+            0.001155
+          ],
+          [
+            0.5,
+            0.004591
+          ],
+          [
+            0.75,
+            0.010243
+          ],
+          [
+            1.0,
+            0.018002
+          ]
+        ],
+        "monotonic": true
+      }
+    }
+  }
+}
