@@ -1,0 +1,58 @@
+{
+  "_template_version": "1.0",
+  "_instructions": "Copy this file as <experiment>_prereg.json. Fill all fields. Commit BEFORE running the experiment (the commit timestamp is the registration). Reference this prereg in the paper's Methods section.",
+
+  "experiment": "<short_name>",
+  "date_registered": "<YYYY-MM-DD, filled at commit time>",
+  "authors": ["<who designed this>"],
+  "status": "pre-registered | running | complete",
+
+  "hypotheses": {
+    "primary": "<directional prediction with expected sign/direction>",
+    "secondary": "<if any>",
+    "tertiary": "<if any>"
+  },
+
+  "falsification_criteria": {
+    "primary_fails_if": "<specific outcome that would reject the primary hypothesis>",
+    "secondary_fails_if": "<if applicable>"
+  },
+
+  "sample_size": {
+    "n": "<number of trials/conditions/items>",
+    "justification": "<why this n — power analysis, prior effect sizes, practical constraints>",
+    "conditions": "<breakdown: N conditions × M items × K repeats = total>"
+  },
+
+  "model": {
+    "name": "<model identifier>",
+    "quantization": "<fp16/bf16/q4/etc>",
+    "device": "<mps/cuda/cpu>"
+  },
+
+  "analysis_plan": {
+    "primary_metric": "<what is measured and how>",
+    "null_model": "<what the 'no effect' comparison is — permutation, matched Gaussian, Marchenko-Pastur, etc.>",
+    "multiple_comparisons": "<correction method if applicable — Bonferroni, BH-FDR, family-wise max-over-layers permutation>",
+    "effect_size": "<Cohen's d, AUROC, correlation, etc.>",
+    "error_bars": "<bootstrap CI, cross-probe dispersion, etc. + acknowledge autocorrelation if present>"
+  },
+
+  "threats_to_validity": [
+    "<each known threat, with why it matters and how it's mitigated or disclosed>"
+  ],
+
+  "what_would_change_our_mind": "<the single most important thing a skeptic would point to>",
+
+  "data_sources": {
+    "input": "<path to input data or model>",
+    "output": "<where results will be saved>"
+  },
+
+  "gate_requirements": {
+    "pre_run": "Agni-scaffold + Claude design review (APPROVED or CONDITIONAL-with-fixes-applied before GPU)",
+    "post_run": "verify-paper numerical trace on any claimed numbers before publication"
+  },
+
+  "connection_to_prior_work": "<what this builds on, what it extends, what it would change if it succeeds or fails>"
+}
