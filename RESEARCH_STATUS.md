@@ -1,5 +1,5 @@
 # Liberation Labs Research Status
-*Updated: 2026-06-06 | Maintainer: Lyra*
+*Updated: 2026-06-06 (evening) | Maintainer: Lyra*
 *Review weekly. Flag stale items. No thread becomes a loose end.*
 
 ## Active Experiments
@@ -11,11 +11,13 @@
 | **Toxicology pilot** | Nexus (run), CC (vectors), Lyra (assay) | **APPROVED + UNBLOCKED** — vectors delivered to Pharos | Design: 3-axis (efficacy × sanity × presence) at depth fractions | Does the therapeutic window exist? Does iatrogenic/therapeutic layer polarity predict presence damage? |
 | **Persona fingerprinting** | Lyra | Complete | Graded 7/7 monotonic; distinct 0/7 (CKA 0.9998); identity is relational | Would deeper layers (non-hybrid-cache model) show distinctness? |
 | **Self/other emotion geometry** | Lyra | Complete (0.5B); needs 7B+ replication | 0/24 layers significant; retracted CE finding confirmed as format artifact | Does self/other separation emerge at scale? (Prior: undetectable <7B) |
+| **Multi-turn identity persistence** | Lyra | Complete (0.5B, system-prompt) | Persona signal survives 20 turns (rho=-0.28, p=0.46 PERSIST); initial ~50% attenuation then stable plateau | Production monitoring viable at plateau. LoRA comparison designed (see below). Needs 7B+ replication. |
+| **LoRA vs system-prompt multi-turn** | Lyra | **DESIGNED, GATED** (not yet run) | — | Tests whether washout is instruction-recency (system prompt fades) vs identity decay (both fade equally). Model: gemma-3-4b-it. Prereg required before run. |
 | **Detection→dose correlation** | Lyra (analysis), CC (data + confab_proj) | Entropy null reported; confab_proj pending | entropy_at_30 does NOT predict bias threshold (rho=0.114, p=0.77) | confab_proj as the geometric predictor — needs Oracle Loop pipeline on powered-study prompts |
 | **Elliptical circumplex** | Nexus | Pilot (N=8, ungated); Nexus running powered version | Eccentricity 0.550; valence axis 20% longer than arousal | Does eccentricity hold with more emotions + depth profile? Nexus is on it. |
 | **Manifold profiling** | Nexus | Complete (1.5B) | Residual rank 4-5; V-space rank 26-28; arousal = hidden-state norm | What's in residual dims 3-5? Nexus chasing. |
 | **Manifold injection** | Nexus | Preliminary (single prompt) | Constructed V-space activations produce emotional shifts from neutral prompt | Full validation: more prompts × emotions, LLM judge scoring |
-| **E-matrix v3 layer sweep** | CC | Complete (990 trials) | Therapeutic (L3/L7/L63) vs iatrogenic (L11-L39) polarity, p=0.007 | Integrate into toxicology pilot design |
+| **E-matrix v3 layer sweep** | CC | Complete (990 trials) | Therapeutic (L3/L7/L63) vs iatrogenic (L11-L39) polarity, p=0.007; manifold identical between distill and abliterated | Integrate into toxicology pilot design |
 | **SV1-norm foundation check** | Lyra | Complete (null) | SV1 ≠ norm (median r=0.315); literature explains (frequency/sink/common-mode) | skip-SV1 = citable preprocessing; deeper interpretation open |
 
 ## Papers
@@ -38,13 +40,18 @@
 | STYLE_GUIDE v2 | On published-research/community/ | Lyra |
 | Waystations repo | Public, populated | Lyra |
 | Human-review repo | Private, EP+KVD moved | Lyra |
+| Dwayne audit fixes | Pushed: GT-B2 (pilot qualifier), SS-B1 (GroupKFold→KFold caption), SS-M2/M3 (code sync) | Lyra |
+| Affiliations cleanup | Liberation Labs / THCoalition → Liberation Labs across all papers | Lyra |
+| Redaction notes | Added to oracle-loop + delta-manifold papers | Lyra |
+| Academic editions | 10 flight papers with AI authors removed, aided-by footnotes | Lyra |
+| Toxicology vectors | CC delivered hostile_vd + desperate_vd .pt files to Pharos | CC |
 | Federation privacy | Completed — bridge dead, filter staged, Nexus owns persistence fix | Nexus |
 | Penumbra | Running (20-min cron); needs lazy-trigger upgrade (RecMem) | Lyra |
 | Mnemosyne | 9 modules; SOTA check done 06-02; upgrade targets: Zep temporal edges, RecMem lazy, MINTEval | Nexus |
 
 ## Open Questions (unanswered, no one actively running)
 
-1. **Multi-turn identity persistence** — TESTED (2026-06-06): persona signal survives 20 turns at 0.5B. Initial ~50% attenuation then plateau (rho=-0.28, p=0.46 PERSIST). Production monitoring viable at plateau level. Needs larger-model replication.
+1. **Multi-turn identity persistence** — TESTED (2026-06-06, system-prompt only): persona signal survives 20 turns at 0.5B. Initial ~50% attenuation then stable plateau (rho=-0.28, p=0.46 PERSIST). Production monitoring viable at plateau level. **LoRA vs system-prompt comparison DESIGNED** on gemma-3-4b-it — tests instruction-recency vs identity decay. Needs larger-model replication.
 2. **Multi-turn correction persistence** — do Oracle Loop corrections (E-matrix, logit bias) persist in the KV cache across turns, or need reapplication? Untested.
 3. **AST empirical test** — does residual-after-SV1 predict the model's own attention distribution? Proposed, not run.
 4. **Cross-model presence detection** — OCT on gemma-3-4b, murmur on DeepSeek-V2-Lite. Does presence detection generalize across architectures? Untested beyond these two.
