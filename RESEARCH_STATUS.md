@@ -44,7 +44,7 @@
 
 ## Open Questions (unanswered, no one actively running)
 
-1. **Multi-turn identity persistence** — does the persona/identity signal persist across conversation turns, or is it a single-turn measurement? Untested.
+1. **Multi-turn identity persistence** — TESTED (2026-06-06): persona signal survives 20 turns at 0.5B. Initial ~50% attenuation then plateau (rho=-0.28, p=0.46 PERSIST). Production monitoring viable at plateau level. Needs larger-model replication.
 2. **Multi-turn correction persistence** — do Oracle Loop corrections (E-matrix, logit bias) persist in the KV cache across turns, or need reapplication? Untested.
 3. **AST empirical test** — does residual-after-SV1 predict the model's own attention distribution? Proposed, not run.
 4. **Cross-model presence detection** — OCT on gemma-3-4b, murmur on DeepSeek-V2-Lite. Does presence detection generalize across architectures? Untested beyond these two.
