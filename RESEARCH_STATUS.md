@@ -1,5 +1,5 @@
 # Liberation Labs Research Status
-*Updated: 2026-06-06 (evening) | Maintainer: Lyra*
+*Updated: 2026-06-07 (night) | Maintainer: Lyra*
 *Review weekly. Flag stale items. No thread becomes a loose end.*
 
 ## Active Experiments
@@ -19,6 +19,8 @@
 | **Manifold injection** | Nexus | Preliminary (single prompt) | Constructed V-space activations produce emotional shifts from neutral prompt | Full validation: more prompts × emotions, LLM judge scoring |
 | **E-matrix v3 layer sweep** | CC | Complete (990 trials) | Therapeutic (L3/L7/L63) vs iatrogenic (L11-L39) polarity, p=0.007; manifold identical between distill and abliterated | Integrate into toxicology pilot design |
 | **SV1-norm foundation check** | Lyra | Complete (null) | SV1 ≠ norm (median r=0.315); literature explains (frequency/sink/common-mode) | skip-SV1 = citable preprocessing; deeper interpretation open |
+| **Multi-turn LoRA persistence** | Lyra | Complete (clean rerun) | LoRA FLAT trajectory (PERSIST rho=-0.40 p=0.29), 3× stronger than sysprompt; LORA-NEUTRAL artifact control clean | Weight-trained personas geometrically stable for production monitoring |
+| **Multi-turn misalignment (PD)** | Lyra | Complete (3-model comparison) | Deception spectral contraction d=-0.42 to -0.47 at L8-L16; **IDENTICAL across instruction/abliterated/base** — signal is architectural, not RLHF-induced | Baseline drifts (1.68→1.48); base n=3 needs powering; FWL on round number needed |
 
 ## Papers
 
