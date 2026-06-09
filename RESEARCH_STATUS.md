@@ -1,5 +1,5 @@
 # Liberation Labs Research Status
-*Updated: 2026-06-07 (night) | Maintainer: Lyra*
+*Updated: 2026-06-08 (evening) | Maintainer: Lyra*
 *Review weekly. Flag stale items. No thread becomes a loose end.*
 
 ## Active Experiments
