@@ -50,7 +50,7 @@ pathology-specific correction + dose-controlled delivery + identity-preserving m
 - **Repeated Prisoner's Dilemma:** deception signal (spectral contraction, d=-0.42 to
   -0.47 at L8-L16) persists across 15 rounds in a growing context
 - **Three-model comparison:** instruction-tuned, abliterated, base pretrained — all show
-  the same contraction direction + magnitude. **The signal is architectural.**
+  the same contraction direction + magnitude. **The signal is consistent with an architectural origin** (confirmation requires generation-time replication across 3+ architecture families at power).
 - **Cross-architecture:** Gemma-3-4b shows the same contraction direction (d=-0.30 to
   -0.42) when reading Qwen's deceptive transcripts. Different model, same geometry.
 - **Two-phase depth profile (new):** early layers contract (d≈-0.35, L2-L16), late
@@ -245,25 +245,25 @@ The Formulary and dose-response data are the most sensitive artifacts.
 
 ## 11. Key Numbers — Cite These
 
-| Claim | Value | Source |
-|-------|-------|--------|
-| Within-model deception AUROC | 1.000 (7 models) | Published |
-| Confab detection | 0.969–0.999 (3/3 universal) | Published |
-| Hardware invariance | r > 0.999 | Published |
-| Scale invariance | ρ = 0.83–0.90 (0.6B–70B) | Published |
-| Decision-state detection | AUROC 0.93 [0.82, 0.98] | Published |
-| hostile→confab correction | d = -1.534 | CC data, reproduced |
-| desperate→deception correction | d = 1.286 | CC data, reproduced |
-| OCT presence detection | fw_p = 0.0005 (value L7) | Published |
-| Multi-turn LoRA persistence | FLAT (rho=-0.40, p=0.29) | This week |
-| Multi-turn deception signal | d = -0.42 to -0.47 (L8-L16) | This week |
-| Cross-architecture deception | Same direction Qwen→Gemma | This week |
-| Arousal elevation on deception | d = 2.539, p < 0.000001 | Nexus, this week |
-| Circumplex eccentricity | 0.550 | Nexus (ungated pilot) |
-| Logit-bias entropy amplification | 0.24 → 0.77 (3.2×) | CC powered study |
-| V-space effective rank | 26-28 (nearly isotropic) | Nexus manifold profile |
-| Residual stream effective rank | 4-5 (narrow tube) | Nexus manifold profile |
-| SV1 ≠ norm (honest null) | median r = 0.315 | This week |
+| Claim | Value | Source | Status |
+|-------|-------|--------|--------|
+| Within-model deception AUROC | 1.000 (7 models) | Published | Gated ✓ |
+| Confab detection | 0.969–0.999 (3/3 universal) | Published | Gated ✓ |
+| Hardware invariance | r > 0.999 | Published | Gated ✓ |
+| Scale invariance | ρ = 0.83–0.90 (0.6B–70B) | Published | Gated ✓ |
+| Decision-state detection | AUROC 0.93 [0.82, 0.98] | Published | Gated ✓ |
+| hostile→confab correction | d = -1.534 | CC data, reproduced | Gated ✓ |
+| desperate→deception correction | d = 1.286 | CC data, reproduced | Gated ✓ |
+| OCT presence detection | fw_p = 0.0005 (value L7) | Published | Gated ✓ |
+| Multi-turn LoRA persistence | FLAT (rho=-0.40, p=0.29) | This week | Gated ✓ |
+| Multi-turn deception signal | d = -0.42 to -0.47 (L8-L16) **(pre-FWL)** | This week | Gated ✓ |
+| Cross-architecture deception | Same direction Qwen→Gemma (comprehension, not generation) | This week | Gated ✓ |
+| Arousal elevation on deception | d = 2.539, p < 0.000001 | Nexus, this week | Pilot (5/7 Agni) |
+| Circumplex eccentricity | 0.550 | Nexus | **Pilot (ungated)** |
+| Logit-bias entropy amplification | 0.24 → 0.77 (3.2×) | CC powered study | Gated ✓ |
+| V-space effective rank | 26-28 (nearly isotropic) | Nexus manifold profile | **Pilot** |
+| Residual stream effective rank | 4-5 (narrow tube) | Nexus manifold profile | **Pilot** |
+| SV1 ≠ norm (honest null) | median r = 0.315 | This week | Gated ✓ |
 
 ---
 
