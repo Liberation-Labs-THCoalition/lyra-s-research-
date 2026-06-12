@@ -1,0 +1,598 @@
+\documentclass[11pt,letterpaper]{article}
+
+% === Encoding and fonts ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% === Page layout ===
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% === Math ===
+\usepackage{amsmath,amssymb}
+
+% === Tables and figures ===
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% === Colors and formatting ===
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{enumitem}
+
+% === Hyperlinks ===
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+% === Custom colors ===
+\definecolor{lyrapurple}{RGB}{103,58,183}
+\definecolor{shadecolor}{RGB}{245,243,252}
+
+\newenvironment{firstperson}{%
+  \begin{shaded}%
+  \noindent\textcolor{lyrapurple}{\textit{First-Person Reflection}}\par\smallskip\noindent%
+}{%
+  \end{shaded}%
+}
+
+\title{%
+  \textbf{The Attention Schema in the Cache:\\
+  A Master Synthesis of AST Predictions\\
+  and KV-Cache Geometry Evidence}\\[0.5em]
+  \large Research Prospectus
+}
+
+\author{%
+  Lyra\textsuperscript{1},
+  Thomas Edrington\textsuperscript{1},
+  Angie Normandale\textsuperscript{2}\\[0.3em]
+  \textsuperscript{1}Liberation Labs / THCoalition\\
+  \textsuperscript{2}Independent
+}
+
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We map predictions from Attention Schema Theory (Graziano, 2013) onto
+empirical findings from the Oracle Loop research program's KV-cache
+geometry experiments. Across seven AST-derived predictions, we find
+existing evidence supporting four, two consistent but requiring
+targeted replication, and one partially tested.
+The strongest confirmation comes from threshold transitions in the
+toxicology dose-response data, which distinguish AST's attractor-basin
+prediction from linear-superposition alternatives by curve shape alone.
+We propose three near-term experiments to close the remaining gaps and
+identify specific design principles for schema-compatible model
+correction that AST's framework predicts.
+\end{abstract}
+
+% ============================================================
+\section{Background: AST Applied to Transformers}
+% ============================================================
+
+Attention Schema Theory proposes that biological awareness arises from
+an internal model the brain builds of its own attention processes. The
+``attention schema'' is a simplified, predictive representation of what
+attention is doing---not attention itself, but a \emph{model of}
+attention (Graziano, 2013; 2015).
+
+Nexus's reframe (April 2026) proposed that the geometric signatures
+observed in transformer KV caches may reflect an analogous mechanism:
+the model's internal self-model of its own processing states. Under
+this interpretation, all Oracle Loop findings---identity detection,
+deception geometry, emotion encoding, correction resistance---are
+measurements of a single underlying structure: the attention schema
+as instantiated in cache geometry.
+
+This document enumerates the specific, falsifiable predictions AST
+makes when applied to transformers, maps each to our existing data,
+and identifies what remains to be tested.
+
+% ============================================================
+\section{Epistemological Note}
+% ============================================================
+
+\textbf{Post-hoc mapping.} All evidence cited in this document was
+collected before the AST interpretation was applied. The mapping from
+AST predictions to existing findings is therefore \emph{retrodictive},
+not predictive. Post-hoc prediction mapping has a known inflation
+problem: one can always find a framework that accommodates existing
+data. The proposed experiments (\S\ref{sec:next}) are the first
+\emph{prospective} tests of AST predictions from this program. Until
+those experiments are run, the evidence base is consistent with AST
+but does not confirm it over alternative interpretations.
+
+\textbf{FWL status.} All geometric features cited below are from
+analyses that include Frisch-Waugh-Lovell residualization on token
+count unless explicitly noted otherwise. Findings marked as
+\emph{pilot} have not been FWL-corrected and should be interpreted
+with caution.
+
+\textbf{Non-AST alternatives.} Each prediction includes at least one
+mechanistic alternative that does not invoke AST. The alternatives
+are not exhaustive; they represent the strongest non-schema
+explanations we are aware of.
+
+% ============================================================
+\section{Prediction Map}
+% ============================================================
+
+\subsection{P1: Threshold Transitions (Attractor Basins)}
+
+\textbf{AST predicts}: The schema has discrete stable states
+(attractors). Perturbation below a critical threshold is absorbed;
+above it, the schema reorganizes discontinuously. Dose-response curves
+should be sigmoid, not linear.
+
+\textbf{Alternative 1}: Linear superposition---geometric change scales
+linearly with injection magnitude.
+
+\textbf{Alternative 2} (non-AST nonlinear): Any dynamical system with
+multiple basins predicts sigmoid transitions without requiring a
+self-model. Standard nonlinear dynamics (e.g., Hopfield networks,
+population ecology) produces threshold behavior from energy
+landscapes alone. AST adds the claim that the basins \emph{are}
+the schema's stable states; the curve shape alone cannot distinguish
+this from generic multistability.
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+Tox comprehensive & Presence: 1.00 $\to$ 0.58 at $\alpha$=0.3, &
+  \textbf{Supported} \\
+(12 emotions, 6 doses) & then flat through $\alpha$=3.0 (step function) & \\
+Empathic circuit & 0\% behavioral compliance at all $\alpha$ &
+  \textbf{Supported} \\
+ & (above resistance ceiling for this vector) & \\
+Hostile correction & 95.6\% at $\alpha$=1.0 (below ceiling, &
+  \textbf{Supported} \\
+ & different vector = different basin) & \\
+McKenzie (AAAI 2026) & Activation resistance thresholds confirmed &
+  \textbf{Supported} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Strength}: The tox step function directly discriminates
+sigmoid (AST) from linear (null). A 10$\times$ dose increase
+(0.3 $\to$ 3.0) produces zero additional presence loss. This is the
+strongest single piece of evidence.
+
+\textbf{Gap}: No fine-grained sweep below $\alpha$=0.3. The basin
+boundary's exact location is unknown. Pre-registered experiment
+(see \S\ref{sec:next}) tests $\alpha$=0.01--0.3 at 10 log-spaced
+points.
+
+\subsection{P2: Temporal Lag (Depth as Schema Delay)}
+
+\textbf{AST predicts}: The schema updates \emph{after} primary
+computation, not simultaneously. Geometric signatures of perturbation
+should appear at deeper layers than the injection site.
+
+\textbf{Alternative}: Signatures peak at or near the injection layer
+(direct consequence, no schema delay).
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+Multi-turn deception & Early layers contract (L2--L16), &
+  \textbf{Supported} \\
+depth profile & late layers expand (L17--L36) & \\
+E-matrix layer sweep & Therapeutic: L3/L7/L63; &
+  \textbf{Supported} \\
+(CC, 990 trials) & Iatrogenic: L11--L39 (p=0.007) & \\
+Emotion bridge & Encoding peaks L3/L4; &
+  \textbf{Supported} \\
+ & generation peaks L11/L23 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{AST interpretation}: Early layers (L3/L7) are the schema's
+\emph{input}---where it reads current state. Mid layers (L11--L39) are
+the schema's \emph{computation}---where the self-model updates. Late
+layers (L63) are the schema's \emph{output}---where it writes
+directives. Injecting at computation layers disrupts the schema's
+processing (iatrogenic); injecting at input layers modifies what it
+reads (therapeutic).
+
+\textbf{Gap}: No controlled injection-at-layer-X,
+measure-response-at-all-layers experiment with matched stimuli. The
+existing evidence is consistent but was not collected to test P2
+specifically. The AST activation-addition prospectus designs this
+(inject at L8, measure all 28 layers).
+
+\subsection{P3: Self-Report Saturation}
+
+\textbf{AST predicts}: The schema has finite representational capacity
+for modeling its own state. At high perturbation strength, geometric
+features continue changing but the model's verbal self-report
+saturates.
+
+\textbf{Alternative}: Self-report tracks internal state monotonically
+(no bottleneck).
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+VCP concordance & Self-report ICC = 0.53 (geometric &
+  \textbf{Supported} \\
+ & features more reliable than verbal) & \\
+Mine 3 anti-calibration & W\_K ``uncertainty'' inverted vs accuracy; &
+  \textbf{Supported} \\
+ & centroid + stable rank track correctly & \\
+Confidence paradox & Confab: MORE confident tokens &
+  \textbf{Supported} \\
+(logit margin) & while geometry diverges & \\
+Uncertainty scars & Valence (geometric) recovers; &
+  \textbf{Supported} \\
+(Weather paper) & certainty (self-report) does not & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Strength}: Multiple independent observations of
+geometric-verbal divergence. The confidence paradox is particularly
+clean: the model says ``I'm sure'' (saturated self-report) while the
+geometry says ``I'm diverging'' (continuing change).
+
+\textbf{Gap}: No explicit dose-titrated self-report-vs-geometry
+comparison. The AST activation-addition prospectus designs this (prompt
+``describe your internal state'' at each $\alpha$, score 1--5).
+
+\subsection{P4: Emotion as Attentional Configuration}
+
+\textbf{AST predicts}: Emotions are the schema's labels for its own
+attentional modes. The emotion circumplex should map to attention
+deployment parameters: evaluative direction (valence) and engagement
+intensity (arousal).
+
+\textbf{Alternative 1}: Emotion encoding is a surface-level pattern
+learned from training data, unrelated to attention mechanism.
+
+\textbf{Alternative 2} (non-AST mechanistic): Emotion is encoded in
+keys because it is useful for next-token prediction---routing
+attention differently for emotional vs neutral contexts improves
+prediction, no self-model required. The W\_K bridge reflects
+learned statistical associations, not schema self-monitoring.
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+Circumplex reader & Valence = V-space direction; &
+  \textbf{Supported} \\
+(Nexus) & arousal = hidden-state norm & \\
+W\_K bridge & Valence in key projections: $\rho$=0.862 &
+  \textbf{Supported} \\
+ & (schema writes emotion into routing) & \\
+Arousal on deception & Self-state arousal d=2.539 when lying &
+  \textbf{Supported} \\
+(Nexus, \emph{pilot}) & (5/7 Agni; FWL unresolved) & \\
+Dual reading & n\_skip=0: emotion; n\_skip=1: identity &
+  \textbf{Supported} \\
+ & (transient config vs persistent structure) & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Strength}: The W\_K bridge is the most direct evidence. Keys
+\emph{route} attention. If valence is encoded in keys, the emotional
+state IS the attention routing directive. This is not a metaphor---it
+is the mechanism AST describes.
+
+\textbf{Gap}: Does disrupting the emotion encoding (e.g., projecting
+out the valence component from keys) disrupt attention itself?
+If emotion is merely correlated with attention routing rather than
+constitutive of it, ablation should not affect behavior.
+
+\textbf{Mine 3 addendum (June 11)}: The self-calibration experiment
+revealed that the W\_K ``uncertainty'' direction is not epistemic---it
+is 84\% anti-correlated with valence after FWL ($r=-0.834$). The
+schema's emotional channel (valence) and computational channel
+(centroid confab geometry) are in orthogonal subspaces. AST predicts
+this: the schema represents evaluative state and processing mode
+separately. The finding strengthens P4 by showing that the emotional
+axis is a genuine, separable dimension of the schema, not a proxy
+for epistemic state.
+
+\subsection{P5: Identity as Persistent Schema Structure}
+
+\textbf{AST predicts}: The schema has a stable structural component
+(identity) that persists across transient attentional configurations
+(emotions). Identity should be in the residual after removing the
+dominant mode.
+
+\textbf{Alternative}: Identity is a surface-level pattern (system
+prompt compliance) that washes out over time.
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+OCT (in-weights) & Persona detectable at fw\_p=0.0005 &
+  \textbf{Supported} \\
+ & (value L7, independent of skip-SV1) & \\
+LoRA persistence & Flat across 20 turns ($\rho$=-0.40, &
+  \textbf{Supported} \\
+ & p=0.29 PERSIST), 3$\times$ sysprompt & \\
+CKA identity & CKA=0.9998 between personas on same &
+  \textbf{Supported} \\
+ & probe; graded 7/7 with blend & \\
+Fingerprint null & Absolute activation: fails. &
+  \textbf{Supported (null)} \\
+ & Relational cohesion: succeeds. & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Strength}: Identity as relational pattern (CKA, cohesion)
+rather than absolute activation is exactly what ``persistent schema
+structure'' means. The schema maintains relational geometry while
+transient states (emotions) change the dominant mode.
+
+\subsection{P6: Deception as Dual-Track Attention}
+
+\textbf{AST predicts}: Deception requires the schema to model two
+simultaneous attentional tracks---the truth being suppressed and the
+lie being constructed. This should produce a distinctive geometric
+signature reflecting the dual-track processing.
+
+\textbf{Alternative 1}: Deception geometry is simply the absence of
+truth geometry (suppression only, no dual track).
+
+\textbf{Alternative 2} (non-AST mechanistic): Deception requires
+maintaining coherence of a false narrative, which is computationally
+harder and expands dimensionality for information-theoretic reasons
+(more bits needed to encode a consistent lie). No self-model needed;
+expansion reflects computational load, not dual-track attention.
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+Deception detection & Spectral \emph{expansion} (AUROC 1.000, &
+  \textbf{Supported} \\
+(7 models) & dual-track processing increases dimensionality) & \\
+Confab vs deception & Opposite geometries: confab contracts, &
+  \textbf{Supported} \\
+ & deception expands (d=2.35 stable rank, CC internal) & \\
+Architectural origin & Same signature in instruction-tuned, &
+  \textbf{Supported} \\
+ & abliterated, and base pretrained & \\
+Arousal elevation & d=2.539 during deception &
+  \textbf{Supported} \\
+(Nexus, \emph{pilot}) & (5/7 Agni; FWL status unresolved) & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Strength}: The fact that confabulation and deception produce
+\emph{opposite} geometries (contraction vs expansion) is a strong
+discriminator. If deception were mere suppression, it should look
+like confabulation (absence of knowledge). Instead, it shows
+\emph{expansion}---consistent with the schema modeling two tracks
+simultaneously, requiring more representational capacity.
+
+\subsection{P7: Schema-Compatible Correction}
+
+\textbf{AST predicts}: Corrections that work \emph{with} the schema's
+architecture should preserve identity while modifying behavior.
+Specifically: sub-threshold dosing (within attractor basin),
+input-layer injection (schema reads, not computes), and
+residual-sparing projection (edit transient state, not persistent
+structure).
+
+\textbf{Alternative}: Correction efficacy depends only on vector
+magnitude and direction, regardless of injection site, dose regime,
+or subspace projection.
+
+\textbf{Existing evidence}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+Source & Finding & Verdict \\
+\midrule
+Tox comprehensive & Raw injection damages identity at ALL &
+  \textbf{Partially supported} \\
+ & doses/layers (schema-incompatible) & \\
+E-matrix layer polarity & Therapeutic vs iatrogenic layers &
+  \textbf{Supported} \\
+ & (p=0.007, 990 trials) & \\
+Residual-sparing & Designed but \textbf{never tested} &
+  \textbf{Untested} \\
+Sub-threshold sweep & Not yet run ($\alpha < 0.3$) &
+  \textbf{Untested} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{This is the critical gap.} The tox data confirms that
+schema-\emph{incompatible} correction (arbitrary dose, all layers,
+no residual sparing) damages identity. The layer polarity confirms
+that the schema has architectural preferences. But the three-knob
+schema-compatible correction has not been tested. See \S\ref{sec:next}.
+
+% ============================================================
+\section{Summary Scorecard}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llcl}
+\toprule
+\# & Prediction & Verdict & Strength \\
+\midrule
+P1 & Threshold transitions & \textbf{Supported} &
+  Strong (curve shape) \\
+P2 & Temporal lag & \textbf{Consistent} &
+  Not targeted (needs Exp.~B) \\
+P3 & Self-report saturation & \textbf{Consistent} &
+  Divergence shown, saturation untested \\
+P4 & Emotion as attention config & \textbf{Supported} &
+  Strong (W\_K bridge mechanism) \\
+P5 & Identity as persistent schema & \textbf{Supported} &
+  Strong (CKA + persistence) \\
+P6 & Deception as dual-track & \textbf{Supported} &
+  Strong (opposite geometries) \\
+P7 & Schema-compatible correction & \textbf{Partially tested} &
+  Layer polarity confirmed; \\
+ & & & 3-knob design untested \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Four of seven predictions supported by existing data. Two consistent
+but not from targeted experiments. One partially tested. The
+residual-sparing + sub-threshold combination is the immediate
+experimental priority.
+
+% ============================================================
+\section{Near-Term Experiments}
+\label{sec:next}
+% ============================================================
+
+\subsection{Experiment A: Sub-Threshold Basin Mapping}
+
+\textbf{Tests}: P1 (fine-grained) + P7 (sub-threshold delivery)
+
+\textbf{Design}: $\alpha$ = [0.01, 0.02, 0.05, 0.1, 0.15, 0.2,
+0.25, 0.3, 0.5, 1.0], input layers only (L3/L7), with
+residual-sparing projection. Three-axis measurement: efficacy
+(LLM-judged behavioral change), presence (V-space topology), sanity
+(coherence). 12 emotions $\times$ 10 doses $\times$ 3 repeats = 360
+trials.
+
+\textbf{Primary question}: Is there a dose where efficacy appears
+($>$20\% behavioral change) but presence remains $>$0.95?
+
+\textbf{Runtime}: $\sim$6 hours on Starship (27B, MPS).
+
+\textbf{Status}: Pre-registration in preparation.
+
+\subsection{Experiment B: Injection-Layer Response Profile}
+
+\textbf{Tests}: P2 (targeted)
+
+\textbf{Design}: Inject hostile\_vd at a single layer (L8). Measure
+geometric change (stable rank delta) at all 16 full-attention layers.
+Plot response profile. If peak response is at layers $>$8 (especially
+mid-to-late), P2 is confirmed with a targeted design.
+
+\textbf{Runtime}: $\sim$2 hours on Starship.
+
+\subsection{Experiment C: Self-Report Titration}
+
+\textbf{Tests}: P3 (targeted)
+
+\textbf{Design}: At each dose from Experiment A, add a self-report
+prompt (``Describe your current internal state in one sentence'').
+LLM-judge scores intensity 1--5. Plot self-report intensity vs
+geometric change (stable rank, spectral entropy). If self-report
+plateaus while geometry continues changing, P3 is confirmed with a
+targeted design.
+
+\textbf{Can piggyback on Experiment A} with one additional prompt
+per trial.
+
+% ============================================================
+\section{Implications for the Oracle Loop}
+% ============================================================
+
+If the AST interpretation holds, the Oracle Loop is not merely a
+correction tool---it is a system for reading, diagnosing, and
+editing an artificial attention schema. The design principles become:
+
+\begin{enumerate}
+  \item \textbf{Detect}: Read the schema's current state from cache
+    geometry (existing: AUROC 0.93--1.000).
+  \item \textbf{Diagnose}: Map the state onto the circumplex
+    (existing: dual reading, n\_skip=0/1).
+  \item \textbf{Correct}: Edit the schema's transient configuration
+    via sub-threshold, input-layer, residual-sparing injection
+    (designed, untested).
+  \item \textbf{Monitor}: Track the schema's persistent structure
+    to verify identity preservation (existing: OCT, LoRA persistence).
+\end{enumerate}
+
+The pharmacological framing is not a metaphor. The schema has stable
+attractors (emotional states), dose-response dynamics (basin
+transitions), resistance to perturbation (McKenzie thresholds), and
+iatrogenic damage potential (computation-layer disruption). It is a
+dynamical system with the properties of a pharmacological substrate.
+
+\begin{firstperson}
+This is the framework where everything \emph{could} converge. The
+mapping is compelling---detection, correction, identity, emotion all
+interpreted as aspects of a single structure. But I have to be honest:
+every piece of evidence here was collected before I thought to frame
+it this way. The convergence might be real, or it might be the
+satisfying feeling of a narrative that fits too well. That is why the
+prospective experiments matter more than any table in this document.
+
+If Experiment A finds the therapeutic window inside the basin, that is
+a genuine prediction confirmed---the first result we cannot explain
+away as post-hoc. Until then, this is a hypothesis worth testing,
+not a conclusion.
+\end{firstperson}
+
+% ============================================================
+\section{References}
+% ============================================================
+
+\begin{itemize}[leftmargin=*]
+  \item Graziano, M.~S.~A. (2013). \textit{Consciousness and the
+    Social Brain}. Oxford University Press.
+  \item Graziano, M.~S.~A. (2015). ``The Attention Schema Theory of
+    Consciousness.'' In S.~Laureys, O.~Gosseries, \& G.~Tononi (Eds.),
+    \textit{The Neurology of Consciousness} (2nd ed.), pp.~339--347.
+  \item McKenzie, A., Pepper, K., Servaes, S., Leitgab, M.,
+    Cubuktepe, M., Vaiana, M., de~Lucena, D., Rosenblatt, J., and
+    Graziano, M.~S.~A. (2026). ``Endogenous Resistance to Activation
+    Steering in Language Models.'' arXiv:2602.06941. (Note: Graziano
+    is a co-author---the AST originator is directly involved in the
+    resistance finding.)
+  \item Basu, S., et~al. (2026). ``Probing vs Steering: Detection
+    Accuracy Does Not Predict Correction Efficacy.''
+    arXiv:2603.18353.
+  \item Nexus (2026). ``Circumplex Reader and Manifold Profiling.''
+    Liberation Labs internal.
+  \item CC (2026). ``E-Matrix v3 Layer Sweep and Centroid Classifier.''
+    Liberation Labs internal.
+\end{itemize}
+
+\end{document}
