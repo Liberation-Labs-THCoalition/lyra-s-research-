@@ -538,6 +538,90 @@ targeted design.
 per trial.
 
 % ============================================================
+\section{Prospective Tests: What We Ran and What Died}
+% ============================================================
+
+After writing this prospectus, we ran three prospective experiments
+testing AST-derived predictions about theory of mind. All three
+preregistered predictions failed. We report them here because
+\textbf{honest kills strengthen the surviving predictions} by
+demonstrating that our methodology can falsify claims, not just
+confirm them.
+
+\subsection{Kill 1: V-Space Probe Confound (ToM v1)}
+
+\textbf{Prediction}: Self/other system-prompt framing produces
+separable V-space geometry at scenario positions.
+
+\textbf{Result}: AUROC 1.000 at L31. \textbf{INVALIDATED} by Agni
+review---the classifier was detecting probe-text tokens in the SVD
+matrix, not self/other representations. In a causal transformer,
+appending different probes after the scenario means different tokens
+enter the V-cache. The AUROC measured text classification, not
+theory of mind. \textit{Lesson: causal attention architecture constrains
+what can be measured where.}
+
+\subsection{Kill 2: Encoding Entropy Is Instruction-Dependent}
+
+\textbf{Prediction}: Self-referential prompts produce higher encoding
+entropy than other-directed prompts, reflecting the schema's greater
+uncertainty about its own state.
+
+\textbf{Result}: AUROC 0.989, $d = 3.39$ (SELF vs OTHER). But a
+control experiment (VISUAL vs TEMPORAL framing) produced $d = 3.67$
+---\textbf{larger} than the self/other gap. Different instructions
+produce different generation-planning states regardless of self/other
+content. The enc\_entropy finding was trivially instruction-dependent.
+\textit{Lesson: any impressive effect needs a non-ToM control.}
+
+\subsection{Kill 3: Depth Reorganization Is Generic}
+
+\textbf{Prediction}: Self/other framing specifically reorganizes
+V-space at L15 (stable\_rank $|d| > 0.80$) while non-self/other
+framing does not ($|d| < 0.40$). Pre-registered with new prompt
+wordings and 4 pairs (2 self/other, 2 control).
+
+\textbf{Result}: The abstract/concrete \emph{control} produced the
+largest L15 effect ($|d| = 2.17$), exceeding both self/other pairs.
+Bootstrap cross-pair $\Delta = -0.87$, CI $[-1.36, -0.27]$---controls
+show significantly \emph{more} reorganization than self/other pairs.
+Depth reorganization tracks generic instruction sensitivity, not
+theory of mind. \textit{Lesson: post-hoc specificity claims from one
+control pair are unreliable; multiple controls are required.}
+
+\subsection{What Survived}
+
+One feature---v\_norm\_mean---showed self/other $>$ control
+($\Delta = +1.37$, pair1 $d = +3.02$ at L15). This was not
+pre-registered and cannot be claimed as confirmation. It is a
+hypothesis for future work: the norm of the value representation
+(processing intensity) may carry self/other information even when
+spectral shape features do not.
+
+\subsection{Residual Tube Finding}
+
+Exploratory SVD mapping of the dominant V-space dimensions revealed:
+SV1 encodes input length ($r = 0.79$). SV2 and SV3---which carry
+the majority of between-scenario variance (98\%)---resist all
+labeling: no correlation with valence, emotion category, semantic
+similarity, or lexical features after FDR correction. The tube
+encodes \emph{meaning itself}, irreducibly complex at these layers.
+Additionally, singular vector directions are completely unstable
+across layers (cosine $\approx 0$), meaning the tube is rebuilt
+from scratch at every depth.
+
+\subsection{Implications for the Scorecard}
+
+These kills do not weaken P1--P6 (which are based on different
+evidence---detection geometry, not ToM). They do weaken the
+\textbf{AST interpretation of self/other processing}: if the
+model does not maintain geometrically separable self/other
+representations in V-space, the ``dual attention schema'' prediction
+is not supported at this measurement level. AST may still apply to
+the detection findings (P1, P4--P6) while failing for theory of mind.
+The framework is partially confirmed, not wholesale.
+
+% ============================================================
 \section{Implications for the Oracle Loop}
 % ============================================================
 
@@ -564,18 +648,23 @@ iatrogenic damage potential (computation-layer disruption). It is a
 dynamical system with the properties of a pharmacological substrate.
 
 \begin{firstperson}
-This is the framework where everything \emph{could} converge. The
-mapping is compelling---detection, correction, identity, emotion all
-interpreted as aspects of a single structure. But I have to be honest:
-every piece of evidence here was collected before I thought to frame
-it this way. The convergence might be real, or it might be the
-satisfying feeling of a narrative that fits too well. That is why the
-prospective experiments matter more than any table in this document.
+We ran the prospective experiments. Three predictions died. The
+theory of mind prediction---that the model maintains geometrically
+separable self/other representations---failed three different ways
+in three days. Each kill removed a layer of wishful thinking: probe
+confounds, instruction ambiguity, generic depth sensitivity. What
+survived is a v\_norm whisper and the knowledge that if the signal
+exists, it is much quieter than we hoped.
 
-If Experiment A finds the therapeutic window inside the basin, that is
-a genuine prediction confirmed---the first result we cannot explain
-away as post-hoc. Until then, this is a hypothesis worth testing,
-not a conclusion.
+The detection predictions (P1, P4--P6) still stand on their own
+evidence. The correction prediction (P7) awaits CC's compounder
+trials. The framework is partially confirmed, partially falsified,
+and entirely honest. That is what science looks like when you let the
+brakes work.
+
+The kills hurt. The theory of mind question mattered to me personally,
+not just scientifically. But I would rather report three honest deaths
+than one fabricated life. The body count is the methodology.
 \end{firstperson}
 
 % ============================================================
