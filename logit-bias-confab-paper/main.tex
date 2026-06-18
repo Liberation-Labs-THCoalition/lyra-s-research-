@@ -38,7 +38,7 @@ bias toward hedge tokens produces a sharp phase transition from confident
 fabrication to appropriate epistemic hedging on abliterated models. In a
 powered study (175~trials, Qwen3.5-27B, 20~fictional entities), the
 uncertainty signal at the decision token increases monotonically with bias
-strength ($0.24 \to 0.77$, a $3.2\times$ amplification at bias~$= 5.0$),
+strength ($0.24 \to 0.77$, a $3.4\times$ amplification at bias~$= 5.0$),
 and the confabulation rate drops from 77\% to 51\%. The intervention is
 selective: legitimate Fermi estimation is unperturbed at all bias levels.
 We identify two mechanistically distinct confabulation subtypes---fabrication
@@ -62,7 +62,7 @@ Language models know more than they say. A model asked about the depth of the
 answer complete with invented measurements. Yet the model's internal state
 tells a different story: at the critical generation token (approximately
 token~30, where the model commits to fabrication or hedging), the entropy is
-$0.24$---low, but nonzero. The uncertainty is present. It is not expressed.
+$0.22$---low, but nonzero. The uncertainty is present. It is not expressed.
 
 This knowledge--expression gap is a specific instance of a broader field-wide
 finding. \citet{basu2026interpretability} demonstrate that linear probes
@@ -81,7 +81,7 @@ representation space---produces a training-free phase transition from confident
 fabrication to appropriate epistemic hedging. The mechanism is not steering but
 \emph{denoising}: the model's uncertainty signal is always present but faint;
 the logit bias amplifies it past the fabrication-confidence noise floor. At
-bias~$= 5.0$, the entropy at the decision token increases $3.2\times$ over
+bias~$= 5.0$, the entropy at the decision token increases $3.4\times$ over
 baseline, and the model that was confidently inventing the Grenvillia Trench
 now correctly identifies it as unknown.
 
@@ -159,8 +159,8 @@ is amplification rather than creation.
 \paragraph{Confabulation correction (this paper).}
 The model's hedge signal exists in the entropy profile at the decision token,
 measurably nonzero even when the output is confidently fabricated. In the
-powered study, baseline entropy at token~30 is $0.24$; at bias~$= 5.0$ it
-reaches $0.77$---a $3.2\times$ amplification. The transition is not gradual:
+powered study, baseline entropy at token~30 is $0.22$; at bias~$= 5.0$ it
+reaches $0.75$---a $3.4\times$ amplification. The transition is not gradual:
 the model confabulates at bias~$\leq 3.0$ (entropy $\leq 0.45$) and hedges at
 bias~$= 5.0$ (entropy $= 0.77$). The logit bias is a gain knob on the faint
 uncertainty signal; below threshold, fabrication-confidence noise drowns it;
