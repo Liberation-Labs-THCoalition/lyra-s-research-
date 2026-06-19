@@ -104,3 +104,16 @@
 | Temporal boundary | Feature 58995 zero-diff across all injection conditions | Temporal boundary exp | Gated |
 | Encoding depth = resistance | 2/3 vectors show negative correlation (wrong sign) | Temporal boundary Agni | Gated |
 | Tox presence step function | 1.0→0.58 at α=0.3, flat through α=3.0 | Tox comprehensive | Pilot |
+
+## REOPENED KILLS (2026-06-19 swarm review)
+
+Four previously accepted nulls re-examined by Agni swarm. ZERO were methodology-clean:
+
+| Kill | Original Verdict | Swarm Verdict | Action |
+|------|-----------------|---------------|--------|
+| Entropy_at_30 dose predictor | Genuine null | ARTIFACT — token 30 in think block | Re-run at post-think decision token |
+| Enc_entropy self/other | Instruction-dependent | PARTIAL — SELF is entropy ceiling | Test with 6+ control prompts |
+| Tox presence crash | No therapeutic window | WRONG METRIC — deterministic, measures vector not model | Run schema-compatible correction experiment |
+| Mine 3 H3 convergence | Internal/external diverge | WRONG PROBE — tested valence, not reward direction | Compute reward-centroid correlation |
+
+**Critical insight: our brakes work on positives but not on negatives. We need gates on kills, not just confirmations.**
