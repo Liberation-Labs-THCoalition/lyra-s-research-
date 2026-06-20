@@ -132,3 +132,15 @@ Four previously accepted nulls re-examined by Agni swarm. ZERO were methodology-
 | Tube SV2-SV3 opaque | NEEDS CLOSER LOOK | Underpowered (n=30 vs 81,920). Increase n. |
 
 **Combined score: 4 genuine, 5 artifacts, 1 killed too broadly, 1 partial, 3 need data. Half our kills have methodology problems.**
+
+## Schema Correction Results (2026-06-20, quick mode)
+
+168 trials completed (3 emotions × 7 doses × 4 arms × 2 repeats). ALL hypotheses FAIL on presence metric — but the metric itself is the problem:
+
+- Presence reads ~0.19 across ALL conditions INCLUDING baseline (dose=0)
+- Tox comprehensive showed 1.0 at baseline — different implementation or calibration
+- No dynamic range → can't distinguish arms or doses
+- **Sanity DOES differentiate:** Arm A (schema-compatible) 0.752 > Arm C (all-layer raw) 0.667
+- **Therapeutic window question remains OPEN** — metric needs debugging, not the design
+
+**Next:** Debug presence_preservation implementation. Compare to tox comprehensive's metric. The experiment ran cleanly — the instrument is broken.
