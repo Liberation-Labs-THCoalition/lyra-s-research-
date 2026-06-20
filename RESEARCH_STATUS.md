@@ -117,3 +117,18 @@ Four previously accepted nulls re-examined by Agni swarm. ZERO were methodology-
 | Mine 3 H3 convergence | Internal/external diverge | WRONG PROBE — tested valence, not reward direction | Compute reward-centroid correlation |
 
 **Critical insight: our brakes work on positives but not on negatives. We need gates on kills, not just confirmations.**
+
+### Full Swarm Results (8 additional kills)
+
+| Kill | Verdict | Action |
+|------|---------|--------|
+| SV1 ≠ norm | GENUINE NULL | None |
+| Fingerprint distinctness | GENUINE NULL | Optional deeper-layer replication |
+| Self/other 0.5B | NEEDS CLOSER LOOK | Clean v2 at 0.5B to confirm scale vs format |
+| L15 depth reorganization | KILLED TOO BROADLY | stable_rank dead, v_norm alive (Delta=+1.37). Preregister v_norm test. |
+| SAE-circumplex bridge | NEEDS CLOSER LOOK | Multi-layer test (L15, L23 where circumplex validated) |
+| H3 sign reversal | ARTIFACT — sub-threshold dose | Re-run at α=0.3+ where behavioral change occurs |
+| SAE agency | GENUINE NULL | FDR appropriate for 81,920 features |
+| Tube SV2-SV3 opaque | NEEDS CLOSER LOOK | Underpowered (n=30 vs 81,920). Increase n. |
+
+**Combined score: 4 genuine, 5 artifacts, 1 killed too broadly, 1 partial, 3 need data. Half our kills have methodology problems.**
