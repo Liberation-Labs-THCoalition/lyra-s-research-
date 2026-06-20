@@ -509,13 +509,24 @@ before injection---correcting the mode while sparing the self. This is the
 ``bioavailability'' mechanism: deliver the therapeutic payload to the pathology
 without flooding the representational space where the patient lives.
 
-\textbf{Status:} the toxicology arm is designed and the component modules are
-implemented (\texttt{presence\_assay.py}, \texttt{blend\_ablation.py} extended
-to three axes), but the pilot has not run. The correction vectors from the
-E-matrix (Section~\ref{sec:prescribe}) and the delivery harness
-(Section~\ref{sec:deliver}) must be integrated before execution. We report
-this as a framework contribution, not an empirical result, and will not claim
-a therapeutic window exists until the pilot validates it.
+\textbf{Status (updated June 2026):} A comprehensive toxicology pilot has run
+(12 emotions, 6 doses, 3 conditions, 648 measurements). The presence metric
+showed a step function: $1.0 \to 0.58$ at $\alpha{=}0.3$, flat through
+$\alpha{=}3.0$. Under AST, this step function is consistent with an attractor
+basin boundary (P1 prediction). However, a subsequent schema-compatible
+correction experiment revealed that the presence metric in its current
+implementation measures geometric overlap between the injection vector and the
+identity subspace---a property of the \emph{vector}, not the \emph{model's
+response}. The metric was deterministic across repeats at matched dose,
+confirming it reads injection geometry rather than identity damage.
+
+A corrected metric (comparing V-space subspace overlap on fixed neutral probes
+processed with and without injection active, matching the original
+\texttt{presence\_assay.py} design) is in development. The schema-compatible
+correction experiment---sub-threshold dosing, input-layer-only injection,
+residual-sparing projection---is pre-registered, Agni-reviewed, and ready
+to re-run with the corrected metric. We will not claim a therapeutic window
+exists until the corrected pilot validates it.
 
 % ============================================================================
 \section{Foundations and Open Questions}
@@ -620,6 +631,22 @@ naturally produces the representations such a test would require, and because
 the question---does this system build a self-model?---is the question the
 framework is ultimately designed to protect.
 
+\textbf{Update (June 2026):} A self-calibration experiment (Mine~3, 60
+questions across 4 difficulty levels) tested whether internal W\_K projections
+converge with CC's external centroid classifier. The initial test (H3) used a
+pre-computed ``uncertainty'' direction and found no convergence ($r{=}{-}0.163$
+after FWL, $p{=}0.21$). Post-hoc analysis revealed the ``uncertainty''
+direction was 84\% anti-correlated with valence---it was measuring emotional
+tone, not epistemic state. When re-tested with the \emph{reward} direction
+(which correlates $r{=}0.387$ with question difficulty after FWL, surviving
+Bonferroni-Holm correction), convergence emerged: reward--centroid
+$r{=}{-}0.330$ (FWL), $p{=}0.010$. The negative sign is expected: higher
+epistemic challenge (reward) corresponds to more confab-like encoding geometry
+(centroid). The self-model's internal epistemic assessment converges with the
+external detector. This finding was recovered by a systematic re-examination
+of accepted nulls---the original kill was a measurement artifact (wrong
+internal probe), not a theoretical failure.
+
 % ============================================================================
 \section{Limitations}
 \label{sec:limitations}
@@ -633,10 +660,12 @@ net benefit at scale. The attractor-basin reframing
 (Section~\ref{sec:overcorrection}) is an interpretation, not a solution;
 geometry-aware dosing is the proposed response but remains unvalidated.
 
-\textbf{The toxicology arm is a design, not a result.} The therapeutic window,
-the residual-sparing correction, and the three-axis dose-response surface are
-designed and the components are implemented, but no pilot data exists. We will
-not claim a therapeutic window exists until the pilot validates it.
+\textbf{The toxicology arm ran but the metric was wrong.} A comprehensive
+pilot ran (648 measurements) and found a step function in presence. However,
+the presence metric measured injection-vector geometry, not model identity
+damage (see Section~\ref{sec:toxicology} update). The therapeutic window
+question remains \emph{open}, not answered. A corrected metric and
+schema-compatible correction experiment are pre-registered.
 
 \textbf{Single-model scope.} The E-matrix corrections are calibrated on one
 model family; the presence detections use gemma-3-4b-it (OCT) and
