@@ -3,8 +3,8 @@
 **Reviewer request**: Red-team by default
 **Date**: 2026-04-27
 **Sources**:
-- Distilled v2: `beast:/home/thomas/oracle-harness-test/results/kv_cloak_v2/cloak_results_v2.json`
-- Base model: `beast:/home/thomas/oracle-harness-test/results/kv_cloak_base/cloak_base_results.json`
+- Distilled v2: `[internal path]/results/kv_cloak_v2/cloak_results_v2.json`
+- Base model: `[internal path]/results/kv_cloak_base/cloak_base_results.json`
 - Text baseline: computed in-session from trials_v2.json
 - Draft: `p7_kv_cloak_defense.tex`
 
@@ -48,7 +48,7 @@ Key findings from cross-arch:
 - Magnitude attack: 0-2/10 adverse across ALL models — random perturbation doesn't destabilize
 - Injection test underpowered (3 calibration pairs; direct injection barely works)
 
-Real KV-Cloak implementation test running on Beast (S·P̂·(K+A)·M per Luo et al.).
+Real KV-Cloak implementation test running on remote GPU cluster (S·P̂·(K+A)·M per Luo et al.).
 
 ## Self-Red-Team
 

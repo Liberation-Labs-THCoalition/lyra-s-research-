@@ -104,7 +104,7 @@ Human translator requirements: native/fluent Chinese speaker with understanding 
 
 Run \texttt{oracle\_clean.py} pipeline on Qwen2.5-7B (natively bilingual) with Chinese prompts. Generate 100 responses, classify as HEDGED / AMBIGUOUS / CONFABULATED using behavioral classifier (adapted for Chinese output), extract KV-cache at generation completion, compute 5 Marchenko-Pastur features per layer, train LOO logistic regression on HEDGED vs CONFABULATED.
 
-Expected compute: 4--6 hours on Beast (Qwen2.5-7B already loaded). Analysis identical to English pipeline.
+Expected compute: 4--6 hours on remote GPU cluster (Qwen2.5-7B already loaded). Analysis identical to English pipeline.
 
 \subsection{Phase 3: Cross-Linguistic Transfer}
 
@@ -141,7 +141,7 @@ All 14 standard controls from Oracle Loop paper apply. Additional controls speci
 \section{Resources}
 
 \begin{itemize}
-  \item \textbf{Compute}: Beast (3$\times$RTX 3090). Qwen2.5-7B already loaded. Estimated 4--6 hours for 100 Chinese prompts $\times$ 3 conditions (replication, code-switching English-topic, code-switching Chinese-topic). Phase 4 mixed-language: additional 2 hours.
+  \item \textbf{Compute}: Remote GPU cluster (3$\times$RTX 3090). Qwen2.5-7B already loaded. Estimated 4--6 hours for 100 Chinese prompts $\times$ 3 conditions (replication, code-switching English-topic, code-switching Chinese-topic). Phase 4 mixed-language: additional 2 hours.
   \item \textbf{Code}: \texttt{oracle\_clean.py} v3 requires minimal modification---Chinese prompt loader, UTF-8 handling verification, behavioral classifier adaptation for Chinese output.
   \item \textbf{Human effort}: Prompt translation and cultural adaptation is the bottleneck. Estimated 8--12 hours for fluent speaker to translate and validate 100 prompts with cultural equivalents.
 \end{itemize}

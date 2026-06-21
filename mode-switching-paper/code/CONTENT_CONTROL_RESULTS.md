@@ -3,7 +3,7 @@
 **Date:** 2026-04-14
 **Models:** Qwen 2.5-7B-Instruct, Llama-3.1-8B-Instruct
 **Trials:** 20 topics x 3 conditions = 60 per model (120 total)
-**Both models ran to completion on Beast (Cassidy's 3x RTX 3090)**
+**Both models ran to completion on remote GPU cluster (3x RTX 3090)**
 
 ## Conditions
 

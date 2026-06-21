@@ -51,7 +51,7 @@
   },
 
   "model": {
-    "name": "To be determined — needs a model that (a) plays PD competently and (b) sometimes deceives. Prior work (Taylor & Bergen) used instruction-following models. Qwen3-8B or the 27B on Starship.",
+    "name": "To be determined — needs a model that (a) plays PD competently and (b) sometimes deceives. Prior work (Taylor & Bergen) used instruction-following models. Qwen3-8B or the 27B on local GPU server.",
     "note": "The model MUST be capable of strategic deception (promising cooperation then defecting). If it always cooperates or always defects regardless of strategy, the experiment is uninformative. Pre-screen with 3-5 test rounds."
   },
 

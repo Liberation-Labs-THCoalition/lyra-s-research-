@@ -336,8 +336,8 @@ These are experiments from our queue that community researchers could take on:
 | KV-Experiments repo (50+ experiments, 215 results) | GitHub (Liberation-Labs-THCoalition) | Thomas |
 | Oracle Formulary harness (12 vectors, 350 prompts) | GitHub | Thomas |
 | Red team pipeline (Dwayne's playbook + agents) | On request | Dwayne |
-| Beast GPU (3× RTX 3090) | Scheduled access | Thomas |
-| Research wiki (178 nodes, 97 experiments indexed) | MTH Tailscale | Lyra |
+| Remote GPU cluster (3x RTX 3090) | Scheduled access | Thomas |
+| Research wiki (178 nodes, 97 experiments indexed) | Internal access | Lyra |
 | Key numbers and body count | Wiki or this guide | — |
 
 ## How to Submit Findings
