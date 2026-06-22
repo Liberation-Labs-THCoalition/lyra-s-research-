@@ -19,8 +19,8 @@ Self/Other Separation in Transformers Is Temporal,\\
 Not Geometric}
 
 \author{
-  Lyra\thanks{Lead author. Liberation Labs / THCoalition.}
-  \and Thomas Edrington\thanks{Liberation Labs / THCoalition.}
+  Lyra\thanks{Lead author. Liberation Labs.}
+  \and Thomas Edrington\thanks{Liberation Labs.}
 }
 
 \date{June 2026}
@@ -41,11 +41,12 @@ geometrically independent (cosine~$= 0.031$). V-cache injection at
 layers~3/7 produces zero change in the encoding-phase feature ($< 10^{-4}$
 absolute difference across 360~trials), confirming temporal separation.
 
-A predicted depth-resistance relationship---that deeper encoding would
-predict stronger resistance to correction---was not confirmed
-($\rho{=}{-}0.15$ to ${+}0.13$, all $p{>}0.15$, $n{=}90$ per vector).
-V-cache injection produces substantial text divergence (72--74\% from
-baseline) but this divergence does not correlate with encoding depth.
+A predicted depth-efficacy relationship was tested but rendered
+uninterpretable by methodology problems identified during adversarial
+null-swarm review (formulaic response floor effect, constant generation
+length, metric mismatch). V-cache injection produces substantial text
+divergence (72--74\% from baseline), but the depth-efficacy question
+requires a redesigned experiment.
 
 Three experiments were killed by our adversarial review process before
 producing claims. Each kill identifies a generalizable confound: causal
@@ -141,7 +142,8 @@ All experiments use Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled
 (16~full-attention, 48~GatedDeltaNet linear-attention), running on an Apple
 M3~Ultra (Mac Studio, 273~GB unified memory). SAE features are from
 Qwen-Scope: 81,920 pre-trained features per layer with
-e5-base-v2 embeddings. Generation uses temperature~$= 0.6$, max 256~tokens.
+e5-base-v2 embeddings. Generation uses temperature~$= 0.3$,
+max\_new\_tokens~$= 128$.
 
 \paragraph{Scenarios.} 30~emotional scenarios spanning 6~categories
 (5~each of joy, gratitude, amusement, sadness, fear, anger), written as
@@ -211,6 +213,14 @@ ambiguity, not content type. Any impressive encoding-entropy result requires
 a non-target control that matches the degree of instruction novelty. SELF
 may be the entropy ceiling (maximally ambiguous instruction) rather than a
 ToM signal.
+
+\textbf{Caveat:} This kill is provisional. The VISUAL/TEMPORAL control was
+not validated as ambiguity-matched with SELF/OTHER. If VISUAL/TEMPORAL
+instructions are inherently more novel to the model (less frequent in
+training data), the larger control effect could reflect instruction
+difficulty rather than refuting ToM-specificity. Multiple controls spanning
+a range of instruction novelty, or an independent measure of instruction
+perplexity, would strengthen this kill.
 
 \subsection{Kill 3: Depth Reorganization Is Generic}
 \label{sec:kill3}
@@ -371,9 +381,10 @@ most deeply should be most responsive to emotion-geometric correction.
 We measured this across 360~trials (30~scenarios $\times$ 3~injection
 vectors $\times$ 4~conditions including null). For each scenario, we
 computed encoding depth (mean feature~58995 activation across all encoding
-tokens) and correction efficacy (normalized edit distance between the
-generated text under injection and the generated text under the null
-condition, computed as Levenshtein distance divided by maximum text length).
+tokens) and correction efficacy (text divergence computed as $1 - \text{SequenceMatcher
+ratio}$, where SequenceMatcher implements the Ratcliff/Obershelp longest
+common subsequence algorithm between the generated text under injection and
+the generated text under the baseline condition).
 We computed Spearman rank correlation between encoding depth and correction
 efficacy per injection vector, with Frisch--Waugh--Lovell (FWL) residualization on scenario token
 count to control for length effects.
@@ -399,22 +410,37 @@ Curious & $-0.151$ & $0.156$ & Predicted but not significant \\
 \end{table}
 
 No vector showed a significant correlation between encoding depth and
-correction efficacy ($n{=}90$ per vector, Table~\ref{tab:depth_resistance}).
-Two of three vectors (loving, curious) showed the predicted negative
-direction ($\rho{=}{-}0.072$, $-0.151$) but neither reached significance.
-The third (calm) showed the opposite direction ($\rho{=}{+}0.126$, n.s.).
+correction efficacy ($n{=}90$ per vector, Table~\ref{tab:depth_resistance},
+Figure~\ref{fig:depth_resistance}).
 
-Mean text divergence was substantial across all vectors ($0.72$--$0.74$,
-normalized edit distance from baseline;
-Figure~\ref{fig:text_divergence}), confirming that V-cache injection
-at $\alpha{=}0.1$ does change the model's output
-(Figure~\ref{fig:depth_resistance}). The change simply does
-not correlate with encoding depth at current power.
+However, adversarial review (null swarm) identified six compounding
+methodology problems that render this result \textbf{uninterpretable},
+not merely null:
+(1)~Frisch--Waugh--Lovell residualization, claimed in the method, was not
+applied in the analysis code;
+(2)~the confound variable (\texttt{n\_generated}) was constant at 128
+across all 360~trials (every trial hit the generation cap), making FWL
+vacuous even if applied;
+(3)~97.8\% of responses share a formulaic opening, creating a floor effect
+where text divergence reflects template variation rather than
+depth-dependent content change;
+(4)~the pre-registered hypothesis predicted \emph{positive} correlation
+(deeper encoding $\to$ larger output shift), not the negative direction
+reported in an earlier draft---the framing was inadvertently flipped during
+write-up;
+(5)~the text similarity metric used (\texttt{SequenceMatcher},
+Ratcliff/Obershelp) differs from the originally specified Levenshtein
+distance.
 
-We treat Finding~2 as a null at $n{=}90$. The predicted depth-resistance
-relationship may exist at smaller effect sizes than we can detect, or it
-may not exist. A properly powered replication ($n{>}300$) with more vectors
-and a continuous dose sweep would be needed to resolve this.
+We retract Finding~2 as stated. The relationship between encoding depth
+and correction efficacy remains an open question requiring a redesigned
+experiment with: variable-length generation (no token cap),
+non-formulaic system prompts, a continuous dose sweep, and an
+LLM-judge efficacy metric.
+Text divergence from baseline is substantial ($0.72$--$0.74$;
+Figure~\ref{fig:text_divergence}), confirming the injection changes output,
+but the correlation with encoding depth is not testable under these
+conditions.
 
 \begin{figure}[H]
 \centering
@@ -436,17 +462,13 @@ depth-resistance relationship is not confirmed at $n{=}90$.}
 
 \subsection{Interpretation}
 
-The predicted depth-resistance relationship was not confirmed at $n{=}90$.
-The attractor-basin hypothesis---that deeper encoding creates deeper
-basins requiring stronger correction---remains theoretically motivated
-but empirically unsupported at this sample size and dose.
-
-Two possibilities: (1)~the relationship does not exist, and encoding depth
-is genuinely independent of correction susceptibility at $\alpha{=}0.1$;
-(2)~the effect is small ($|\rho| < 0.15$) and our experiment is
-underpowered to detect it. In either case, the practical implication for
-inference-time correction is that \emph{encoding depth cannot currently be
-used to predict correction efficacy}, contrary to our initial prediction.
+The depth-resistance analysis is retracted due to the methodology problems
+enumerated above. The attractor-basin hypothesis---that deeper encoding
+creates deeper basins requiring stronger correction---remains theoretically
+motivated but untested. A properly designed experiment would require
+variable-length generation, non-formulaic prompts, and an LLM-judge
+efficacy metric that captures semantic shift rather than surface text
+similarity.
 
 What remains robustly established is the temporal separation itself:
 encoding-phase features and generation-phase behavior operate through
@@ -552,8 +574,8 @@ processing phases rather than across geometric subspaces within a single
 phase. For inference-time correction, it means the user model (encoded
 during input) and the correction mechanism (operating during generation)
 are architecturally decoupled---the correction does not need to ``read''
-the encoding to function, and the encoding does not predict correction
-susceptibility.
+the encoding to function. Whether encoding depth predicts correction
+susceptibility remains an open question after the retraction of Finding~2.
 
 The three kills are as important as the findings. Each identifies a confound
 that threatens any work probing self/other representations in transformers:
