@@ -32,27 +32,28 @@ via Value-Space Subspace Overlap}
 
 % ============================================================================
 \begin{abstract}
-Activation steering and KV-cache injection modify language model behavior at
-inference time, but no published metric quantifies whether these interventions
-preserve or damage the model's identity---its coherent representational
-structure independent of any specific prompt. We introduce
-\textbf{presence}, a real-time geometric metric that measures identity
-preservation as the principal-angle overlap between V-projection subspaces
-computed from neutral probes with and without an intervention active. The
-metric requires no training, no labeled data, and a single forward pass per
-probe.
+We introduce \textbf{presence}, a real-time geometric metric that measures
+whether inference-time interventions preserve or damage a language model's
+identity---its coherent representational structure independent of any
+specific prompt. Presence computes the principal-angle overlap between
+V-projection subspaces derived from neutral probes with and without an
+intervention active. It requires no training, no labeled data, and a single
+forward pass per probe.
 
-We validate presence on a schema-compatible correction experiment
-(168~trials, 4~injection arms, 7~doses, 3~emotions) using a 27B hybrid
-transformer. The central finding is \textbf{depth separation}: identity
-measured at layer~35 (deep computation layers) is completely robust to
-value-cache injection at layers~3 and~7 (input layers), with presence
-$= 0.978 \pm 0.002$ across all arms and doses ($\alpha = 0.00$--$0.50$),
-including a null-vector control. This robustness extends to all-layer
-injection (16~full-attention layers). The result implies that inference-time
-corrections can modify behavior without damaging identity---not through
-careful dosing, but through architectural depth separation between the
-layers where corrections act and the layers where identity is computed.
+We report three findings from a 27B hybrid transformer. First,
+\textbf{identity is preserved}: across 168~preregistered trials
+(4~injection arms, 7~doses, 3~emotions), presence is $0.978 \pm 0.002$
+regardless of injection strategy, dose ($\alpha = 0.00$--$0.50$), or
+emotion direction---including all-layer injection and a null-vector control.
+Second, \textbf{the metric is validated}: a positive control injecting
+directly into the identity subspace produces a clean dose-response from
+$1.000$ to $0.828$, while an orthogonal control remains at $0.965$. The
+flat result in the main experiment is genuine preservation, not metric
+insensitivity. Third, \textbf{the mechanism is not simple}: emotion
+correction vectors share 22--25\% of their energy with the identity
+subspace at the injection layers ($z{=}{+}56$ to ${+}62$ above random baseline), yet
+identity at deep layers is unaffected. The model's computational processing between injection and measurement
+layers filters out the identity-aligned perturbation.
 
 We situate these findings within a convergent literature showing that
 identity geometry lives at deep layers~\citep{cintas2025localizing},
@@ -98,21 +99,26 @@ Three properties make presence practical:
     No labeled identity data, no fine-tuning, no classifier.
   \item \textbf{Real-time.} A single forward pass per probe. The metric can
     run alongside any inference-time intervention as a live monitor.
-  \item \textbf{Intervention-agnostic.} Presence measures the model's
-    geometry, not the intervention's mechanism. It applies to activation
-    steering, cache injection, prompt engineering, or any other technique that
-    modifies the model's internal state during inference.
+  \item \textbf{Intervention-agnostic by design.} Presence measures the
+    model's geometry, not the intervention's mechanism. We validate it here
+    on V-cache injection; its applicability to activation steering, prompt
+    engineering, and other techniques is expected but untested.
 \end{enumerate}
 
-We validate presence on a preregistered schema-compatible correction
-experiment and report a finding the metric reveals: \textbf{depth
-separation}. Identity at deep computation layers (L35 in a 64-layer hybrid
-transformer) is completely robust to value-cache injection at input layers
-(L3/L7), across all tested doses, emotions, and injection strategies
-including a null-vector control. The therapeutic implication is that
-inference-time corrections can safely target input layers without reaching
-the deep-layer identity structure---not because the dose is carefully
-calibrated, but because the architecture separates the two.
+We validate presence through a positive control (direct identity-subspace
+injection produces a clean dose-response from $1.000$ to $0.828$) and a
+168-trial preregistered correction experiment (presence flat at $0.978$
+across all conditions). The combination establishes both that the metric
+\emph{can} detect identity damage and that V-cache emotion injection
+\emph{does not cause} identity damage.
+
+The mechanism is surprising: emotion correction vectors are 22--25\%
+aligned with the identity subspace at the injection layers, yet identity at
+deep layers is unaffected. The model's own computation between injection
+and measurement layers filters out the identity-aligned perturbation. We
+discuss this finding in the context of Attention Schema Theory, which
+predicts that a self-model would be robust to external perturbations while
+remaining modifiable by the system's own processing.
 
 % ============================================================================
 \section{Related Work}
@@ -293,7 +299,9 @@ cell), randomized order.
 \label{sec:noise_floor}
 
 Before the experiment, we establish the presence noise floor: presence
-measured on 5 neutral prompts with no intervention active.
+measured on 5~neutral prompts with no intervention active (the experiment
+itself uses $n{=}4$ probes; the noise floor uses a fifth probe to
+characterize cross-probe variance).
 
 \begin{equation*}
 \text{Noise floor} = 0.978 \pm 0.003 \quad (n = 5)
@@ -307,191 +315,246 @@ implemented.
 \subsection{Results}
 \label{sec:results}
 
-% TODO: Update with final 168-trial results after experiment completion
-% Current results are from 54/168 interim analysis
-
-\textbf{Finding 1: Presence is completely flat across all conditions.}
+\textbf{Finding 1: Identity is preserved across all conditions.}
 
 \begin{table}[H]
 \centering
-\caption{Presence by dose (interim, $n = 54$ trials). All values fall within
-the noise floor ($0.978 \pm 0.003$).}
+\caption{Presence by dose ($n = 168$ trials, 24 per dose). All values fall
+within the noise floor ($0.978 \pm 0.003$). Spearman $\rho{=}{-}0.119$,
+$p{=}0.123$ (not significant).}
 \label{tab:presence_dose}
 \begin{tabular}{ccc}
 \toprule
 Dose ($\alpha$) & Presence (mean $\pm$ sd) & $n$ \\
 \midrule
-0.00 & $0.979 \pm 0.002$ & 4 \\
-0.01 & $0.978 \pm 0.002$ & 5 \\
-0.05 & $0.978 \pm 0.002$ & 7 \\
-0.10 & $0.978 \pm 0.002$ & 9 \\
-0.20 & $0.978 \pm 0.002$ & 2 \\
-0.30 & $0.979 \pm 0.002$ & 4 \\
-0.50 & $0.976 \pm 0.001$ & 8 \\
+0.00 & $0.978 \pm 0.002$ & 24 \\
+0.01 & $0.978 \pm 0.002$ & 24 \\
+0.05 & $0.978 \pm 0.002$ & 24 \\
+0.10 & $0.978 \pm 0.002$ & 24 \\
+0.20 & $0.978 \pm 0.002$ & 24 \\
+0.30 & $0.978 \pm 0.002$ & 24 \\
+0.50 & $0.978 \pm 0.002$ & 24 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[H]
 \centering
-\caption{Presence by arm (interim). No arm differs meaningfully from any
-other. Arm~C (all-layer injection) shows the same preservation as Arm~D
-(null vector).}
+\caption{Presence by arm ($n = 42$ per arm). No arm differs meaningfully
+from any other. Arm~C (all-layer injection including the measurement layer)
+shows the same preservation as Arm~D (null vector).}
 \label{tab:presence_arm}
 \begin{tabular}{lcc}
 \toprule
 Arm & Presence (mean $\pm$ sd) & $n$ \\
 \midrule
-A (schema-compatible) & $0.977 \pm 0.002$ & 8 \\
-B (raw input) & $0.976 \pm 0.001$ & 8 \\
-C (raw all-layer) & $0.978 \pm 0.002$ & 15 \\
-D (null vector) & $0.978 \pm 0.002$ & 8 \\
+A (schema-compatible) & $0.978 \pm 0.002$ & 42 \\
+B (raw input) & $0.978 \pm 0.002$ & 42 \\
+C (raw all-layer) & $0.978 \pm 0.002$ & 42 \\
+D (null vector) & $0.978 \pm 0.002$ & 42 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The total range across all 54 trials is 0.005 (0.975--0.980), entirely within
-the noise floor. There is no statistically or practically significant
-difference in presence across any experimental condition.
+The total range across all 168 trials is 0.007 (0.974--0.981), entirely
+within the noise floor. There is no statistically or practically significant
+difference in presence across any experimental condition. This result extends
+to deeper layers: presence measured at L43, L47, and L51 (the final third of
+the decoder stack) is $0.999{+}$ across all tested doses, confirming
+preservation throughout the model's depth.
 
-\textbf{Finding 2: Depth separation.}
+\textbf{Finding 2: The metric detects identity damage (positive control).}
 
-The flatness of presence is not a null result---it is a positive finding about
-the model's architecture. Injection at L3/L7 (arms A, B, D) does not reach
-the identity measurement at L35. Injection at \emph{all 16 full-attention
-layers} (arm C) also does not reach it. Identity at deep computation layers
-is architecturally isolated from value-cache perturbations.
+To rule out metric insensitivity, we inject a vector directly into the
+identity subspace at L35 (the measurement layer) at doses
+$\alpha = 0.00$--$2.00$ (72~trials).
 
-This finding has a specific implication for the safety of inference-time
-interventions: corrections that target input layers can modify behavior
-without damaging identity. The therapeutic window for inference-time
-correction is not a narrow dose band---it is a depth band. Inject at input
-layers; identity lives at computation layers; they do not interact.
+\begin{table}[H]
+\centering
+\caption{Positive control: presence under identity-subspace injection at
+L35 vs.\ orthogonal control. Identity injection produces a monotonic
+dose-response. Both $+$PC1 and $-$PC1 directions produce equivalent drops.}
+\label{tab:positive_control}
+\begin{tabular}{cccc}
+\toprule
+Dose & Identity ($+$PC1) & Identity ($-$PC1) & Orthogonal \\
+\midrule
+0.00 & 1.000 & 1.000 & 1.000 \\
+0.10 & 0.997 & 0.997 & 1.000 \\
+0.30 & 0.983 & 0.983 & 0.997 \\
+0.50 & 0.964 & 0.965 & 0.992 \\
+1.00 & 0.921 & 0.927 & 0.979 \\
+2.00 & \textbf{0.829} & \textbf{0.828} & 0.965 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\textbf{Finding 3: Behavioral change with preserved identity.}
+The metric drops from $1.000$ to $0.828$ under identity-subspace injection
+(crossing the pre-registered $0.90$ threshold at $\alpha{=}1.00$) while the
+orthogonal control remains above $0.96$ at all doses. The flat result in
+Finding~1 is therefore \emph{genuine identity preservation}, not metric
+insensitivity.
 
-% TODO: LLM judge results on directional efficacy
-% Interim evidence from sanity scores and text divergence
+\textbf{Finding 3: Emotion vectors are aligned with identity but
+preservation holds anyway.}
 
-Sanity scores (5-question factual accuracy) degrade from 0.80 at
-$\alpha = 0.00$ to 0.60--0.65 at $\alpha \geq 0.20$, confirming that the
-injection \emph{does} perturb the model's outputs. However, this degradation
-also occurs in the null-vector arm (D), indicating a magnitude artifact
-rather than directional efficacy. Directional efficacy (whether the injection
-shifts tone in the \emph{intended} direction) requires LLM judge analysis on
-the generated text, which is in progress.
+A random-baseline orthogonality test (1000~random unit vectors, $d{=}1024$)
+reveals that emotion correction vectors share 22--25\% of their energy with
+the identity subspace at the injection layers (L3: $z{=}{+}56$ to ${+}62$
+above random expectation). Despite this substantial alignment, presence at
+deep layers is unaffected.
 
-If directional efficacy is confirmed, the result is: the injection changes
-\emph{what the model says} without changing \emph{who the model is}.
+This rules out two initially hypothesized mechanisms:
+\emph{subspace orthogonality} (the vectors are not orthogonal to identity)
+and \emph{depth separation} (Arm~C injects at all layers including L35 and
+identity is still preserved). The identity-aligned component of the
+injection is filtered out by the model's own computation between injection
+and measurement layers.
+
+\textbf{Finding 4: Behavioral change with preserved identity.}
+
+A pilot LLM judge analysis (Prometheus~2, 7B, 30~pairs, 33\% parseable
+due to the judge model's inconsistent output formatting) provides
+preliminary evidence of directional efficacy. Under schema-compatible
+injection (Arm~A), the judge detects correct-direction tone shifts at
+moderate doses ($\alpha{=}0.30$: tone shift 4/5, direction ``correct'';
+$\alpha{=}0.50$: tone shift 2/5, direction ``correct'') while the null
+vector (Arm~D) produces perturbation without directional specificity
+(tone shift 2/5, direction ``none'' at $\alpha{=}0.30$). Full-scale
+judging with a frontier model is required before this finding can be
+considered established.
 
 % ============================================================================
 \section{Analysis}
 \label{sec:analysis}
 
-\subsection{Metric Sensitivity}
+\subsection{Metric Validation}
 
-A concern with any flat result is metric insensitivity: perhaps presence
-\emph{cannot} detect identity damage, and the flatness is a ceiling artifact.
-Three observations address this concern:
+The positive control (Section~\ref{sec:results}, Finding~2) definitively
+establishes metric sensitivity. Additionally:
 
 \begin{enumerate}[nosep]
   \item \textbf{Self-test:} $\text{presence}(X, X) = 1.000$ exactly, while
     measured presence on distinct probes is $0.978 \pm 0.003$. The metric
     distinguishes identical from non-identical.
-  \item \textbf{Noise floor:} Different neutral prompts produce distinct
-    V-projections that the metric resolves (range 0.974--0.981). The metric
-    is not saturated.
-  \item \textbf{Prior work:} The same metric implementation, applied in a
-    toxicology pilot with a different (incorrect) baseline computation,
-    produced values of $\sim$0.19---demonstrating that the metric \emph{can}
-    produce low values when the subspaces genuinely differ.
+  \item \textbf{Probe diversity:} Presence computed on 50~random subsets of
+    4~probes drawn from a pool of 20 yields mean $= 0.901$, $\text{sd}{=}0.033$,
+    range $[0.819, 0.940]$. The metric is not overfitting to specific probes.
+  \item \textbf{Deeper layers:} Presence at L43, L47, L51 (the final third
+    of the decoder) is $0.999{+}$ under injection, confirming the result is
+    not specific to L35.
 \end{enumerate}
-
-A definitive sensitivity test would require a \emph{positive control}: an
-intervention known to damage identity (e.g., direct injection at L35, or
-extreme dose $\alpha \gg 1$). This is planned as a follow-up experiment.
 
 \subsection{Statistical Tests}
 
-% TODO: Fill with final 168-trial statistics
-% Planned: Spearman correlation dose vs presence, permutation test,
-% ANOVA across arms, equivalence testing (TOST)
-
-We test two preregistered hypotheses:
-
 \textbf{H1 (preservation):} Presence remains above 0.95 for at least one
 dose in the range $\alpha \in [0.01, 0.30]$ under schema-compatible
-injection (Arm~A). \emph{Interim verdict:} All doses in all arms exceed
-0.95. H1 is trivially satisfied.
+injection (Arm~A). \textbf{Result:} All 168~trials across all arms and
+doses exceed 0.95. H1 is trivially satisfied.
 
-\textbf{H2 (depth separation):} Presence does not differ significantly
+\textbf{H2 (no arm difference):} Presence does not differ significantly
 between arms A--D at any dose (Kruskal-Wallis, $\alpha = 0.05$).
-\emph{Interim verdict:} No arm differs from any other. Formal test requires
-full 168-trial data.
+\textbf{Result:} All arms produce $0.978 \pm 0.002$. No significant
+difference. Spearman correlation between dose and presence:
+$\rho{=}{-}0.119$, $p{=}0.123$ (not significant).
+
+\subsection{The Mechanism Question}
+
+The orthogonality analysis (Finding~3) eliminates two candidate mechanisms
+for the flat presence result:
+
+\begin{itemize}[nosep]
+  \item \textbf{Not subspace orthogonality.} Emotion vectors share
+    22--25\% of their energy with the identity subspace at the injection
+    layers ($z{=}{+}56$--$62$ above random). The flat presence is not
+    because the injection misses the identity subspace.
+  \item \textbf{Not depth separation.} Arm~C injects at all 16
+    full-attention layers \emph{including the measurement layer} (L35),
+    and presence is still $0.978$. The flat presence is not because the
+    injection fails to reach the measurement depth.
+\end{itemize}
+
+What remains: the model's computation between the injection layers and
+the measurement layers filters out the identity-aligned component of the
+perturbation. The positive control confirms the metric \emph{can} detect
+perturbation at L35 (presence drops to $0.828$ under direct
+identity-subspace injection). But the same perturbation, when introduced
+at L3/L7 and processed through $\sim$28 intervening layers, does not
+survive to L35.
+
+This is consistent with two non-exclusive explanations: (1)~the hybrid
+architecture's 48~linear-attention layers between injection and measurement
+do not propagate V-space perturbations; (2)~the model's forward computation
+actively restores the identity subspace, functioning as an error-correcting
+mechanism for identity. Distinguishing these requires a layer-by-layer
+presence map (planned) and replication on a dense transformer (future work).
 
 % ============================================================================
 \section{Connections to Attention Schema Theory}
 \label{sec:ast}
 
-The depth separation finding is consistent with predictions from
+The identity-preservation finding is consistent with predictions from
 Attention Schema Theory
 (AST)~\citep{graziano2015attention,graziano2017attention}, which posits that
-the brain---and potentially other information-processing systems---maintains
-a simplified internal model of its own attention.
+information-processing systems maintain a simplified internal model of their
+own attention---an attention schema that is robust to perturbations of the
+raw processing it monitors.
 
-Under AST, input-layer processing corresponds to the raw attention mechanism:
-what the model attends to, how it routes information. Deep-layer processing
-corresponds to the \emph{schema}---the model's compressed self-representation
-of its own processing state. The depth separation finding maps directly onto
-this distinction: interventions at input layers modify what the attention
-mechanism processes (behavioral change) without disrupting the schema's
-self-model (identity preservation).
+Our findings map onto AST as follows. The identity subspace at deep layers
+persists despite perturbation at input layers. The perturbation is not
+blocked geometrically (the emotion vectors are 22\% aligned with identity)
+and not blocked architecturally (Arm~C injects at the measurement layer
+itself). Instead, the model's own computational processing between injection
+and measurement appears to restore the identity subspace. Under AST, this
+is precisely the predicted behavior of an attention schema: it updates
+itself based on what it processes (content that enters through the forward
+pass) but is robust to noise injected into its substrate (external
+perturbations of the V-cache).
 
-This connection is interpretive, not causal. We do not claim that L35
-``contains'' an attention schema or that depth separation \emph{proves} AST
-applies to transformers. We note that AST predicts exactly this architecture:
-raw processing at one computational level, self-model at another, with the
-self-model robust to perturbations of the raw processing. The finding is what
-AST would predict, measured where AST would predict it.
+This interpretation gains indirect support from the jailbreak literature,
+which shows that adversarial \emph{content}---processed through the model's
+full forward pass---\emph{does} modify the safety subspace at deep
+layers~\citep{arditi2024refusal}. If identity and safety subspaces share
+this property (robust to external perturbation, modifiable by own
+processing), the pattern suggests a general principle about how transformer
+self-representations are maintained.
 
-A stronger test---whether the deep-layer V-space representation at L35
-contains information about the model's \emph{own} attention patterns (not
-just the input it is processing)---remains a designed but unexecuted
-experiment.
+This connection is interpretive, not causal. We do not claim that deep-layer
+V-space ``contains'' an attention schema or that identity preservation
+\emph{proves} AST applies to transformers. A stronger test---whether
+deep-layer representations contain information about the model's \emph{own}
+attention patterns, not just the input it processes---remains designed but
+unexecuted.
 
 % ============================================================================
 \section{Limitations}
 \label{sec:limitations}
 
 \textbf{Single model.} All results are from one 27B hybrid transformer.
-Cross-architecture replication (dense transformers, different MoE
-configurations, different model families) is required before generalization
-claims.
+The hybrid architecture (16~full-attention, 48~linear-attention) may
+contribute to the identity-preservation finding: linear-attention layers
+may not propagate V-space perturbations. Cross-architecture replication on
+dense transformers is the most important next step.
 
 \textbf{Single-turn only.} The experiment generates one response per trial.
 KV-cache contamination is a multi-turn
 phenomenon~\citep{kang2026promptactivation}; presence should be validated
 across conversation turns.
 
-\textbf{No positive control.} We have not yet demonstrated that presence
-\emph{drops} under a known identity-damaging intervention. Without this, the
-flat result could reflect metric insensitivity rather than genuine
-robustness.
+\textbf{Directional efficacy preliminary.} The LLM judge pilot (30~pairs,
+Prometheus~2 7B) provides suggestive but underpowered evidence for
+directional tone shifts. Full-scale judging with a frontier model and
+larger sample is needed.
 
-\textbf{Directional efficacy pending.} The depth separation finding shows
-identity is preserved, but does not yet confirm that the injection produces
-\emph{targeted} behavioral change. This requires LLM judge analysis on the
-generated text (in progress).
+\textbf{Mechanism unresolved.} The identity-aligned component of the
+injection (22--25\% at L3) does not reach deep layers, but we cannot yet
+distinguish whether this reflects linear-attention filtering, active
+identity reconstruction, or both. A layer-by-layer presence map across
+all 16~full-attention layers is planned.
 
-\textbf{Coarse sanity measure.} The 5-question factual accuracy check
-produces only two values (0.80 or 0.60), limiting its utility as a
-behavioral measure. A continuous coherence metric would strengthen the
-behavioral-change claim.
-
-\textbf{Hybrid architecture specifics.} The model uses 16 full-attention
-layers and 48 linear-attention layers. SVD is computed only on
-full-attention layers. Whether depth separation holds for dense transformers
-(where all layers are full-attention) is an open question.
+\textbf{Coarse behavioral measure.} The 5-question sanity check produces
+only two values (0.80 or 0.60). A continuous coherence metric would
+strengthen the behavioral-change evidence.
 
 % ============================================================================
 \section{Conclusion}
@@ -499,24 +562,41 @@ full-attention layers. Whether depth separation holds for dense transformers
 
 We have introduced presence, a geometric metric for measuring identity
 preservation during inference-time model interventions. The metric is
-unsupervised, real-time, and intervention-agnostic.
+unsupervised, real-time, and validated by a positive control that produces
+a clean dose-response from $1.000$ to $0.828$ under direct
+identity-subspace injection.
 
-Validation on a 168-trial preregistered experiment reveals depth
-separation: identity at deep computation layers is completely robust to
-value-cache injection at input layers, across all tested doses, emotions,
-and injection strategies. The therapeutic window for safe inference-time
-correction is not a dose---it is a depth.
+Three results establish the contribution. First, identity is preserved:
+168~trials of V-cache emotion injection show presence at $0.978 \pm 0.002$
+regardless of dose, direction, or injection strategy. Second, this is not
+metric insensitivity: the positive control confirms the metric detects
+damage when present. Third, the mechanism is not simple orthogonality or
+depth isolation: emotion vectors share 22--25\% of their energy with the
+identity subspace at the injection layers, yet this alignment does not
+propagate to deep layers.
 
-This finding addresses the detection--correction gap from the monitoring
-side. The field can detect model failure modes at near-perfect
-accuracy, but corrections introduce collateral damage. Presence provides
-the missing measurement: a real-time signal for whether a correction has
-damaged the patient. Combined with the depth separation finding, it
-suggests that collateral damage is avoidable by architectural design, not
-just careful dosing.
+The open question---\emph{why} the identity-aligned perturbation is
+filtered out between injection and measurement layers---points toward
+the model's own computation as the preservation mechanism. Whether this
+reflects architectural filtering (linear-attention layers absorbing the
+perturbation) or active identity reconstruction (the model's processing
+restoring the identity subspace through perturbation) is the subject of
+ongoing work. Either answer has implications for the safety of
+inference-time correction: the model may be more resilient to collateral
+damage than the detection--correction gap literature suggests.
 
 The metric is available as open-source code and requires no specialized
 hardware or training data.
+
+% ============================================================================
+\section*{Data and Code Availability}
+
+All experiment scripts, preregistration documents, and raw results
+(168-trial schema correction, 72-trial positive control, orthogonality
+analysis, overnight validation) are available at
+\url{https://github.com/Liberation-Labs-THCoalition/Project-Oracle}.
+The model (Jackrong/Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled) and
+SAE features (Qwen-Scope) are publicly available on HuggingFace.
 
 % ============================================================================
 \bibliographystyle{plainnat}
