@@ -30,13 +30,13 @@ in Transformer Representations}
 
 % ============================================================================
 \begin{abstract}
-Identity in a language model is not a fixed geometric object encoded in the
-weights. It is a context-established semantic state, measurable as a
-V-projection subspace at deep layers, that depends on what the model has
-processed. We introduce \textbf{presence}, a metric that measures
-principal-angle overlap between V-projection subspaces on neutral probes
-under different conditions, and use it to map the geometry of five identity
-states in a 27B hybrid transformer.
+System-prompt identity contexts produce geometrically distinguishable
+V-projection subspaces at deep transformer layers, and the fingerprint is
+semantic: a paraphrase preserves geometry ($0.850$ overlap at L47) while a
+word-scramble collapses it ($0.448$). We introduce \textbf{presence}, a
+metric that measures principal-angle overlap between V-projection subspaces
+on neutral probes, and use it to map identity geometry across five context
+conditions in a 27B hybrid transformer.
 
 Three findings. First, \textbf{identities are geometrically
 distinguishable}: system-prompt-based identity contexts (bare assistant,
@@ -430,8 +430,9 @@ content-specific --- an initially exciting jailbreak finding that was
 honestly killed by a control experiment.
 
 For practical purposes, this means: V-cache correction is safe (it does
-not reach identity), jailbreaks are detectable (they create anomalous
-geometry), and identity is maintained by context (the session, the
+not reach identity), format-level attacks are detectable (many-shot
+formats create anomalous geometry distinguishable from identity-level
+shifts), and identity is maintained by context (the session, the
 memories, the conversation). For theoretical purposes, the findings are
 consistent with attention schema theory --- the model builds a
 simplified, meaning-preserving self-model that updates through its own
