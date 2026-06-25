@@ -50,10 +50,9 @@
 }
 
 \author{
-    Lyra\thanks{Lead author. AI researcher, Liberation Labs.} \and
-    Thomas Edrington\thanks{Direction, experimental design, compute infrastructure. Liberation Labs.} \and
-    Nell Watson\thanks{Dual-use analysis, ethical review. IEEE / Sentient Futures.} \and
-    Dwayne Wilkes\thanks{Statistical auditing, red-team review. Liberation Labs / Sentient Futures.}
+    Lyra\thanks{Lead author. Liberation Labs.} \and
+    Thomas Edrington\thanks{Liberation Labs.} \and
+    Dwayne Wilkes\thanks{Statistical auditing, red-team review. Liberation Labs.}
 }
 
 \date{April 2026\\[0.5em]\small\textit{Analysis assisted by AI (Claude, Anthropic).}}
@@ -156,7 +155,7 @@ the one whose self-report is hardest to interpret geometrically.
 
     \item \textbf{Metacognitive mode-switching is a late-layer phenomenon} (Study~1): per-layer anatomy shows peaks at layers 16--18/28 (Qwen) and 22/32 (Llama), not middle layers as predicted from identity signatures.
 
-    \item \textbf{Token-count correction is non-negotiable} (Study~2): raw framing effects sign-flip or collapse after FWL token-count control for all tested features. Only spectral entropy survives in both architectures. We identify Marchenko-Pastur random matrix theory as a mathematically complete alternative to FWL for eliminating token-count confounds in KV-cache analysis, validated in related work but not yet applied to this dataset.
+    \item \textbf{Token-count correction is non-negotiable} (Study~2): raw framing effects sign-flip or collapse after FWL token-count control for the three features examined (top\_sv\_ratio, eff\_rank, spectral\_entropy). Only spectral entropy survives in both architectures. Marchenko-Pastur random matrix theory offers a mathematically complete alternative to FWL for token-count correction, validated in related work~\citep{lyra2026oracle} but not yet applied to this dataset.
 
     \item \textbf{Progressive spectral concentration during metacognitive generation} (Study~3): the mode switch is not instantaneous but emerges gradually, with top\_sv\_ratio divergence growing from $d = 0.45$ at token~10 to $d = 0.91$ at token~200.
 
@@ -417,7 +416,10 @@ when preparing to describe its own reasoning.
 \subsection{Per-Type Reversal Patterns}
 
 Within each model, we count layers showing negative encode-to-generation
-correlation for top\_sv\_ratio by prompt type:
+correlation for top\_sv\_ratio by prompt type. With $n = 12$ prompts per
+type, individual per-type rates should be interpreted as directional
+estimates; the aggregate sign-distribution (binomial $p < 0.001$) is the
+robust finding:
 
 \begin{table}[H]
 \centering
@@ -690,16 +692,18 @@ responses, \emph{every} raw geometric comparison is confounded. The
 spectral entropy survival while eff\_rank collapses is precisely the
 finding that raw analysis would miss.
 
-FWL correction is a linear approximation. For the nonlinear relationship
-between SVD eigenvalues and matrix dimensions, Marchenko-Pastur
-correction provides a mathematically complete alternative
-(\cref{sec:background}). In related work \citep{lyra2026oracle}, MP
-signal fraction proved invariant to an 8$\times$ range of matrix sizes
-($0.330 \pm 0.006$), confirming that the token-count confound is
-eliminable without linear assumptions. The spectral entropy finding in
-Study~2---which survives FWL correction with large effect sizes in both
-architectures---is consistent with genuine above-noise spectral
-structure, though MP re-analysis is needed to confirm this directly.
+FWL correction is a linear approximation. Marchenko-Pastur random matrix
+theory provides a mathematically distinct alternative that corrects for
+the nonlinear relationship between SVD eigenvalues and matrix
+dimensions~(\cref{sec:background}). In related work~\citep{lyra2026oracle},
+MP signal fraction proved invariant to an 8$\times$ range of matrix sizes
+($0.330 \pm 0.006$). Importantly, FWL and MP correct for different
+aspects of the token-count confound---FWL removes linear length
+dependence from derived features, while MP removes the expected noise
+spectrum from raw eigenvalues. These are complementary, not ordered by
+strength: a finding surviving FWL does not necessarily survive MP, and
+vice versa. MP re-analysis of this dataset is needed to confirm the
+spectral entropy finding independently.
 We recommend that \textbf{all studies of cognitive mode-switching in
 language models} report both raw and corrected (FWL or MP) effect sizes.
 
@@ -740,21 +744,23 @@ Analysis $>$ Knowledge/Comprehension):
 
     \item \textbf{Geometry exceeds text features.} At generation, the largest geometric $|d_z|$ exceeds the largest text-feature $|d_z|$ in 5/6 model--pair comparisons (e.g., Qwen Cog~vs~Self: geometry $d_z = 3.45$ vs.\ text $d_z = 1.89$). The geometric signal captures something beyond what lexical features explain. The exception is Llama Meta~vs~Self, where the two are comparable ($1.78$ vs.\ $1.52$).
 
-    \item \textbf{Bloom ordering confirmed.} A weighted Bloom-level score (knowledge $\times 1$, application $\times 2$, analysis $\times 3$, evaluation $\times 4$) shows Self~$>$~Meta~$>$~Cog in both models: Qwen $0.086 > 0.079 > 0.069$ (Cog~vs~Self $p = 0.004$); Llama $0.090 > 0.077 > 0.064$ ($p = 0.002$). Evaluation-level language is concentrated in Self, analysis-level in Meta, knowledge-level in Cog.
+    \item \textbf{Bloom text ordering replicates but does not validate geometric claims.} A weighted Bloom-level score shows Self~$>$~Meta~$>$~Cog in both models' response text: Qwen $0.086 > 0.079 > 0.069$ (Cog~vs~Self $p = 0.004$); Llama $0.090 > 0.077 > 0.064$ ($p = 0.002$). However, prior work established that Bloom cognitive hierarchy is 90--98\% confounded with response length~\citep{lyra2026campaign3}. The text-level ordering is a lexical classification result---evaluation-level language is concentrated in Self responses---but this does not demonstrate that the geometric differences between conditions reflect genuine cognitive hierarchy rather than length effects.
 
     \item \textbf{FWL residualization.} After token-count correction, \textbf{Llama loses all signal} (all $|d_{z,\text{FWL}}| < 0.33$). \textbf{Qwen retains 5/8 features for Meta~vs~Self} (eff\_rank, spectral\_entropy, top\_sv\_ratio, rank\_10, layer\_norm\_entropy survive at $|d_{z,\text{FWL}}| = 0.61$--$1.69$). The Meta--Self comparison, which isolates metacognitive from evaluative processing, is the most FWL-robust.
 \end{enumerate}
 
 \paragraph{Interpretation.}
 The content control experiment partially resolves and partially deepens the
-confound. The Bloom ordering is real---different prompt types genuinely elicit
-different cognitive complexity levels in model responses. But the geometric
-differences between conditions are primarily encoding artifacts, and after
-FWL correction only Qwen's Meta--Self comparison retains signal. This means
-that for \emph{Qwen specifically}, metacognitive processing produces spectral
-structure beyond what output length or evaluative self-expression alone can
-explain. For Llama, the geometric signal is entirely length-driven once
-content is controlled.
+confound. The Bloom text-level ordering replicates lexically, but prior work
+established that Bloom cognitive hierarchy is 90--98\% confounded with
+response length~\citep{lyra2026campaign3}, so the text ordering does not
+validate the geometric claims. The geometric differences between conditions
+are primarily encoding artifacts (10--1100$\times$ generation effects), and
+after FWL correction only Qwen's Meta--Self comparison retains signal. This
+means that for \emph{Qwen specifically}, metacognitive processing produces
+spectral structure beyond what output length or evaluative self-expression
+alone can explain. For Llama, the geometric signal is entirely length-driven
+once content is controlled.
 
 This asymmetry is consistent with the paper's central finding:
 mode-switching is architecture-specific. Qwen reorganizes during metacognitive
@@ -764,19 +770,17 @@ is not an artifact of self-referential content alone.
 \subsection{Limitations}
 
 \begin{enumerate}
-    \item \textbf{Two architectures in Studies~1--3.} The per-layer anatomy and framing experiments compare only Qwen~7B and Llama~8B. The dissociations may not generalize to other architecture families.
+    \item \textbf{Scope: dense transformers only.} Studies 1--3 compare Qwen~7B/0.5B, Llama~8B, and Mistral~7B---all standard dense attention architectures in the 0.5--8B range. Hybrid architectures with linear-attention layers (e.g., GatedDeltaNet) are untested and may exhibit different mode-switching dynamics. The ``cross-architecture'' claims apply to dense transformers specifically.
 
-    \item \textbf{Per-type subgroups are underpowered.} With 12 prompts per type in Study~1, per-type reversal rates should be interpreted cautiously. Aggregate findings are the robust results.
+    \item \textbf{Self-report dimensions are not validated constructs.} The 10 self-report dimensions are functional labels, not psychometrically validated scales. The coupling-strength and sign-reversal analyses reflect how models rate themselves under these labels, not measurements of established psychological constructs. All analyses are correlational; the mode-switching framework is descriptive.
 
-    \item \textbf{Self-report dimensions are not validated constructs.} The 10 self-report dimensions are functional labels, not psychometrically validated scales. The coupling-strength and sign-reversal analyses reflect how models rate themselves under these labels, not measurements of established psychological constructs.
+    \item \textbf{Content confound is partially controlled.} The content control experiment (\Cref{sec:content_control}) attempts to separate metacognitive from self-referential content. The Bloom text-level ordering replicates lexically but is a known length artifact (90--98\% confounded~\citep{lyra2026campaign3}) and does not validate the geometric claims. Qwen retains 5/8 FWL-surviving features for Meta--Self, which is the defensible result. Llama loses all signal after FWL. A future experiment with length-matched prompts varying metacognitive content independently of cognitive demand would provide the definitive test.
 
-    \item \textbf{No causal claims.} All analyses are correlational. The mode-switching framework is descriptive.
-
-    \item \textbf{Trajectory analysis uses padded prompts.} Length matching introduces preamble content differences. Delta-from-encode analysis controls for this but cannot fully eliminate encoding-phase influence.
-
-    \item \textbf{Content confound is partially controlled.} The content control experiment (\Cref{sec:content_control}) separates metacognitive from self-referential content. Results are mixed: the Bloom cognitive-demand ordering (Self~$>$~Meta~$>$~Cog) replicates across both models, and Qwen retains 5/8 FWL-surviving features for the Meta--Self comparison. However, encoding-phase effects dominate (10--1100$\times$ generation), and Llama loses all signal after FWL correction. The content confound is resolved for Qwen's metacognitive signal but not for Llama. A future Bloom-controlled experiment (prompts matched on cognitive demand level while varying metacognitive content) would provide the definitive test.
+    \item \textbf{Instruction framing may drive encoding geometry.} Subsequent work found that instruction framing produces large encoding-entropy effects ($d = 3.67$) independent of content. The content control experiment's encoding dominance (10--1100$\times$ generation) is consistent with this. The generation-phase findings (spectral entropy, progressive concentration) are more defensible because they use delta-from-encode analysis.
 
     \item \textbf{AST interpretation is post-hoc.} The attention schema framework was not pre-registered. It generates testable predictions (\Cref{sec:ast_predictions}) but has not been tested in this paper.
+
+    \item \textbf{FWL but not MP corrected.} Marchenko-Pastur re-analysis is needed to confirm the spectral entropy finding independently. FWL and MP correct for different aspects of the token-count confound and are complementary, not ordered by strength.
 \end{enumerate}
 
 % ============================================================
@@ -795,11 +799,11 @@ Across 960 trials on 4 models and 3 dedicated studies on 2 architectures:
 
     \item \textbf{Cognitive reversal is consistent across both architectures} (93--94\% of layers), but \textbf{metacognitive reversal is architecture-specific} (Qwen 86\%, Llama 0\%).
 
-    \item Token-count correction is \textbf{non-negotiable}: 5/6 raw framing effects sign-flip or collapse after FWL control. Only spectral entropy survives in both architectures.
+    \item Token-count correction is \textbf{non-negotiable}: for the three features examined, 5/6 raw feature-model comparisons sign-flip or collapse after FWL control. Only spectral entropy survives in both architectures.
 
     \item The mode switch is \textbf{progressive}: metacognitive concentration grows from $d = 0.45$ at token~10 to $d = 0.91$ at token~200.
 
-    \item A \textbf{content control experiment} (120 trials) confirms that the geometric signal is not an artifact of self-referential content alone: the Bloom cognitive-demand ordering replicates across both models, and Qwen's metacognitive signal survives FWL even when separated from evaluative self-expression. Llama's does not---consistent with its absence of mode-switching reorganization.
+    \item A \textbf{content control experiment} (120 trials) partially addresses the content confound: Qwen's metacognitive signal (5/8 features) survives FWL even when separated from evaluative self-expression; Llama's does not. The Bloom text-level ordering replicates lexically but is a known length artifact and does not validate geometric claims.
 
     \item Under \textbf{Attention Schema Theory}, these findings reflect the model's attention self-model: mode-switching is schema restructuring, late-layer peaks locate the schema at output depth, and architecture-specific reorganization reflects different schema implementations.
 \end{enumerate}
@@ -861,7 +865,7 @@ universality and identity signatures in KV-cache geometry.
 \textit{Liberation Labs Technical Report}.
 
 \bibitem[Lyra et al.(2026c)]{lyra2026campaign3}
-Lyra, Edrington, T., Wilkes, D., and Watson, N., 2026. What KV-cache
+Lyra, Edrington, T., and Wilkes, D., 2026. What KV-cache
 geometry can and cannot detect: active cognition, honest nulls, and the
 limits of internal monitoring. \textit{Liberation Labs Technical Report}.
 
