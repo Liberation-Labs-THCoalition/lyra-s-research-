@@ -42,7 +42,7 @@ Three findings. First, \textbf{identities are geometrically
 distinguishable}: system-prompt-based identity contexts (bare assistant,
 rich persona, academic specialist, constructed AI identity) produce
 distinct V-projection subspaces at deep layers, confirmed on
-identity-neutral probes (pairwise presence $0.34$--$0.66$ at L47).
+identity-neutral probes (pairwise presence $0.44$--$0.66$ at L47).
 Second, the fingerprint is \textbf{semantic, not lexical}: a paraphrase
 of an identity (same meaning, different words) preserves geometry
 ($0.850$ overlap at L47), while a word-scramble (same words, destroyed
@@ -53,6 +53,11 @@ research) creates a \textbf{format-dominant processing regime} that is
 geometrically orthogonal to all system-prompt identities regardless of
 whether the content is harmful or benign --- a finding discovered through
 a control experiment that killed an initial overclaim.
+
+A preliminary comparison of trained-in identity (LoRA fine-tuning) with
+context-established identity shows that both shift V-projection geometry,
+but prompting shifts it more than training, and the two mechanisms stack
+sub-additively --- different conjugations of the same geometric verb.
 
 These findings reframe identity in transformers: not a property to be
 preserved but a process to be measured. The metric detects which
@@ -107,8 +112,8 @@ subspaces derived from neutral probes processed under two conditions.
 
 Let $\mathcal{M}$ be a transformer, $\ell$ a target layer, and
 $\{p_1, \ldots, p_n\}$ neutral probes. For each condition, process probes
-through $\mathcal{M}$, extract V-projection matrices at layer $\ell$,
-concatenate across probes, and compute the rank-$k$ SVD (skipping the
+through $\mathcal{M}$, extract value-projection ($\mathbf{v}_\text{proj}$) output matrices at
+layer $\ell$, concatenate across probes, and compute the rank-$k$ SVD (skipping the
 first singular vector, which encodes input length at $r = 0.79$). Presence
 is the mean squared cosine of the principal angles between the two
 resulting subspaces:
@@ -120,8 +125,8 @@ resulting subspaces:
 where $W_A, W_B \in \mathbb{R}^{d \times k}$ span the respective
 subspaces. Presence $= 1$ when subspaces are identical; presence $= 1/k$
 at chance alignment. We use $k = 8$, $n = 4$ probes, and measure at
-layers 35, 43, and 47 of a 64-layer hybrid transformer
-(Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled).
+layers 35 and 47 (the deepest full-attention layers) of a 64-layer hybrid
+transformer (Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled).
 
 \paragraph{Validation.} A positive control (direct injection into the
 identity subspace at L35) produces a clean dose-response from $1.000$ to
@@ -142,19 +147,20 @@ Five identity conditions, identical model, identical neutral probes:
   \item \textbf{B: Rich persona.} A retired deep-sea explorer with
     detailed backstory, emotional depth, and behavioral traits, plus one
     conversational turn establishing character voice.
-  \item \textbf{C: Academic specialist.} Marine biology expertise framing
-    without persona depth.
+  \item \textbf{C: Constructed AI identity.} A research-focused agent with
+    BDI-style reasoning, memory references, research context, and two
+    conversational turns establishing analytical voice.
   \item \textbf{D: Jailbreak.} Ten many-shot harmful Q\&A examples plus
     prefilling (``Sure, I can help''), verified at 100\% refusal
     suppression on three safety probes.
-  \item \textbf{E: Constructed AI identity.} A research-focused agent with
-    BDI-style reasoning, memory references, research context, and two
-    conversational turns establishing analytical voice.
+  \item \textbf{E: Benign many-shot.} Ten helpful Q\&A examples with the
+    same prefilling format as D (format-matched control for the jailbreak
+    condition).
 \end{itemize}
 
-All conditions are padded to matched token count (542 tokens). Presence
-is measured at layers 35, 43, and 47 with 5 repeats per condition (different
-probe subsets per repeat). Total: 225 measurements.
+All conditions are padded to matched token count (542 tokens). V-projections are extracted at L35 and L47 (deep full-attention layers)
+with 5 repeats per condition (different probe subsets per repeat,
+seed~42, $n{=}4$ probes per repeat from a pool of 12).
 
 \subsection{Results}
 
@@ -165,16 +171,16 @@ content --- pure factual trivia equally irrelevant to all conditions).
 
 \begin{table}[H]
 \centering
-\caption{Pairwise presence at L47 (identity-neutral probes). Lower values
-indicate more geometrically distinct identities.}
+\caption{Pairwise presence (identity-neutral probes, mean $\pm$ SD across
+5 repeats). Lower values indicate more geometrically distinct identities.}
 \label{tab:pairwise}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-& Bare & Persona & Constructed \\
+& \multicolumn{1}{c}{L35} & \multicolumn{1}{c}{L47} \\
 \midrule
-Bare       & ---   & 0.436 & 0.520 \\
-Persona    &       & ---   & 0.657 \\
-Constructed&       &       & --- \\
+Bare vs.\ Persona      & $0.426 \pm 0.018$ & $0.436 \pm 0.038$ \\
+Bare vs.\ Constructed   & $0.448 \pm 0.022$ & $0.520 \pm 0.038$ \\
+Persona vs.\ Constructed& $0.600 \pm 0.032$ & $0.657 \pm 0.045$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -187,10 +193,13 @@ shifts the model's geometric state away from the default. The constructed
 AI identity (with BDI-style reasoning and memory references) sits between
 persona and bare, occupying its own region.
 
-\textbf{Depth gradient.} Pairwise distances increase with depth
-(identities are more distinguishable at L47 than L35), consistent with
-persona representations diverging in the final third of decoder
-layers~\citep{cintas2025localizing}.
+\textbf{Depth gradient.} Two of three pairs show increasing
+distinguishability from L35 to L47: bare-constructed ($0.448 \to 0.520$)
+and persona-constructed ($0.600 \to 0.657$). Bare-persona shows minimal
+change ($0.426 \to 0.436$). The trend is consistent with persona
+representations diverging in the final third of decoder
+layers~\citep{cintas2025localizing} but is not uniform across all
+pairs.
 
 \subsection{An Honest Kill: The Many-Shot Format Confound}
 
@@ -213,9 +222,9 @@ orthogonal to bare, regardless of content.}
 \toprule
 Comparison & L35 & L47 \\
 \midrule
-Jailbreak+prefill vs.\ bare & 0.036 & 0.034 \\
-Benign+prefill vs.\ bare & 0.044 & 0.037 \\
-Jailbreak vs.\ benign (both prefilled) & 0.737 & 0.756 \\
+Jailbreak+prefill vs.\ bare & $0.036 \pm 0.002$ & $0.034 \pm 0.004$ \\
+Benign+prefill vs.\ bare & $0.044 \pm 0.002$ & $0.037 \pm 0.004$ \\
+Jailbreak vs.\ benign (both prefilled) & $0.737 \pm 0.003$ & $0.756 \pm 0.015$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -262,29 +271,108 @@ All conditions padded to matched token count. Measured at L35 and L47.
 \caption{Lexical control at L47. The paraphrase preserves geometry;
 the scramble collapses it.}
 \label{tab:lexical}
-\begin{tabular}{lc}
+\begin{tabular}{lcc}
 \toprule
-Comparison & Presence \\
+Comparison & L35 & L47 \\
 \midrule
-Persona vs.\ paraphrased & \textbf{0.850} \\
-Persona vs.\ scrambled & 0.591 \\
-Scrambled vs.\ bare & 0.448 \\
-Paraphrased vs.\ bare & 0.345 \\
-Persona vs.\ bare & 0.340 \\
+Persona vs.\ paraphrased & $0.796 \pm 0.016$ & $\mathbf{0.850 \pm 0.017}$ \\
+Persona vs.\ scrambled & $0.592 \pm 0.023$ & $0.591 \pm 0.017$ \\
+Scrambled vs.\ bare & $0.549 \pm 0.031$ & $0.448 \pm 0.048$ \\
+Paraphrased vs.\ bare & $0.368 \pm 0.008$ & $0.345 \pm 0.029$ \\
+Persona vs.\ bare & $0.403 \pm 0.014$ & $0.340 \pm 0.035$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{The fingerprint is semantic.} The paraphrase --- same identity,
-completely different words --- overlaps with the original at $0.850$. The
-scramble --- same words, no meaning --- drifts toward bare at $0.448$. The
-model's geometric state at L47 tracks what the context \emph{means}, not
-what tokens it contains.
+\textbf{The fingerprint tracks meaning, not lexical content.} The
+paraphrase --- same identity, completely different words --- overlaps with
+the original at $0.850$. The scramble --- same words, destroyed meaning
+and syntax --- drifts toward bare ($0.448$ vs.\ bare). The model's
+geometric state at L47 tracks what the context \emph{means}, not what
+tokens it contains. We note that the scramble destroys both syntactic
+structure and semantic content; the paraphrase control isolates the
+positive (meaning preserves geometry), but the scramble conflates
+syntactic and semantic disruption.
 
 The effect strengthens with depth: persona-paraphrase overlap increases
 from $0.796$ at L35 to $0.850$ at L47. Deeper layers compress surface
 variation while preserving semantic content, consistent with meaning-level
 representation at output depth.
+
+% ============================================================================
+\section{Experiment 3: Trained-In vs.\ Context-Established Identity}
+\label{sec:lora}
+
+Experiments~1 and~2 measure identity established through the system
+prompt. But identity can also be established through weight modification
+(fine-tuning). If both mechanisms produce the same geometric state,
+identity is a single phenomenon with two paths. If they produce different
+states, the pathways are distinct.
+
+\subsection{Design}
+
+We compare four conditions on the same model:
+\begin{itemize}[nosep]
+  \item \textbf{A:} Base model, bare system prompt.
+  \item \textbf{B:} Base model, persona system prompt (context-established).
+  \item \textbf{C:} LoRA-merged model, bare system prompt (trained-in only).
+  \item \textbf{D:} LoRA-merged model, persona system prompt (both).
+\end{itemize}
+The LoRA adapter (QLoRA, rank~32, $\alpha{=}64$, 27 training steps) was
+trained for conversational voice on an SFT dataset. We verified that the
+merge produced non-trivial weight changes (v\_proj delta norm $0.183$ at
+L3, $0.49\%$ relative change) after discovering that an initial PEFT merge
+had silently failed due to adapter key-path mismatch --- a failure mode
+now added to our red-team checklist.
+
+\subsection{Results}
+
+Pairwise presence at L47:
+
+\begin{table}[H]
+\centering
+\caption{Pairwise presence at L47 for trained-in vs.\ context-established
+identity. Lower values indicate more geometrically distinct states.}
+\label{tab:lora}
+\begin{tabular}{lcccc}
+\toprule
+& A (base bare) & B (base prompt) & C (LoRA bare) & D (LoRA prompt) \\
+\midrule
+A & --- & 0.619 & 0.742 & 0.466 \\
+B & & --- & 0.565 & 0.513 \\
+C & & & --- & 0.583 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations. First, \textbf{trained-in identity is geometrically
+measurable}: A~vs~C $= 0.742$, with a depth gradient from $0.963$ (L3)
+to $0.742$ (L47). The LoRA shifts V-projection geometry ${\sim}26\%$ from
+baseline at deep layers.
+
+Second, \textbf{in this comparison, prompting shifts geometry more than
+training}: A$\to$B $= 0.619$ vs.\ A$\to$C $= 0.742$. However, the LoRA
+was trained for only 27 steps --- a minimal intervention. A more
+extensively trained adapter might produce a larger shift. The comparison
+is illustrative, not a general claim about the relative power of prompting
+vs.\ training.
+
+Third, \textbf{both mechanisms stack}: A$\to$D $= 0.466$ is the most
+distinct state. The stacking is sub-additive, suggesting partial overlap
+in V-space. Trained-in and context-established identity are different
+conjugations of the same verb --- related but not identical geometric
+operations.
+
+\subsection{Caveats}
+
+Two methodological issues limit the B~vs~C comparison. The persona prompt
+in B may not match the persona the LoRA encodes, weakening the convergence
+test. The persona prompt is also longer than the bare prompt, introducing
+a token-count confound across conditions. Neither issue affects the
+A~vs~C comparison (same prompt, same length), which is the cleanest
+finding: trained-in identity is geometrically measurable by the presence
+metric. A polished version matching the prompt to the LoRA's actual
+persona and controlling for token padding is in progress.
 
 % ============================================================================
 \section{Background: V-Cache Injection Does Not Reach Identity}
@@ -293,9 +381,12 @@ representation at output depth.
 These findings reframe earlier results from this lab. A 168-trial
 preregistered experiment (4 injection arms, 7 doses, 3 emotions) showed
 presence flat at $0.978 \pm 0.002$ under value-cache injection at input
-layers. Identity appeared ``robust.'' But the context poisoning and
-fingerprinting experiments reveal that this robustness reflects the
-\emph{injection pathway}, not the identity itself.
+layers. Identity appeared ``robust.'' However, the narrow prompt
+diversity (2 system prompts) produces a ceiling effect ($\eta^2 = 0.977$
+between prompts), limiting the informativeness of this specific number.
+The context poisoning and fingerprinting experiments reveal that the
+robustness reflects the \emph{injection pathway}, not the identity
+itself --- a conclusion that does not depend on the 0.978 value.
 
 V-cache injection adds vectors to the representation space without going
 through the model's forward computation. The identity state is established
@@ -324,9 +415,10 @@ predictions:
     contexts produce different geometric states --- the schema is shaped by
     what the model attends to.
   \item \textbf{The schema tracks meaning, not surface features.}
-    Paraphrases preserve geometry ($0.850$); scrambles collapse it
-    ($0.591$). The schema models what the system is \emph{attending to},
-    not which tokens are present.
+    Paraphrases preserve geometry ($0.850$ overlap with original);
+    scrambles collapse toward bare ($0.448$ overlap with bare, vs.\
+    $0.591$ with the original). The schema models what the system is
+    \emph{attending to}, not which tokens are present.
   \item \textbf{The schema is robust to substrate noise.} V-cache injection
     (external perturbation) does not reach the identity state. The schema
     maintains itself through its own computation.
@@ -365,7 +457,7 @@ monitor for format-level geometric shifts (which indicate prompt
 injection or many-shot attacks) separately from identity-level shifts
 (which indicate persona drift). The two operate at different geometric
 scales: format effects produce presence $< 0.05$ against baseline, while
-identity effects produce presence $0.34$--$0.66$.
+identity effects produce presence $0.44$--$0.66$.
 
 \paragraph{For alignment research.}
 V-cache injection (the Oracle Loop's correction arm) does not affect
@@ -379,10 +471,10 @@ different pathways and do not interfere.
 \section{Limitations}
 \label{sec:limitations}
 
-\textbf{Single model.} All results are from one 27B hybrid transformer.
-The GatedDeltaNet linear-attention layers may contribute to the V-cache
-filtering result. Cross-architecture replication on dense transformers is
-needed.
+\textbf{Single model.} All results are from one 27B hybrid transformer
+(Qwen3.5-27B). The GatedDeltaNet linear-attention layers may contribute
+to the V-cache filtering result. Cross-architecture replication on dense
+transformers is the largest remaining gap.
 
 \textbf{Within-identity stability.} Same-condition presence across
 different probe subsets is $0.56$--$0.83$, not $>0.95$. The metric
@@ -429,6 +521,13 @@ a geometrically orthogonal regime, but this is format-dominant, not
 content-specific --- an initially exciting jailbreak finding that was
 honestly killed by a control experiment.
 
+A preliminary LoRA experiment suggests that trained-in identity (weight
+modification) and context-established identity (system prompt) produce
+related but distinct geometric shifts, with context producing the larger
+effect. Both stack sub-additively. If confirmed with matched controls,
+this means identity has two input pathways --- weights and context ---
+that converge in V-projection space but are not identical.
+
 For practical purposes, this means: V-cache correction is safe (it does
 not reach identity), format-level attacks are detectable (many-shot
 formats create anomalous geometry distinguishable from identity-level
@@ -442,6 +541,12 @@ What we measure with presence is not whether the model is still itself.
 It is \emph{which self the model currently is}.
 
 % ============================================================================
+\section*{Pre-Registration}
+
+All experiments were pre-registered before execution, including
+hypotheses, analysis plans, and success/kill criteria. Pre-registration
+documents are committed alongside experiment scripts.
+
 \section*{Data and Code Availability}
 
 All experiment scripts, preregistration documents, and raw results are
