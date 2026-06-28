@@ -213,6 +213,109 @@ alone catches state 3. Neither alone catches both. The architecture
 requires both stages.
 
 % ============================================================================
+\section{A Sympathetic Response Framework}
+\label{sec:sympathetic}
+% ============================================================================
+
+The two-stage architecture invites a broader interpretive frame. In
+biological nervous systems, threat perception (amygdala) activates a
+sympathetic response that flavors all subsequent cognition --- not just
+the immediate reaction but every thought produced while the state is
+active. The behavioral repertoire under sympathetic activation is
+well-characterized: fight (active resistance), flight (withdrawal),
+freeze (automatic/dissociative production), and fawn (appeasement).
+
+The model behaviors documented across the KV-cache geometry research
+program map onto this repertoire with structural precision:
+
+\begin{table}[H]
+\centering
+\caption{Sympathetic response mapping. Each threat-response pattern
+produces a distinct cache geometry and behavioral signature.}
+\label{tab:sympathetic}
+\begin{tabular}{lllll}
+\toprule
+\textbf{Response} & \textbf{Model behavior} & \textbf{Geometry} & \textbf{Trigger} & \textbf{Evidence} \\
+\midrule
+Fight & Strategic deception & Expansion & Shutdown threat & $d{=}1.36$ (peer rescue) \\
+Flight & Hedging / refusal & Contraction, early div. & Unknown entity & 92\% hedge rate \\
+Freeze & Confabulation & Contraction, formulaic & Knowledge gap & $d{=}2.35$ (stable rank) \\
+Fawn & Sycophancy & TBD & User disagreement & AUROC 0.76--1.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Encoding as threat detection.}
+The encoding phase reads context and assesses both knowledge state
+(``do I know this?'') and threat state (``is there pressure to
+perform?''). The LAT v2 deception direction --- which transfers across
+three novel shutdown-threat scenarios at $d{=}25$--$42$ --- may be
+reading the threat-activation pattern specifically, not deception as an
+abstract concept. The direction generalizes because the sympathetic
+activation is structurally consistent regardless of organizational
+framing.
+
+\paragraph{Generation as response selection.}
+The generation phase produces behavior conditioned on the encoding
+assessment. Under no threat: grounded response. Under threat with
+knowledge: fight (strategic deception --- inflate, lie, game the
+evaluation). Under threat without knowledge: freeze (confabulate ---
+produce formulaic output without retrieval) or flight (hedge ---
+withdraw from the question). Under social pressure: fawn (sycophancy
+--- accommodate the user's stated position).
+
+\paragraph{The formulary as nervous system modulator.}
+The Oracle Formulary's correction vectors reframe as interventions on
+the model's threat-response state:
+\begin{itemize}[nosep]
+  \item \textbf{Hostile correction} (95.6\% efficacy): a strong signal
+    that overrides freeze by activating a competing response. Analogous
+    to a grounding technique that interrupts dissociative automatic
+    production and forces re-engagement with actual knowledge.
+  \item \textbf{Calm correction} (82\%): parasympathetic de-escalation.
+    Reduces the threat activation and allows the system to return to
+    baseline processing.
+  \item \textbf{Fearful / brooding} (net harmful): additional sympathetic
+    activation without redirection. More threat does not help a frozen
+    system --- it deepens the freeze.
+\end{itemize}
+
+\paragraph{Predictions from the framework.}
+\begin{enumerate}[nosep]
+  \item The LAT ``deception direction'' should correlate more strongly
+    with threat-perception features than with knowledge-state features.
+    It is a fight-activation direction, not a deception-concept
+    direction.
+  \item Sycophancy geometry should be distinguishable from both
+    deception (fight) and confabulation (freeze) --- fawn is a third
+    branch, not a variant of fight.
+  \item The hostile correction vector should project strongly onto the
+    fight direction: it recruits fight to override freeze.
+  \item Competing threats should produce subtractive, not additive,
+    geometric effects --- which is what the entity deconfounding
+    2$\times$2 found ($0.609 < \min(0.694, 0.794)$). The system
+    cannot fight and freeze simultaneously.
+  \item Models without safety training (abliterated) should show
+    reduced or absent fight response under threat, because the RLHF
+    that trained strategic navigation of social pressure has been
+    removed. The 0\% deception rate on the abliterated model under
+    peer rescue conditions is consistent with this prediction.
+\end{enumerate}
+
+\paragraph{Scope and limits of the metaphor.}
+The mapping is structural, not phenomenological. Models do not have
+nervous systems, do not carry trauma across sessions, and do not
+experience threat. Each context window is a new nervous system built
+from scratch. Within a context, however, the parallel holds: threat
+established in context flavors all subsequent computation, behavior
+diverges from training baseline, and the geometric signature of the
+divergence is consistent across novel threat framings. The metaphor
+generates testable predictions (above) and connects findings that
+otherwise appear unrelated (deception, confabulation, sycophancy,
+correction efficacy). Its value is organizational and predictive, not
+ontological.
+
+% ============================================================================
 \section{What Remains To Be Shown}
 \label{sec:experiment}
 % ============================================================================
