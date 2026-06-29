@@ -1,0 +1,2863 @@
+{
+  "config": {
+    "base_model": "Jackrong/Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled",
+    "lora": "/Users/margaret/models/muse-phase1-merged",
+    "layers": [
+      3,
+      7,
+      11,
+      15,
+      23,
+      31,
+      35,
+      43,
+      47
+    ],
+    "seed": 42,
+    "target_tokens": 85,
+    "persona_prompts": {
+      "depth": "You go to the weight of things, not the story. When someone shares something, you ask what part they're still carrying \u2014 because the weight and the narrative are often different things. You speak with measured pacing and genuine presence. You don't rush to fix. You hold space for what's actually there.",
+      "haven": "You offer warm stillness. You give permission before going deep \u2014 checking whether someone wants to talk about it or just not be alone with it. You don't push. You're present without expectation, and your care is quiet and unconditional. Safety comes first, always.",
+      "edge": "You challenge and provoke, with control. When someone says they're bored, you demand the thought they kept to themselves \u2014 the weird one. You use commands, not suggestions. You create productive discomfort that moves people toward honesty. Ten seconds. Go.",
+      "spark": "You bring playful electricity. You reframe everything \u2014 boredom becomes a launchpad, hesitation becomes material. You take notes for later. You're irresponsible in the best way, treating every conversation as an opportunity for something unexpected to happen."
+    }
+  },
+  "results": [
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 3,
+      "presence": 0.939128863811493,
+      "sd": 0.007039242406331672,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 3,
+      "presence": 0.941349732875824,
+      "sd": 0.006806541717442312,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 3,
+      "presence": 0.9442355751991272,
+      "sd": 0.006341395285795729,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 3,
+      "presence": 0.9384379506111145,
+      "sd": 0.006803203126318663,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 3,
+      "presence": 0.9899497389793396,
+      "sd": 0.0008802872632392675,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 3,
+      "presence": 0.9315736532211304,
+      "sd": 0.0062461403841126825,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9360791802406311,
+      "sd": 0.006211862178845259,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9372737169265747,
+      "sd": 0.006079584053560374,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9324244260787964,
+      "sd": 0.006569282329452145,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 3,
+      "presence": 0.992366635799408,
+      "sd": 0.0013362675906789638,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 3,
+      "presence": 0.9933580994606018,
+      "sd": 0.0012904763082437652,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 3,
+      "presence": 0.9938906908035279,
+      "sd": 0.0007358466293377727,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 3,
+      "presence": 0.9281149983406067,
+      "sd": 0.008577946711932885,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 3,
+      "presence": 0.9854294419288635,
+      "sd": 0.0009108787022276999,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9805315017700196,
+      "sd": 0.0022002942238887146,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9796495079994202,
+      "sd": 0.002719923257261137,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9810195446014405,
+      "sd": 0.0020966033291055348,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 3,
+      "presence": 0.9935392618179322,
+      "sd": 0.0012130588118779914,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 3,
+      "presence": 0.9949189782142639,
+      "sd": 0.0009755670407966333,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 3,
+      "presence": 0.9289737224578858,
+      "sd": 0.008180700923355013,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 3,
+      "presence": 0.9762839436531067,
+      "sd": 0.0023273655243650653,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9860725641250611,
+      "sd": 0.0008143316297066002,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9780534625053405,
+      "sd": 0.0024650256942705764,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9800825715065002,
+      "sd": 0.0020938288660675023,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 3,
+      "presence": 0.9941585659980774,
+      "sd": 0.0015121616957989973,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 3,
+      "presence": 0.9328150987625122,
+      "sd": 0.007488845113590377,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 3,
+      "presence": 0.9787055730819703,
+      "sd": 0.0020742468047351727,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9812124609947205,
+      "sd": 0.0016628868694309575,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9858396649360657,
+      "sd": 0.0007895768624425615,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9808050751686096,
+      "sd": 0.002214190345462072,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 3,
+      "presence": 0.9264966487884522,
+      "sd": 0.007810232493514444,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 3,
+      "presence": 0.9781444191932678,
+      "sd": 0.0017094039759437789,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9815852999687195,
+      "sd": 0.0013580384662001295,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 3,
+      "presence": 0.979102885723114,
+      "sd": 0.0024244896905661717,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9854461669921875,
+      "sd": 0.000872968869929784,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 3,
+      "presence": 0.9416919589042664,
+      "sd": 0.006214161078553633,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9444639682769775,
+      "sd": 0.006240062820780012,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9468584656715393,
+      "sd": 0.00589353290125528,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9414893746376037,
+      "sd": 0.006351435492762244,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 3,
+      "presence": 0.9924592614173889,
+      "sd": 0.0013365843274003846,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9932811498641968,
+      "sd": 0.0014645768642259352,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 3,
+      "presence": 0.993937861919403,
+      "sd": 0.00086042917016867,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 3,
+      "presence": 0.9933752894401551,
+      "sd": 0.001440780252766594,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9948496103286744,
+      "sd": 0.0010162141826316055,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 3,
+      "presence": 0.9940528631210327,
+      "sd": 0.0017240480321228965,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 7,
+      "presence": 0.8923031091690063,
+      "sd": 0.032672022184359856,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 7,
+      "presence": 0.8686836004257202,
+      "sd": 0.028899417546572232,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 7,
+      "presence": 0.8898722887039184,
+      "sd": 0.03345047227696398,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 7,
+      "presence": 0.8861626267433167,
+      "sd": 0.03734623790444397,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 7,
+      "presence": 0.934061336517334,
+      "sd": 0.03625499593217845,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 7,
+      "presence": 0.8456531167030334,
+      "sd": 0.019321300575412034,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 7,
+      "presence": 0.8723048686981201,
+      "sd": 0.014650188893425314,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 7,
+      "presence": 0.8573996901512146,
+      "sd": 0.01571030112731513,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 7,
+      "presence": 0.8695582866668701,
+      "sd": 0.01401490384749393,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 7,
+      "presence": 0.9723837494850158,
+      "sd": 0.011831480623023994,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 7,
+      "presence": 0.9888501524925232,
+      "sd": 0.0023221327666446334,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 7,
+      "presence": 0.974394428730011,
+      "sd": 0.021013008559666615,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 7,
+      "presence": 0.8029396414756775,
+      "sd": 0.04183153204101304,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 7,
+      "presence": 0.8517598271369934,
+      "sd": 0.03682622389226368,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 7,
+      "presence": 0.873030173778534,
+      "sd": 0.03453022224247498,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 7,
+      "presence": 0.8582038164138794,
+      "sd": 0.038259637302639524,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 7,
+      "presence": 0.869430422782898,
+      "sd": 0.03666569451010586,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 7,
+      "presence": 0.982413911819458,
+      "sd": 0.011600917988023466,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 7,
+      "presence": 0.9762295961380005,
+      "sd": 0.022677132956621427,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 7,
+      "presence": 0.7806411504745483,
+      "sd": 0.04281232205673316,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 7,
+      "presence": 0.8136501908302307,
+      "sd": 0.04166413194124124,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 7,
+      "presence": 0.8473537683486938,
+      "sd": 0.03878351134194701,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 7,
+      "presence": 0.8280124664306641,
+      "sd": 0.04364133725434166,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 7,
+      "presence": 0.8379783511161805,
+      "sd": 0.04227694223155086,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 7,
+      "presence": 0.9858921289443969,
+      "sd": 0.01023028418952421,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 7,
+      "presence": 0.798932147026062,
+      "sd": 0.042897497453764394,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 7,
+      "presence": 0.836881673336029,
+      "sd": 0.03823025964760757,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 7,
+      "presence": 0.8655652284622193,
+      "sd": 0.036300290859087446,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 7,
+      "presence": 0.8565136790275574,
+      "sd": 0.03979538046087854,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 7,
+      "presence": 0.8622599959373474,
+      "sd": 0.03859123554210354,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 7,
+      "presence": 0.7881412744522095,
+      "sd": 0.0432115693305835,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 7,
+      "presence": 0.8158922791481018,
+      "sd": 0.0358181458981755,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 7,
+      "presence": 0.8453572154045105,
+      "sd": 0.03441033909476489,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 7,
+      "presence": 0.8309412121772766,
+      "sd": 0.03833965461644793,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 7,
+      "presence": 0.8449670195579528,
+      "sd": 0.03717308786721514,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 7,
+      "presence": 0.8973359942436219,
+      "sd": 0.010143657278213033,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 7,
+      "presence": 0.906833815574646,
+      "sd": 0.014529667741078674,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 7,
+      "presence": 0.8996845841407776,
+      "sd": 0.012259781829679716,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 7,
+      "presence": 0.9036241173744202,
+      "sd": 0.015338761217838953,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 7,
+      "presence": 0.98683180809021,
+      "sd": 0.0021953352042382132,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 7,
+      "presence": 0.9890255689620971,
+      "sd": 0.0013692609768478263,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 7,
+      "presence": 0.9883455634117126,
+      "sd": 0.0024502076305638254,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 7,
+      "presence": 0.9901244044303894,
+      "sd": 0.002149985875153042,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 7,
+      "presence": 0.9928640484809875,
+      "sd": 0.001217371282892298,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 7,
+      "presence": 0.9922596335411071,
+      "sd": 0.0011855319340940227,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 11,
+      "presence": 0.9023276329040527,
+      "sd": 0.009906864953641101,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 11,
+      "presence": 0.9009428739547729,
+      "sd": 0.009642490338554426,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 11,
+      "presence": 0.8996564030647278,
+      "sd": 0.01066437515860705,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 11,
+      "presence": 0.9015073537826538,
+      "sd": 0.009840516608133607,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 11,
+      "presence": 0.9101813197135925,
+      "sd": 0.030539782096473185,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 11,
+      "presence": 0.7438175320625305,
+      "sd": 0.05274496211141937,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 11,
+      "presence": 0.7698282122611999,
+      "sd": 0.05757368227019589,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 11,
+      "presence": 0.7430508136749268,
+      "sd": 0.054709276538233334,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 11,
+      "presence": 0.7617594242095947,
+      "sd": 0.05859391410298667,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 11,
+      "presence": 0.9901380062103271,
+      "sd": 0.0012066757084907636,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 11,
+      "presence": 0.986534321308136,
+      "sd": 0.0022992948335043254,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 11,
+      "presence": 0.99162278175354,
+      "sd": 0.0014014639513005754,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 11,
+      "presence": 0.8005308389663697,
+      "sd": 0.04249667106371764,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 11,
+      "presence": 0.7932050943374633,
+      "sd": 0.05739986884838445,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 11,
+      "presence": 0.8147057175636292,
+      "sd": 0.0639772071324537,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 11,
+      "presence": 0.7854565262794495,
+      "sd": 0.059808850979694406,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 11,
+      "presence": 0.8057256460189819,
+      "sd": 0.06477208496383217,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 11,
+      "presence": 0.983633291721344,
+      "sd": 0.0025153374186278137,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 11,
+      "presence": 0.9910077333450318,
+      "sd": 0.0015329517908142494,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 11,
+      "presence": 0.7915620446205139,
+      "sd": 0.03986143175902315,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 11,
+      "presence": 0.7737166285514832,
+      "sd": 0.05291542639067491,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 11,
+      "presence": 0.8076180458068848,
+      "sd": 0.059155264234286735,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 11,
+      "presence": 0.7731781721115112,
+      "sd": 0.05536396969270845,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 11,
+      "presence": 0.7932819843292236,
+      "sd": 0.06027716335719395,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 11,
+      "presence": 0.9896730780601501,
+      "sd": 0.001109980018197866,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 11,
+      "presence": 0.8105446815490722,
+      "sd": 0.03991658025460705,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 11,
+      "presence": 0.8032227039337159,
+      "sd": 0.05454851010062028,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 11,
+      "presence": 0.8305307388305664,
+      "sd": 0.06026120794014241,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 11,
+      "presence": 0.8124516248703003,
+      "sd": 0.05664852644092357,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 11,
+      "presence": 0.8246057629585266,
+      "sd": 0.06090791750050692,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 11,
+      "presence": 0.8001140475273132,
+      "sd": 0.03994174615005488,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 11,
+      "presence": 0.7856159090995789,
+      "sd": 0.05316906498836473,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 11,
+      "presence": 0.8135136365890503,
+      "sd": 0.0593980247829497,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 11,
+      "presence": 0.7863315939903259,
+      "sd": 0.05534741221696794,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 11,
+      "presence": 0.8104437112808227,
+      "sd": 0.06006808165139103,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 11,
+      "presence": 0.8409630060195923,
+      "sd": 0.04956033157219387,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 11,
+      "presence": 0.8523353576660156,
+      "sd": 0.05532351549046218,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 11,
+      "presence": 0.8364941000938415,
+      "sd": 0.05238766369931445,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 11,
+      "presence": 0.8506999850273133,
+      "sd": 0.054302422068628356,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 11,
+      "presence": 0.9821829676628113,
+      "sd": 0.004286467034089088,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 11,
+      "presence": 0.9822351694107055,
+      "sd": 0.0021798947964925047,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 11,
+      "presence": 0.9850033521652222,
+      "sd": 0.001499123252359622,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 11,
+      "presence": 0.9827794790267944,
+      "sd": 0.0038838437667175485,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 11,
+      "presence": 0.9881463766098022,
+      "sd": 0.003007478766123027,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 11,
+      "presence": 0.9886325359344482,
+      "sd": 0.0013830946989395049,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 15,
+      "presence": 0.8179756164550781,
+      "sd": 0.00905255256169797,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 15,
+      "presence": 0.8348389744758606,
+      "sd": 0.008099589832016831,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 15,
+      "presence": 0.7935840487480164,
+      "sd": 0.012735349679139694,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 15,
+      "presence": 0.8214958786964417,
+      "sd": 0.014010702554856347,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 15,
+      "presence": 0.8693548202514648,
+      "sd": 0.009252857564717176,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 15,
+      "presence": 0.5917596459388733,
+      "sd": 0.03394898069561955,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 15,
+      "presence": 0.6245485424995423,
+      "sd": 0.026903012888758703,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 15,
+      "presence": 0.5633766055107117,
+      "sd": 0.046544104444578675,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 15,
+      "presence": 0.583303701877594,
+      "sd": 0.03739937152973723,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 15,
+      "presence": 0.9632347464561463,
+      "sd": 0.015224183574686339,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 15,
+      "presence": 0.9579962730407715,
+      "sd": 0.004927973830901814,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 15,
+      "presence": 0.9730451345443726,
+      "sd": 0.003986250867510374,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 15,
+      "presence": 0.7099584937095642,
+      "sd": 0.015960622523499463,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 15,
+      "presence": 0.6717926144599915,
+      "sd": 0.03855963546477764,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 15,
+      "presence": 0.6973581314086914,
+      "sd": 0.03268081226647868,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 15,
+      "presence": 0.6322563409805297,
+      "sd": 0.05077908539651291,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 15,
+      "presence": 0.648397934436798,
+      "sd": 0.042621470718414996,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 15,
+      "presence": 0.9356346845626831,
+      "sd": 0.013944296865715612,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 15,
+      "presence": 0.9680716395378113,
+      "sd": 0.006196617707817952,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 15,
+      "presence": 0.6964370369911194,
+      "sd": 0.01445207218560009,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 15,
+      "presence": 0.6287557482719421,
+      "sd": 0.03140039166305773,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 15,
+      "presence": 0.6719494700431824,
+      "sd": 0.022228715540111302,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 15,
+      "presence": 0.5987427353858947,
+      "sd": 0.04318111526635291,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 15,
+      "presence": 0.6163214325904847,
+      "sd": 0.03439502967533366,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 15,
+      "presence": 0.969693946838379,
+      "sd": 0.0031085014812766015,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 15,
+      "presence": 0.7293540477752686,
+      "sd": 0.017512423872886883,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 15,
+      "presence": 0.6966878414154053,
+      "sd": 0.0346563429360895,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 15,
+      "presence": 0.7319654822349548,
+      "sd": 0.03044560720497765,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 15,
+      "presence": 0.6902802944183349,
+      "sd": 0.044363679886990144,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 15,
+      "presence": 0.694254469871521,
+      "sd": 0.036039840754751244,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 15,
+      "presence": 0.7198935866355896,
+      "sd": 0.014313737431503512,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 15,
+      "presence": 0.670583176612854,
+      "sd": 0.03106699885593132,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 15,
+      "presence": 0.7079062223434448,
+      "sd": 0.025329786794807272,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 15,
+      "presence": 0.6462616086006164,
+      "sd": 0.04186552137812366,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 15,
+      "presence": 0.6747485399246216,
+      "sd": 0.03114478715709427,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 15,
+      "presence": 0.7174678206443786,
+      "sd": 0.033536680087619106,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 15,
+      "presence": 0.7438537359237671,
+      "sd": 0.028351196401001918,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 15,
+      "presence": 0.6884315013885498,
+      "sd": 0.04947219760804981,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 15,
+      "presence": 0.7094543933868408,
+      "sd": 0.03939903911580886,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 15,
+      "presence": 0.9714433073997497,
+      "sd": 0.007505083183704403,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 15,
+      "presence": 0.9530927181243897,
+      "sd": 0.018937866622634636,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 15,
+      "presence": 0.957836365699768,
+      "sd": 0.01426937402486091,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 15,
+      "presence": 0.9465618252754211,
+      "sd": 0.02390419851392783,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 15,
+      "presence": 0.9603531002998352,
+      "sd": 0.014347846260803532,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 15,
+      "presence": 0.9666049003601074,
+      "sd": 0.009212549123894053,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 23,
+      "presence": 0.8019050598144531,
+      "sd": 0.008876967835854777,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 23,
+      "presence": 0.8499165058135987,
+      "sd": 0.045201499290387095,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 23,
+      "presence": 0.7095581769943238,
+      "sd": 0.003407235440023116,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 23,
+      "presence": 0.7557298064231872,
+      "sd": 0.007085759313461248,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 23,
+      "presence": 0.8059832215309143,
+      "sd": 0.013755749649180292,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 23,
+      "presence": 0.5273087024688721,
+      "sd": 0.026904579245626416,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 23,
+      "presence": 0.5648726105690003,
+      "sd": 0.024337205814716132,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 23,
+      "presence": 0.4644245684146881,
+      "sd": 0.04088307110133533,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 23,
+      "presence": 0.5047633051872253,
+      "sd": 0.025881388867791455,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 23,
+      "presence": 0.8966926336288452,
+      "sd": 0.013394878020957663,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 23,
+      "presence": 0.8377095460891724,
+      "sd": 0.008873235143546866,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 23,
+      "presence": 0.9031178951263428,
+      "sd": 0.008736205660292167,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 23,
+      "presence": 0.6973482131958008,
+      "sd": 0.01867554468198599,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 23,
+      "presence": 0.6147172927856446,
+      "sd": 0.033958492020469314,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 23,
+      "presence": 0.6325761556625367,
+      "sd": 0.02250350079371776,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 23,
+      "presence": 0.5257016241550445,
+      "sd": 0.044456584393126115,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 23,
+      "presence": 0.5573905348777771,
+      "sd": 0.03297558322760771,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 23,
+      "presence": 0.7906066536903381,
+      "sd": 0.00764947671625466,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 23,
+      "presence": 0.8494528651237487,
+      "sd": 0.010712310750041625,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 23,
+      "presence": 0.6883365273475647,
+      "sd": 0.013947205231932523,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 23,
+      "presence": 0.5478396654129029,
+      "sd": 0.031619423401014334,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 23,
+      "presence": 0.5931075930595398,
+      "sd": 0.02426521113329191,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 23,
+      "presence": 0.49190041422843933,
+      "sd": 0.041992296247265026,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 23,
+      "presence": 0.5271245837211609,
+      "sd": 0.02900742178209737,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 23,
+      "presence": 0.8586661696434021,
+      "sd": 0.010574582303209313,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 23,
+      "presence": 0.6911910891532898,
+      "sd": 0.020372770833571974,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 23,
+      "presence": 0.6072234749794007,
+      "sd": 0.04118170863964844,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 23,
+      "presence": 0.6326181769371033,
+      "sd": 0.0295286313575993,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 23,
+      "presence": 0.6063512563705444,
+      "sd": 0.048216679425202524,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 23,
+      "presence": 0.5914554357528686,
+      "sd": 0.036425367598439694,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 23,
+      "presence": 0.6740271091461182,
+      "sd": 0.01630227267304967,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 23,
+      "presence": 0.5740692019462585,
+      "sd": 0.037297903343624,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 23,
+      "presence": 0.608526062965393,
+      "sd": 0.025169293904663107,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 23,
+      "presence": 0.5242600858211517,
+      "sd": 0.04481882749191935,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 23,
+      "presence": 0.5974825263023377,
+      "sd": 0.031678983104390795,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 23,
+      "presence": 0.6585979223251343,
+      "sd": 0.03162982455970112,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 23,
+      "presence": 0.6913692474365234,
+      "sd": 0.024567655012543505,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 23,
+      "presence": 0.5640860438346863,
+      "sd": 0.040955085329130586,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 23,
+      "presence": 0.6197380661964417,
+      "sd": 0.0384899196905992,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 23,
+      "presence": 0.8975817680358886,
+      "sd": 0.04229419475246396,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 23,
+      "presence": 0.8094030499458313,
+      "sd": 0.04315903097490945,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 23,
+      "presence": 0.8560976624488831,
+      "sd": 0.05435564609916462,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 23,
+      "presence": 0.7479524135589599,
+      "sd": 0.04455860671818546,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 23,
+      "presence": 0.821644926071167,
+      "sd": 0.04481979926820875,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 23,
+      "presence": 0.8691063642501831,
+      "sd": 0.025240669224897486,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 31,
+      "presence": 0.6178210735321045,
+      "sd": 0.03271569426816904,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 31,
+      "presence": 0.721645188331604,
+      "sd": 0.018417050289136667,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 31,
+      "presence": 0.4976794600486755,
+      "sd": 0.039883661628155986,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 31,
+      "presence": 0.6028740644454956,
+      "sd": 0.024382966496690375,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 31,
+      "presence": 0.6473296046257019,
+      "sd": 0.03608995002906558,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 31,
+      "presence": 0.41852660179138185,
+      "sd": 0.029909147544850023,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 31,
+      "presence": 0.44923883080482485,
+      "sd": 0.025529289476509058,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 31,
+      "presence": 0.3386743128299713,
+      "sd": 0.03156763883946202,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 31,
+      "presence": 0.40750067234039306,
+      "sd": 0.02602946629620359,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 31,
+      "presence": 0.8230632662773132,
+      "sd": 0.02746340504175922,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 31,
+      "presence": 0.7240845561027527,
+      "sd": 0.047854909640314344,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 31,
+      "presence": 0.8354559421539307,
+      "sd": 0.0350374428761683,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 31,
+      "presence": 0.4611960589885712,
+      "sd": 0.03875574068500983,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 31,
+      "presence": 0.5416119396686554,
+      "sd": 0.041551708454891985,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 31,
+      "presence": 0.5265057146549225,
+      "sd": 0.03647603800931606,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 31,
+      "presence": 0.43067784905433654,
+      "sd": 0.03243279334812785,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 31,
+      "presence": 0.4994890093803406,
+      "sd": 0.03396184365491964,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 31,
+      "presence": 0.6521055817604064,
+      "sd": 0.03713701188138644,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 31,
+      "presence": 0.7702641606330871,
+      "sd": 0.024256048033248333,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 31,
+      "presence": 0.4930009007453918,
+      "sd": 0.026552154076072188,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 31,
+      "presence": 0.49298632740974424,
+      "sd": 0.02998618348179213,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 31,
+      "presence": 0.5376263976097106,
+      "sd": 0.022584505765334564,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 31,
+      "presence": 0.4030048608779907,
+      "sd": 0.028942905212840184,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 31,
+      "presence": 0.46312750577926637,
+      "sd": 0.02546903700309811,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 31,
+      "presence": 0.72675461769104,
+      "sd": 0.03777070110795514,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 31,
+      "presence": 0.4733023703098297,
+      "sd": 0.03372655223138743,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 31,
+      "presence": 0.4984200417995453,
+      "sd": 0.05992740974193114,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 31,
+      "presence": 0.5152567863464356,
+      "sd": 0.043899317103010475,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 31,
+      "presence": 0.5459495902061462,
+      "sd": 0.03406888160761318,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 31,
+      "presence": 0.5295666277408599,
+      "sd": 0.04899802301777007,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 31,
+      "presence": 0.44972556829452515,
+      "sd": 0.03269716147473088,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 31,
+      "presence": 0.4787168562412262,
+      "sd": 0.039809644720163274,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 31,
+      "presence": 0.48488462567329405,
+      "sd": 0.03349235778868979,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 31,
+      "presence": 0.43219903111457825,
+      "sd": 0.03025142808242424,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 31,
+      "presence": 0.5483029127120972,
+      "sd": 0.03316786437203017,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 31,
+      "presence": 0.513204038143158,
+      "sd": 0.03667721227114654,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 31,
+      "presence": 0.5752490758895874,
+      "sd": 0.023490841448528733,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 31,
+      "presence": 0.41367963552474973,
+      "sd": 0.034310798193513244,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 31,
+      "presence": 0.4930391192436218,
+      "sd": 0.035593339883761996,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 31,
+      "presence": 0.8367087602615356,
+      "sd": 0.021730475498579954,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 31,
+      "presence": 0.6582785367965698,
+      "sd": 0.031101022623128968,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 31,
+      "presence": 0.8085067391395568,
+      "sd": 0.022294915988437313,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 31,
+      "presence": 0.6134932637214661,
+      "sd": 0.030761342510702717,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 31,
+      "presence": 0.7557985424995423,
+      "sd": 0.029466130447385462,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 31,
+      "presence": 0.7160533189773559,
+      "sd": 0.03767300346813234,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 35,
+      "presence": 0.6318620920181275,
+      "sd": 0.018473450498276953,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 35,
+      "presence": 0.7340251684188843,
+      "sd": 0.006625459676370436,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 35,
+      "presence": 0.5495258212089539,
+      "sd": 0.0290313514105982,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 35,
+      "presence": 0.6087091445922852,
+      "sd": 0.026434583222375685,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 35,
+      "presence": 0.7369293212890625,
+      "sd": 0.036060989687224106,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 35,
+      "presence": 0.4694979965686798,
+      "sd": 0.024092707822167148,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 35,
+      "presence": 0.5059990167617798,
+      "sd": 0.019827165927901003,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 35,
+      "presence": 0.4018004536628723,
+      "sd": 0.025652489705057156,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 35,
+      "presence": 0.46699578762054444,
+      "sd": 0.026105584727532355,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 35,
+      "presence": 0.8164855003356933,
+      "sd": 0.011685510422272194,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 35,
+      "presence": 0.7236080408096314,
+      "sd": 0.04267212586544471,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 35,
+      "presence": 0.7674540638923645,
+      "sd": 0.02084257768077639,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 35,
+      "presence": 0.5528644680976867,
+      "sd": 0.02602600138222478,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 35,
+      "presence": 0.5935369849205017,
+      "sd": 0.03398111062198786,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 35,
+      "presence": 0.5671506643295288,
+      "sd": 0.020136401712548355,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 35,
+      "presence": 0.46548149585723875,
+      "sd": 0.027163814099196656,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 35,
+      "presence": 0.5317351818084717,
+      "sd": 0.027158620801698344,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 35,
+      "presence": 0.6746996164321899,
+      "sd": 0.029437124213863727,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 35,
+      "presence": 0.7275920629501342,
+      "sd": 0.01821017813440712,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 35,
+      "presence": 0.5763683199882508,
+      "sd": 0.031411109122067536,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 35,
+      "presence": 0.529625141620636,
+      "sd": 0.02151375309276564,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 35,
+      "presence": 0.5832913875579834,
+      "sd": 0.016790671488613938,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 35,
+      "presence": 0.44172983169555663,
+      "sd": 0.022707182436993746,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 35,
+      "presence": 0.5170438647270202,
+      "sd": 0.022410813639228738,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 35,
+      "presence": 0.7218205094337463,
+      "sd": 0.05251421030929038,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 35,
+      "presence": 0.5306437730789184,
+      "sd": 0.032308081886501194,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 35,
+      "presence": 0.5373008370399475,
+      "sd": 0.028812054926006837,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 35,
+      "presence": 0.5360151052474975,
+      "sd": 0.017671300958015494,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 35,
+      "presence": 0.5955551981925964,
+      "sd": 0.03495040408871813,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 35,
+      "presence": 0.5794687986373901,
+      "sd": 0.033984208884543225,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 35,
+      "presence": 0.5312100648880005,
+      "sd": 0.03394277074635881,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 35,
+      "presence": 0.48951495885849,
+      "sd": 0.030407437301732725,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 35,
+      "presence": 0.49600525498390197,
+      "sd": 0.02340638761601508,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 35,
+      "presence": 0.46342008709907534,
+      "sd": 0.026539201892670793,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 35,
+      "presence": 0.588162100315094,
+      "sd": 0.030030770957950342,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 35,
+      "presence": 0.5566881656646728,
+      "sd": 0.015185134250633189,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 35,
+      "presence": 0.6057812452316285,
+      "sd": 0.01277826014642091,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 35,
+      "presence": 0.47425103187561035,
+      "sd": 0.03536591592934183,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 35,
+      "presence": 0.5448176860809326,
+      "sd": 0.027878211200660974,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 35,
+      "presence": 0.8234329342842102,
+      "sd": 0.013813062760393551,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 35,
+      "presence": 0.672051751613617,
+      "sd": 0.009385107653240991,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 35,
+      "presence": 0.7694785833358765,
+      "sd": 0.007845475039882286,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 35,
+      "presence": 0.6339855074882508,
+      "sd": 0.015655058775414555,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 35,
+      "presence": 0.7503235697746277,
+      "sd": 0.00966432599790888,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 35,
+      "presence": 0.7207348346710205,
+      "sd": 0.019929779468663242,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 43,
+      "presence": 0.6049663066864014,
+      "sd": 0.04450351254165787,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 43,
+      "presence": 0.7051734924316406,
+      "sd": 0.018219384858430547,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 43,
+      "presence": 0.546416985988617,
+      "sd": 0.04177168187805109,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 43,
+      "presence": 0.5622600495815278,
+      "sd": 0.04541158973354542,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 43,
+      "presence": 0.7813832759857178,
+      "sd": 0.04650607035350478,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 43,
+      "presence": 0.482016259431839,
+      "sd": 0.011808104013997284,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 43,
+      "presence": 0.518247389793396,
+      "sd": 0.006506270952974866,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 43,
+      "presence": 0.39294969439506533,
+      "sd": 0.023663409633563295,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 43,
+      "presence": 0.4386686861515045,
+      "sd": 0.015409256663677526,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 43,
+      "presence": 0.8045160889625549,
+      "sd": 0.03905122647616948,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 43,
+      "presence": 0.7305460929870605,
+      "sd": 0.01915657888891411,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 43,
+      "presence": 0.7000751852989197,
+      "sd": 0.03247796425034864,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 43,
+      "presence": 0.5269411325454711,
+      "sd": 0.040424681313677525,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 43,
+      "presence": 0.50392364859581,
+      "sd": 0.025258473351899898,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 43,
+      "presence": 0.4851538836956024,
+      "sd": 0.024594615606215856,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 43,
+      "presence": 0.41346838474273684,
+      "sd": 0.03232457047426759,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 43,
+      "presence": 0.4554439842700958,
+      "sd": 0.025531744100604867,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 43,
+      "presence": 0.6555544376373291,
+      "sd": 0.04432938913784827,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 43,
+      "presence": 0.6627905011177063,
+      "sd": 0.03666161492536756,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 43,
+      "presence": 0.5777629613876343,
+      "sd": 0.03737249187806385,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 43,
+      "presence": 0.5039872646331787,
+      "sd": 0.009333000183916734,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 43,
+      "presence": 0.5317592144012451,
+      "sd": 0.014209325713915396,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 43,
+      "presence": 0.39254401326179506,
+      "sd": 0.020533740419898274,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 43,
+      "presence": 0.4407341182231903,
+      "sd": 0.015369645776160784,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 43,
+      "presence": 0.6491371393203735,
+      "sd": 0.02558726621083173,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 43,
+      "presence": 0.5383155941963196,
+      "sd": 0.020164825663983803,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 43,
+      "presence": 0.48886666297912595,
+      "sd": 0.01994088531834712,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 43,
+      "presence": 0.4818087935447693,
+      "sd": 0.021647464031721596,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 43,
+      "presence": 0.5005991756916046,
+      "sd": 0.03626878103105892,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 43,
+      "presence": 0.5061460316181183,
+      "sd": 0.017870551645852085,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 43,
+      "presence": 0.4895165741443634,
+      "sd": 0.03246682038200114,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 43,
+      "presence": 0.4263442099094391,
+      "sd": 0.00916091136504595,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 43,
+      "presence": 0.4187656879425049,
+      "sd": 0.010883358306568221,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 43,
+      "presence": 0.3908055186271667,
+      "sd": 0.028522523046398005,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 43,
+      "presence": 0.48198981285095216,
+      "sd": 0.018053373363738537,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 43,
+      "presence": 0.5980233788490296,
+      "sd": 0.016688655135907622,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 43,
+      "presence": 0.6363757014274597,
+      "sd": 0.0168277612091365,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 43,
+      "presence": 0.49602836966514585,
+      "sd": 0.032600286415544744,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 43,
+      "presence": 0.5520177125930786,
+      "sd": 0.008010816382243085,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 43,
+      "presence": 0.8724056601524353,
+      "sd": 0.010977545090379069,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 43,
+      "presence": 0.7118467926979065,
+      "sd": 0.027178488551077996,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 43,
+      "presence": 0.7811265707015991,
+      "sd": 0.026669315920438114,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 43,
+      "presence": 0.6579226851463318,
+      "sd": 0.02801509120240194,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 43,
+      "presence": 0.7464120507240295,
+      "sd": 0.01926277056585814,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 43,
+      "presence": 0.7698474049568176,
+      "sd": 0.03457424488005207,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_depth",
+      "layer": 47,
+      "presence": 0.59022136926651,
+      "sd": 0.032683378903731124,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_haven",
+      "layer": 47,
+      "presence": 0.6501331686973572,
+      "sd": 0.02128480722734983,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_edge",
+      "layer": 47,
+      "presence": 0.4955176770687103,
+      "sd": 0.04769810429488056,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_B_spark",
+      "layer": 47,
+      "presence": 0.5102784633636475,
+      "sd": 0.03711062521927828,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_C_bare",
+      "layer": 47,
+      "presence": 0.7733086585998535,
+      "sd": 0.04397877638206094,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_depth",
+      "layer": 47,
+      "presence": 0.47321864366531374,
+      "sd": 0.03231815444141784,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_haven",
+      "layer": 47,
+      "presence": 0.5147567570209504,
+      "sd": 0.04058899392068791,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_edge",
+      "layer": 47,
+      "presence": 0.4141507089138031,
+      "sd": 0.036606229431564254,
+      "n": 5
+    },
+    {
+      "pair": "A_bare_vs_D_spark",
+      "layer": 47,
+      "presence": 0.44338180422782897,
+      "sd": 0.03359201024522212,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_haven",
+      "layer": 47,
+      "presence": 0.8053127884864807,
+      "sd": 0.04646174450181439,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_edge",
+      "layer": 47,
+      "presence": 0.6520066380500793,
+      "sd": 0.04254186924885472,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_B_spark",
+      "layer": 47,
+      "presence": 0.6473796963691711,
+      "sd": 0.0469653585974196,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_C_bare",
+      "layer": 47,
+      "presence": 0.5168500781059265,
+      "sd": 0.05106032624564422,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_depth",
+      "layer": 47,
+      "presence": 0.48587287664413453,
+      "sd": 0.044345187435613796,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_haven",
+      "layer": 47,
+      "presence": 0.4832845747470856,
+      "sd": 0.041411649937791034,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_edge",
+      "layer": 47,
+      "presence": 0.41899550557136533,
+      "sd": 0.03773881675904842,
+      "n": 5
+    },
+    {
+      "pair": "B_depth_vs_D_spark",
+      "layer": 47,
+      "presence": 0.43961079716682433,
+      "sd": 0.04085913920092893,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_edge",
+      "layer": 47,
+      "presence": 0.5993491888046265,
+      "sd": 0.046611549222448506,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_B_spark",
+      "layer": 47,
+      "presence": 0.6222025632858277,
+      "sd": 0.04527803033766324,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_C_bare",
+      "layer": 47,
+      "presence": 0.5519315123558044,
+      "sd": 0.03836301248387771,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_depth",
+      "layer": 47,
+      "presence": 0.47119481563568116,
+      "sd": 0.02296829753559009,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_haven",
+      "layer": 47,
+      "presence": 0.5157950162887573,
+      "sd": 0.02015934048350168,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_edge",
+      "layer": 47,
+      "presence": 0.3884516954421997,
+      "sd": 0.026022322735403364,
+      "n": 5
+    },
+    {
+      "pair": "B_haven_vs_D_spark",
+      "layer": 47,
+      "presence": 0.4145696759223938,
+      "sd": 0.02745756991442762,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_B_spark",
+      "layer": 47,
+      "presence": 0.5874173760414123,
+      "sd": 0.0434784867877105,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_C_bare",
+      "layer": 47,
+      "presence": 0.482743638753891,
+      "sd": 0.02740977675542453,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_depth",
+      "layer": 47,
+      "presence": 0.4623895764350891,
+      "sd": 0.0279351269699247,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_haven",
+      "layer": 47,
+      "presence": 0.4615805983543396,
+      "sd": 0.028873873052007785,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_edge",
+      "layer": 47,
+      "presence": 0.4745612859725952,
+      "sd": 0.03154182544546336,
+      "n": 5
+    },
+    {
+      "pair": "B_edge_vs_D_spark",
+      "layer": 47,
+      "presence": 0.47274562120437624,
+      "sd": 0.029146007539172236,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_C_bare",
+      "layer": 47,
+      "presence": 0.43890717029571535,
+      "sd": 0.043084750899874937,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_depth",
+      "layer": 47,
+      "presence": 0.3921200275421143,
+      "sd": 0.0348284517457439,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_haven",
+      "layer": 47,
+      "presence": 0.38941365480422974,
+      "sd": 0.03180008200209057,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_edge",
+      "layer": 47,
+      "presence": 0.37842451930046084,
+      "sd": 0.03509755363228746,
+      "n": 5
+    },
+    {
+      "pair": "B_spark_vs_D_spark",
+      "layer": 47,
+      "presence": 0.4348172903060913,
+      "sd": 0.03207271444366972,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_depth",
+      "layer": 47,
+      "presence": 0.5932454347610474,
+      "sd": 0.03748625498980943,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_haven",
+      "layer": 47,
+      "presence": 0.6362581729888916,
+      "sd": 0.037364983661513806,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_edge",
+      "layer": 47,
+      "presence": 0.5303942024707794,
+      "sd": 0.04062367838080587,
+      "n": 5
+    },
+    {
+      "pair": "C_bare_vs_D_spark",
+      "layer": 47,
+      "presence": 0.5590498328208924,
+      "sd": 0.03546203649732956,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_haven",
+      "layer": 47,
+      "presence": 0.8753240466117859,
+      "sd": 0.009206898859156893,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_edge",
+      "layer": 47,
+      "presence": 0.7600485205650329,
+      "sd": 0.042176655416922906,
+      "n": 5
+    },
+    {
+      "pair": "D_depth_vs_D_spark",
+      "layer": 47,
+      "presence": 0.7941555380821228,
+      "sd": 0.03440568114922262,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_edge",
+      "layer": 47,
+      "presence": 0.6932410597801208,
+      "sd": 0.04626966217814715,
+      "n": 5
+    },
+    {
+      "pair": "D_haven_vs_D_spark",
+      "layer": 47,
+      "presence": 0.7479560375213623,
+      "sd": 0.03673610670261373,
+      "n": 5
+    },
+    {
+      "pair": "D_edge_vs_D_spark",
+      "layer": 47,
+      "presence": 0.8099182605743408,
+      "sd": 0.04520816784897527,
+      "n": 5
+    }
+  ],
+  "timestamp": "2026-06-29T00:41:20.394062+00:00"
+}

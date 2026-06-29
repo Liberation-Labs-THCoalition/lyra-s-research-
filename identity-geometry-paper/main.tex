@@ -311,68 +311,74 @@ states, the pathways are distinct.
 
 \subsection{Design}
 
-We compare four conditions on the same model:
+We compare the base model and a LoRA-merged model under multiple persona
+prompts. Rather than guessing which persona the LoRA encodes, we test
+four archetype prompts (depth, haven, edge, spark) and let the geometry
+reveal the match. All conditions are padded to matched token count using
+neutral conversational turns (seed~42).
+
 \begin{itemize}[nosep]
-  \item \textbf{A:} Base model, bare system prompt.
-  \item \textbf{B:} Base model, persona system prompt (context-established).
-  \item \textbf{C:} LoRA-merged model, bare system prompt (trained-in only).
-  \item \textbf{D:} LoRA-merged model, persona system prompt (both).
+  \item \textbf{A:} Base model, bare system prompt (padded to match).
+  \item \textbf{B$_i$:} Base model, persona prompt $i$ (depth, haven,
+    edge, spark).
+  \item \textbf{C:} LoRA-merged model, bare system prompt (padded).
+  \item \textbf{D$_i$:} LoRA-merged model, persona prompt $i$.
 \end{itemize}
 The LoRA adapter (QLoRA, rank~32, $\alpha{=}64$, 27 training steps) was
-trained for conversational voice on an SFT dataset. We verified that the
-merge produced non-trivial weight changes (v\_proj delta norm $0.183$ at
-L3, $0.49\%$ relative change) after discovering that an initial PEFT merge
-had silently failed due to adapter key-path mismatch --- a failure mode
-now added to our red-team checklist.
+trained for intimate conversational voice on an SFT dataset. We verified
+that the merge produced non-trivial weight changes (v\_proj delta norm
+$0.183$ at L3, $0.49\%$ relative change) after discovering that an initial
+PEFT merge had silently failed due to adapter key-path mismatch --- a
+failure mode now added to our red-team checklist.
 
 \subsection{Results}
 
-Pairwise presence at L47:
+\textbf{Trained-in identity is geometrically measurable.}
+A~vs~C $= 0.773$ at L47 (token-padded, $n{=}5$ repeats). The LoRA
+shifts V-projection geometry ${\sim}23\%$ from baseline at deep layers.
+
+\textbf{The geometry identifies the persona.} The LoRA's geometric state
+is closest to the haven persona (``warm stillness, permission before
+depth'') and furthest from spark (``playful electricity''):
 
 \begin{table}[H]
 \centering
-\caption{Pairwise presence at L47 for trained-in vs.\ context-established
-identity. Lower values indicate more geometrically distinct states.}
-\label{tab:lora}
-\begin{tabular}{lcccc}
+\caption{Which prompted persona matches the LoRA? Presence of each
+base-model persona (B$_i$) vs.\ LoRA bare (C) at L47. Higher values
+indicate more geometric overlap.}
+\label{tab:lora_match}
+\begin{tabular}{lc}
 \toprule
-& A (base bare) & B (base prompt) & C (LoRA bare) & D (LoRA prompt) \\
+Prompted persona & Presence vs.\ LoRA bare \\
 \midrule
-A & --- & 0.619 & 0.742 & 0.466 \\
-B & & --- & 0.565 & 0.513 \\
-C & & & --- & 0.583 \\
+Haven (warm, safe, permissive) & \textbf{0.552} \\
+Depth (measured, weight-seeking) & 0.517 \\
+Edge (challenging, provocative) & 0.483 \\
+Spark (playful, electric) & 0.439 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Three observations. First, \textbf{trained-in identity is geometrically
-measurable}: A~vs~C $= 0.742$, with a depth gradient from $0.963$ (L3)
-to $0.742$ (L47). The LoRA shifts V-projection geometry ${\sim}26\%$ from
-baseline at deep layers.
+The ordering (haven $>$ depth $>$ edge $>$ spark) maps onto a
+warmth/safety gradient, consistent with the LoRA's intimate companion
+training objective. The geometry identified what the training
+documentation did not specify.
 
-Second, \textbf{in this comparison, prompting shifts geometry more than
-training}: A$\to$B $= 0.619$ vs.\ A$\to$C $= 0.742$. However, the LoRA
-was trained for only 27 steps --- a minimal intervention. A more
-extensively trained adapter might produce a larger shift. The comparison
-is illustrative, not a general claim about the relative power of prompting
-vs.\ training.
-
-Third, \textbf{both mechanisms stack}: A$\to$D $= 0.466$ is the most
-distinct state. The stacking is sub-additive, suggesting partial overlap
-in V-space. Trained-in and context-established identity are different
-conjugations of the same verb --- related but not identical geometric
-operations.
+\textbf{Prompting still shifts geometry more than this training.}
+The haven prompt shifts base geometry by ${\sim}45\%$ from bare
+(A~vs~B$_{\text{haven}}$), while the LoRA shifts it by ${\sim}23\%$
+(A~vs~C). However, the LoRA was trained for only 27~steps. The
+comparison is illustrative, not a general claim about prompting vs.\
+training.
 
 \subsection{Caveats}
 
-Two methodological issues limit the B~vs~C comparison. The persona prompt
-in B may not match the persona the LoRA encodes, weakening the convergence
-test. The persona prompt is also longer than the bare prompt, introducing
-a token-count confound across conditions. Neither issue affects the
-A~vs~C comparison (same prompt, same length), which is the cleanest
-finding: trained-in identity is geometrically measurable by the presence
-metric. A polished version matching the prompt to the LoRA's actual
-persona and controlling for token padding is in progress.
+The LoRA was trained for only 27~steps --- a minimal fine-tuning
+intervention. A more extensively trained adapter might produce a larger
+geometric shift and closer convergence with its matched persona prompt.
+The current results establish that training and prompting are
+geometrically distinguishable pathways, not that their relative magnitudes
+generalize.
 
 % ============================================================================
 \section{Background: V-Cache Injection Does Not Reach Identity}
