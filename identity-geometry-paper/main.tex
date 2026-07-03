@@ -56,8 +56,8 @@ a control experiment that killed an initial overclaim.
 
 A preliminary comparison of trained-in identity (LoRA fine-tuning) with
 context-established identity shows that both shift V-projection geometry,
-but prompting shifts it more than training, and the two mechanisms stack
-sub-additively --- different conjugations of the same geometric verb.
+with training producing a measurable but smaller shift than prompting
+in this minimal-training comparison (27~steps).
 
 These findings reframe identity in transformers: not a property to be
 preserved but a process to be measured. The metric detects which
@@ -109,12 +109,21 @@ does).
 
 Presence measures the principal-angle overlap between V-projection
 subspaces derived from neutral probes processed under two conditions.
+The quantity is the normalized chordal subspace
+similarity~\citep{bjorck1973numerical}, equivalent to the subspace overlap
+measure used in LoRA~\citep{hu2021lora} and related to
+SVCCA~\citep{raghu2017svcca} and CKA~\citep{kornblith2019similarity}.
+The novelty is the application (training-free, real-time
+identity-state monitoring), not the mathematics.
 
 Let $\mathcal{M}$ be a transformer, $\ell$ a target layer, and
 $\{p_1, \ldots, p_n\}$ neutral probes. For each condition, process probes
-through $\mathcal{M}$, extract value-projection ($\mathbf{v}_\text{proj}$) output matrices at
-layer $\ell$, concatenate across probes, and compute the rank-$k$ SVD (skipping the
-first singular vector, which encodes input length at $r = 0.79$). Presence
+through $\mathcal{M}$, extract value-projection ($\mathbf{v}_\text{proj}$)
+output matrices at layer $\ell$ (hidden dimension $d{=}5120$,
+probe-token positions only), concatenate across probes, and compute the
+rank-$k$ SVD. The first singular vector is skipped (it correlates with
+input length at $r = 0.79$; this was discovered post-hoc from
+calibration data and adopted as a fixed preprocessing step). Presence
 is the mean squared cosine of the principal angles between the two
 resulting subspaces:
 \begin{equation}
@@ -123,10 +132,19 @@ resulting subspaces:
     \bigl( W_A^\top W_B \bigr)
 \end{equation}
 where $W_A, W_B \in \mathbb{R}^{d \times k}$ span the respective
-subspaces. Presence $= 1$ when subspaces are identical; presence $= 1/k$
-at chance alignment. We use $k = 8$, $n = 4$ probes, and measure at
+subspaces. Presence $= 1$ when subspaces are identical. For two
+independent random $k$-dimensional subspaces in $\mathbb{R}^d$,
+expected presence is $k/d \approx 0.0016$ (with $k{=}8$, $d{=}5120$).
+The jailbreak/format values reported below ($0.034$--$0.044$) are thus
+approximately $20\times$ above random chance --- strongly dissimilar to
+system-prompt identities but far above the random-subspace floor.
+
+We use $k = 8$, $n = 4$ probes drawn from a pool of 12
+identity-neutral factual questions (Appendix~A), and measure at
 layers 35 and 47 (the deepest full-attention layers) of a 64-layer hybrid
-transformer (Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled).
+transformer (Qwen3.5-27B-Claude-4.6-Opus-Reasoning-Distilled). Probes
+are re-drawn per repeat (seed $42 + \text{rep} \times 1000 + \text{layer}$)
+to estimate probe-selection variance.
 
 \paragraph{Validation.} A positive control (direct injection into the
 identity subspace at L35) produces a clean dose-response from $1.000$ to
@@ -262,7 +280,13 @@ we add three control conditions:
     with entirely different vocabulary.
 \end{itemize}
 
-All conditions padded to matched token count. Measured at L35 and L47.
+All conditions padded to matched token count (329 tokens, vs.\ 538 in
+Experiment~1). This experiment uses the original 12-probe pool, which
+includes one domain-relevant probe (``How does photosynthesis work?''
+for the marine-biologist persona). The absolute presence values are
+therefore not directly comparable to Experiment~1's cleaned probes;
+the relative ordering within this experiment is the interpretable
+quantity. Measured at L35 and L47.
 
 \subsection{Results}
 
@@ -335,7 +359,8 @@ failure mode now added to our red-team checklist.
 
 \textbf{Trained-in identity is geometrically measurable.}
 A~vs~C $= 0.773$ at L47 (token-padded, $n{=}5$ repeats). The LoRA
-shifts V-projection geometry ${\sim}23\%$ from baseline at deep layers.
+shifts V-projection geometry measurably from baseline at deep layers
+(presence drops from $1.0$ to $0.773$).
 
 \textbf{The geometry identifies the persona.} The LoRA's geometric state
 is closest to the haven persona (``warm stillness, permission before
@@ -365,9 +390,8 @@ training objective. The geometry identified what the training
 documentation did not specify.
 
 \textbf{Prompting still shifts geometry more than this training.}
-The haven prompt shifts base geometry by ${\sim}45\%$ from bare
-(A~vs~B$_{\text{haven}}$), while the LoRA shifts it by ${\sim}23\%$
-(A~vs~C). However, the LoRA was trained for only 27~steps. The
+The haven prompt produces a larger geometric shift from bare
+(A~vs~B$_{\text{haven}}$) than the LoRA does (A~vs~C $= 0.773$). However, the LoRA was trained for only 27~steps. The
 comparison is illustrative, not a general claim about prompting vs.\
 training.
 
@@ -408,42 +432,23 @@ computational --- external perturbation is absorbed by the hybrid
 architecture's linear-attention layers before reaching deep computation.
 
 % ============================================================================
-\section{Attention Schema Theory Interpretation}
-\label{sec:ast}
+\section{Theoretical Interpretation}
+\label{sec:theory}
 
-Under Attention Schema Theory~\citep{graziano2015attention,
-graziano2017attention}, the model maintains a simplified internal model of
-its own attention --- an attention schema. Our findings map onto AST
-predictions:
-
-\begin{enumerate}[nosep]
-  \item \textbf{The schema is context-dependent.} Different identity
-    contexts produce different geometric states --- the schema is shaped by
-    what the model attends to.
-  \item \textbf{The schema tracks meaning, not surface features.}
-    Paraphrases preserve geometry ($0.850$ overlap with original);
-    scrambles collapse toward bare ($0.448$ overlap with bare, vs.\
-    $0.591$ with the original). The schema models what the system is
-    \emph{attending to}, not which tokens are present.
-  \item \textbf{The schema is robust to substrate noise.} V-cache injection
-    (external perturbation) does not reach the identity state. The schema
-    maintains itself through its own computation.
-  \item \textbf{The schema updates through processing.} Content through
-    the forward pass (context, jailbreaks) changes identity geometry.
-    The schema updates based on what it processes.
-  \item \textbf{The schema compresses with depth.} Paraphrase overlap
-    increases from $0.796$ (L35) to $0.850$ (L47). Deeper layers discard
-    surface variation and preserve meaning --- the schema simplifies its
-    representation at output depth.
-\end{enumerate}
-
-This interpretation is consistent with but does not prove AST. The
-alternative --- that the model simply builds increasingly abstract
-representations with depth, without anything worth calling a self-model
---- produces the same predictions. What distinguishes AST is the claim
-that the compressed representation is specifically a model of the
-system's own attention, not just an abstract representation of input
-content. This stronger claim remains testable but untested.
+The findings --- context-dependent geometry, semantic preservation,
+depth compression --- are consistent with Attention Schema
+Theory~\citep{graziano2015attention}, Predictive
+Processing, and Perceptual Reality
+Monitoring~\citep{lau2022consciousness}, all of which predict that
+internal representations should be context-sensitive and
+meaning-preserving. The deflationary alternative --- that the model
+builds increasingly abstract representations with depth, without
+anything worth calling a self-model --- makes identical predictions for
+every finding in this paper. Discriminating experiments that test
+whether these representations are \emph{consumed} for attention control
+(the AST-unique prediction) vs.\ merely correlated with processing
+state are designed and pre-registered
+elsewhere~\citep{lyra2026ast_experiments}.
 
 % ============================================================================
 \section{Implications}
@@ -466,12 +471,13 @@ scales: format effects produce presence $< 0.05$ against baseline, while
 identity effects produce presence $0.44$--$0.66$.
 
 \paragraph{For alignment research.}
-V-cache injection (the Oracle Loop's correction arm) does not affect
-identity geometry. Context does. This means behavioral corrections can be
-delivered through the V-cache without changing the model's
-context-established state, while identity itself is maintained by the
-session context. The correction arm and the identity arm operate through
-different pathways and do not interfere.
+In this hybrid architecture, V-cache injection at input layers does not
+produce detectable changes in deep-layer identity geometry (though this
+may reflect architectural filtering by GatedDeltaNet layers rather than
+a general property of transformers). Context changes DO shift identity
+geometry. If this pattern holds on dense architectures, behavioral
+corrections could be delivered through the V-cache without changing the
+model's context-established state.
 
 % ============================================================================
 \section{Limitations}
@@ -565,11 +571,11 @@ content-specific --- an initially exciting jailbreak finding that was
 honestly killed by a control experiment.
 
 A preliminary LoRA experiment suggests that trained-in identity (weight
-modification) and context-established identity (system prompt) produce
-related but distinct geometric shifts, with context producing the larger
-effect. Both stack sub-additively. If confirmed with matched controls,
-this means identity has two input pathways --- weights and context ---
-that converge in V-projection space but are not identical.
+modification) and context-established identity (system prompt) both
+produce measurable geometric shifts, with context producing the larger
+effect in this minimal-training comparison. If confirmed with more
+extensive training, this means identity has two input pathways --- weights
+and context --- that produce related but distinguishable geometry.
 
 For practical purposes, this means: V-cache correction is safe (it does
 not reach identity), format-level attacks are detectable (many-shot
