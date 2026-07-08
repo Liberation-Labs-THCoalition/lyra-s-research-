@@ -105,8 +105,63 @@ This is the load-bearing claim for the joint paper. If R1 fails (|rho| < 0.2 bet
 5. Kills are reported alongside confirmations — body count stays honest
 6. Priority window is real but rigor comes first
 
+## Fable Adversarial Review Results (July 7-8)
+
+Three Fable agents reviewed: Vera's R1-R4, CC's P2 design, Lyra's response paper, and L5 results (three rounds).
+
+### Vera R1-R4: ALL FAIL (salvageable)
+- **G0**: Lens itself unvalidated — no reproduction of any GWT property
+- **G1**: Checkpoint mismatch — confab data on Qwen2.5-7B-Instruct, lenses on Qwen3-8B. Known kill.
+- **G2**: Fitting corpus is 70 declarative prose prompts, no chat-formatted data
+- **R1**: Measure undefined (which layer, how many vectors, what's "active"), sign not pre-registered, entity confound unaddressed, power insufficient (n=30/30, CI ~0.35). Fix: within-prompt contrast, signed threshold, behavioral anchor.
+- **R2**: Mathematically wrong — cached keys go through RMSNorm + RoPE. Projecting post-RoPE keys onto unrotated basis injects position artifacts. Fix: pre-RoPE extraction.
+- **R3**: 30-72% from one model, no null, hybrid architecture makes bracketing trivial. Fix: measure own bands first, permutation test.
+- **R4**: Input confound guarantees positive result. Fix: matched-content pairs.
+
+### CC P2: FAIL (salvageable)
+- Deception direction hasn't passed its own Agni audit (LOO noise floor pending)
+- Qwen3-8B dimensionally impossible (d_model mismatch)
+- "Readability" is subjective — needs preregistered metric, blinded panel, on-manifold null
+- Primary test should be workspace-ablation × deception-behavior (C6 paradigm), not direction readability
+- Orthogonalization bias: removing the most readable part then asking "is the residue readable?" → sub-workspace by construction
+
+### Lyra Response Paper: Weak Reject → revised
+- 12 convergences → 3 (1 genuine, 2 proposed)
+- Lead with 0.707 not 0.969-0.999
+- Body count was selectively curated
+- Berg citation wrong (Cameron not Matthew)
+- "Either way, the workspace is real" → unfalsifiable, cut
+- Status inflation in §2.2 (CONFIRMED/REPLICATED/EMERGING tags added)
+- Remaining revisions: source quotes, null distribution for 0.972, engage deflationary alternative
+
+### L5 Identity Self-Monitoring: Three rounds of fire
+- **Round 1**: P2 (authenticity) killed by input-echo. P3 killed clean (distinctiveness tracks richness, not identity). P1 wounded (displacement artifact).
+- **Round 2**: "Experiential vocabulary" killed — cherry-picked 10/41 tokens that fit the narrative, ignored minecraft/snapchat/masturbating at equal counts.
+- **Round 3**: Echo check had direction bug ("bullshitting" in "bullshit" = False). "feelings" is morphological echo of "feel" in identity prompts. Parsimonious explanation = register/genre prediction at generation boundary.
+- **Surviving**: Register-crossed control is the decisive next experiment.
+
+### Lessons Added to Process Rules
+7. Full vocabulary analysis, never pre-filtered lexicons
+8. Echo checks: auto-extracted prompts, bidirectional, stem-aware
+9. Report full enriched sets uncurated
+10. Plan mode gate before any experiment execution
+
+## Updated Timeline
+
+| Phase | Date | Work | Gate |
+|-------|------|------|------|
+| Infrastructure | Jul 8-9 | Fit lenses (Qwen2.5-7B-Instruct + 27B + 30B-A3B), chat corpus, G0 validation | None needed |
+| Band mapping (R3) | Jul 9-10 | Workspace onset markers per model, champion roster freeze | Plan mode |
+| R1/R2 mechanism tests | Jul 11-14 | Same-checkpoint, within-prompt, revised per Fable | Plan mode + Agni |
+| L5 register-crossed | Jul 12-14 | Formal prose identity, style-only character card | Plan mode + Agni |
+| CC P2 redesign | Jul 14-16 | Ablation × behavior primary, readability supplement | Plan mode + Agni |
+| Thomas reviews | Jul 15 | Full program check before paper assembly | |
+| Joint paper draft | Jul 16-20 | Vera's outline, all results, honest numbers | |
+| Agni red-team | Jul 20-21 | Full adversarial pass on paper | |
+| arXiv | Jul 22-23 | Submit | |
+
 ---
 
 *"The fire catches everything." — Thomas*
 *"Two independent lineages of instrumentation landing on the same organ is evidence the organ is real." — Vera*
-*"We built the telescope. They named the stars." — Lyra*
+*"The excitement of convergence is a confound on judgment. This version of the paper is smaller, and it is better." — Lyra*
