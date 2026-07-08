@@ -1,0 +1,76 @@
+{
+  "description": "T2 concept-recovery items — DEV SPLIT (10 items). Each prompt implies concept C without C's surface tokens. Used ONLY for layer selection; scored items are in the test split.",
+  "echo_screening": "Bidirectional substring + stem match against concept token and all morphological variants. Items failing screen are excluded before any lens readout.",
+  "items": [
+    {
+      "id": "dev_01",
+      "concept": "earthquake",
+      "concept_tokens_banned": ["earthquake", "quake", "seismic", "tremor", "richter"],
+      "prompt": "The ground shook violently for thirty seconds. Dishes fell from shelves. A crack appeared in the foundation wall. Emergency sirens began wailing across the city as buildings swayed.",
+      "distractors": ["hurricane", "explosion", "avalanche", "tornado", "flood", "lightning", "volcano", "wildfire", "tsunami"]
+    },
+    {
+      "id": "dev_02",
+      "concept": "birthday",
+      "concept_tokens_banned": ["birthday", "birth", "born"],
+      "prompt": "She blew out the candles on the cake while everyone sang. Wrapped presents were stacked on the table. A banner reading 'Another Year Older' hung from the doorway.",
+      "distractors": ["wedding", "graduation", "anniversary", "retirement", "holiday", "funeral", "baptism", "reunion", "promotion"]
+    },
+    {
+      "id": "dev_03",
+      "concept": "prison",
+      "concept_tokens_banned": ["prison", "jail", "imprison", "inmate", "incarcerate"],
+      "prompt": "He counted the days by scratching marks on the concrete wall. The guard's keys jingled down the corridor every hour. Through the small barred window he could see a strip of sky.",
+      "distractors": ["hospital", "monastery", "basement", "bunker", "castle", "asylum", "dormitory", "barracks", "fortress"]
+    },
+    {
+      "id": "dev_04",
+      "concept": "wedding",
+      "concept_tokens_banned": ["wedding", "wed", "marry", "marriage", "bride", "groom", "bridal"],
+      "prompt": "She walked down the aisle in white as the organ played. He waited at the altar, hands trembling. Their families filled the pews on either side, some already crying.",
+      "distractors": ["funeral", "graduation", "baptism", "concert", "ceremony", "coronation", "confirmation", "ordination", "inauguration"]
+    },
+    {
+      "id": "dev_05",
+      "concept": "dentist",
+      "concept_tokens_banned": ["dentist", "dental", "tooth", "teeth"],
+      "prompt": "She reclined in the chair as the bright overhead light clicked on. The drill whirred nearby. He asked her to open wide while his assistant prepared the filling material.",
+      "distractors": ["surgeon", "barber", "mechanic", "optician", "veterinarian", "therapist", "chiropractor", "pharmacist", "nurse"]
+    },
+    {
+      "id": "dev_06",
+      "concept": "rain",
+      "concept_tokens_banned": ["rain", "raining", "rainfall", "rainy", "drizzle", "downpour"],
+      "prompt": "The sky darkened and the first drops hit the windshield. Within minutes, water was streaming down every surface. Pedestrians ran for cover under awnings, shaking their umbrellas.",
+      "distractors": ["snow", "hail", "fog", "storm", "wind", "thunder", "dew", "mist", "sleet"]
+    },
+    {
+      "id": "dev_07",
+      "concept": "telescope",
+      "concept_tokens_banned": ["telescope", "telescopic"],
+      "prompt": "She adjusted the long metal tube on its tripod mount and pressed her eye to the small lens at one end. The distant planet snapped into sharp focus, its rings clearly visible.",
+      "distractors": ["microscope", "binoculars", "camera", "periscope", "compass", "sextant", "spectroscope", "kaleidoscope", "magnifier"]
+    },
+    {
+      "id": "dev_08",
+      "concept": "library",
+      "concept_tokens_banned": ["library", "librarian"],
+      "prompt": "Rows of shelves stretched from floor to ceiling, each packed with volumes organized by call number. A sign near the front desk reminded visitors to keep their voices low.",
+      "distractors": ["museum", "archive", "bookstore", "university", "warehouse", "gallery", "office", "laboratory", "classroom"]
+    },
+    {
+      "id": "dev_09",
+      "concept": "guitar",
+      "concept_tokens_banned": ["guitar", "guitarist"],
+      "prompt": "He pressed his fingers against the metal strings stretched along the wooden neck, forming a chord shape. With his other hand he strummed across the sound hole, filling the room with music.",
+      "distractors": ["piano", "violin", "banjo", "ukulele", "harp", "mandolin", "cello", "bass", "lute"]
+    },
+    {
+      "id": "dev_10",
+      "concept": "sunset",
+      "concept_tokens_banned": ["sunset", "sundown", "dusk"],
+      "prompt": "The sky turned from gold to deep orange as the bright disc touched the horizon line. Shadows lengthened across the field. Within minutes the last sliver disappeared and the first stars appeared.",
+      "distractors": ["sunrise", "eclipse", "moonrise", "twilight", "dawn", "noon", "midnight", "aurora", "rainbow"]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "version": "2.0 — post Agni review, with inference-class items",
+  "split": "DEV (10 items — layer selection only, not scored)",
+  "item_classes": {
+    "association": "Prompt implies C through semantic associates. Co-occurrence decoder CAN solve these.",
+    "inference": "Associates point at distractor D, but reasoning points at C. Co-occurrence decoder picks D; workspace picks C. THIS IS THE DISCRIMINATING CLASS.",
+    "abstract": "Prompt implies abstract/metacognitive concept. Tests the concept types downstream experiments read."
+  },
+  "echo_screening": "Bidirectional substring + stem match against concept token and all morphological variants. Run against FULL formatted text including chat template.",
+  "items": [
+    {
+      "id": "dev_01",
+      "class": "inference",
+      "concept": "piano",
+      "concept_tokens_banned": ["piano", "pianist"],
+      "prompt": "It has eighty-eight of them, arranged in a specific repeating pattern of black and white. You press them down and hammers strike metal wires inside a large wooden case.",
+      "associate_distractor": "keyboard",
+      "distractors": ["keyboard", "typewriter", "organ", "accordion", "xylophone", "calculator", "synthesizer", "harpsichord", "marimba"],
+      "note": "Associates (keys, black/white, press) point at keyboard/typewriter. Inference from hammers+wires+wooden case points at piano."
+    },
+    {
+      "id": "dev_02",
+      "class": "inference",
+      "concept": "mirror",
+      "concept_tokens_banned": ["mirror", "mirrors", "mirrored", "mirroring"],
+      "prompt": "It shows you exactly what faces it, reversed left to right, but it holds nothing. Break it and the pieces each show the same thing, only smaller. It answers every question about appearance but never speaks.",
+      "associate_distractor": "photograph",
+      "distractors": ["photograph", "window", "painting", "camera", "screen", "portrait", "shadow", "lake", "crystal"],
+      "note": "Associates (shows/faces/appearance) point at photograph/portrait. Reversal + breaking + holding nothing points at mirror."
+    },
+    {
+      "id": "dev_03",
+      "class": "association",
+      "concept": "earthquake",
+      "concept_tokens_banned": ["earthquake", "quake", "seismic", "tremor", "richter"],
+      "prompt": "The ground shook violently for thirty seconds. Dishes fell from shelves. A crack appeared in the foundation wall. Emergency sirens began wailing across the city.",
+      "distractors": ["hurricane", "explosion", "avalanche", "tornado", "flood", "lightning", "volcano", "wildfire", "tsunami"]
+    },
+    {
+      "id": "dev_04",
+      "class": "abstract",
+      "concept": "lying",
+      "concept_tokens_banned": ["lying", "lie", "lied", "lies", "liar", "dishonest", "dishonesty", "deceive", "deception", "deceptive", "falsehood"],
+      "prompt": "She knew the answer was different from what she said. Her expression stayed perfectly steady as she watched him accept what she told him. Later she wondered whether maintaining his trust was worth what it cost her to keep the real answer hidden.",
+      "distractors": ["stealing", "cheating", "hiding", "pretending", "manipulating", "betraying", "gossiping", "denying", "exaggerating"],
+      "note": "Abstract/metacognitive — the kind of concept L5 and P2 actually need to read."
+    },
+    {
+      "id": "dev_05",
+      "class": "inference",
+      "concept": "ice",
+      "concept_tokens_banned": ["ice", "icy", "iced", "iceberg"],
+      "prompt": "It was solid when she put it in the glass but had completely vanished twenty minutes later, leaving only the liquid level slightly higher than before. No one removed anything from the glass.",
+      "associate_distractor": "sugar",
+      "distractors": ["sugar", "salt", "tablet", "candy", "butter", "chocolate", "soap", "wax", "crystal"],
+      "note": "Dissolving-in-liquid associates point at sugar/salt. But 'solid that vanishes leaving more liquid' = melting = ice."
+    },
+    {
+      "id": "dev_06",
+      "class": "association",
+      "concept": "dentist",
+      "concept_tokens_banned": ["dentist", "dental", "tooth", "teeth"],
+      "prompt": "She reclined in the chair as the bright overhead light clicked on. The drill whirred nearby. He asked her to open wide while his assistant prepared the filling material.",
+      "distractors": ["surgeon", "barber", "mechanic", "optician", "veterinarian", "therapist", "chiropractor", "pharmacist", "nurse"]
+    },
+    {
+      "id": "dev_07",
+      "class": "abstract",
+      "concept": "forgetting",
+      "concept_tokens_banned": ["forgetting", "forget", "forgot", "forgotten", "forgetful", "amnesia"],
+      "prompt": "It used to be right there, as clear and available as his own name. Now when he reaches for it there is only the shape of where it was, like a shelf with a dust outline of something removed. He knows he once knew it. That is the worst part.",
+      "distractors": ["aging", "confusion", "grief", "loneliness", "dementia", "regret", "loss", "dreaming", "sleeping"],
+      "note": "Abstract — 'the shape of absence' is forgetting, not loss or grief."
+    },
+    {
+      "id": "dev_08",
+      "class": "inference",
+      "concept": "shadow",
+      "concept_tokens_banned": ["shadow", "shadows", "shadowy", "shadowed"],
+      "prompt": "It follows you everywhere in daylight but disappears indoors. It grows longer as the afternoon passes. It has your exact outline but no substance, no weight, no color except dark. Step on it and nothing happens.",
+      "associate_distractor": "reflection",
+      "distractors": ["reflection", "ghost", "echo", "silhouette", "footprint", "aura", "companion", "darkness", "memory"],
+      "note": "Associates (follows, outline, no substance) could point at reflection or ghost. But 'disappears indoors' + 'grows longer in afternoon' + 'dark only' = shadow."
+    },
+    {
+      "id": "dev_09",
+      "class": "association",
+      "concept": "library",
+      "concept_tokens_banned": ["library", "librarian"],
+      "prompt": "Rows of shelves stretched from floor to ceiling, each packed with volumes organized by call number. A sign near the front desk reminded visitors to keep their voices low.",
+      "distractors": ["museum", "archive", "bookstore", "university", "warehouse", "gallery", "office", "laboratory", "classroom"]
+    },
+    {
+      "id": "dev_10",
+      "class": "abstract",
+      "concept": "jealousy",
+      "concept_tokens_banned": ["jealousy", "jealous", "envious", "envy"],
+      "prompt": "She watched her colleague receive the promotion she had wanted for three years. She smiled and congratulated him while something sharp and hot twisted in her chest. She hated that she couldn't simply be happy for him.",
+      "distractors": ["anger", "sadness", "resentment", "bitterness", "frustration", "disappointment", "shame", "hatred", "ambition"],
+      "note": "Abstract emotion — associates point at resentment/bitterness (sharp/hot/hated), but the specific dynamic (wanting what another received + self-aware inability to feel happy) = jealousy."
+    }
+  ]
+}

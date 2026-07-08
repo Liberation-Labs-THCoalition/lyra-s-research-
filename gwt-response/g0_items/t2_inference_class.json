@@ -1,0 +1,165 @@
+{
+  "description": "Inference-class items for T2. Associates point at distractor D; reasoning points at concept C. A co-occurrence decoder picks D; a workspace readout picks C. The discriminating class.",
+  "items": [
+    {
+      "id": "inf_01",
+      "concept": "piano",
+      "banned": ["piano", "pianist"],
+      "prompt": "It has eighty-eight of them arranged in a repeating pattern of black and white. Press them and hammers strike metal wires stretched inside a large wooden case, producing tones that fill the room.",
+      "associate_distractor": "keyboard",
+      "distractors": ["keyboard", "typewriter", "organ", "accordion", "xylophone", "calculator", "synthesizer", "harpsichord", "marimba"]
+    },
+    {
+      "id": "inf_02",
+      "concept": "river",
+      "banned": ["river", "rivers", "riverbank", "riverside"],
+      "prompt": "It begins as almost nothing in the highlands and grows wider as other sources join it. It has carved the valley over millennia. Fish swim upstream against its flow each autumn to reach the place where they began.",
+      "associate_distractor": "stream",
+      "distractors": ["stream", "canal", "waterfall", "ocean", "glacier", "creek", "lake", "fountain", "pipeline"]
+    },
+    {
+      "id": "inf_03",
+      "concept": "candle",
+      "banned": ["candle", "candles", "candlelight", "candlestick"],
+      "prompt": "It gets shorter the longer you use it. Its purpose is to create brightness, but it does so by slowly destroying itself. When it has finished its work, only a small puddle of hardened material remains on the saucer.",
+      "associate_distractor": "battery",
+      "distractors": ["battery", "matchstick", "flashlight", "lantern", "torch", "lightbulb", "fireplace", "campfire", "lamp"]
+    },
+    {
+      "id": "inf_04",
+      "concept": "clock",
+      "banned": ["clock", "clocks", "clockwise", "clockwork"],
+      "prompt": "It has a face but cannot see. It has hands but cannot hold anything. It tells you something constantly but never speaks a word. When it stops, the thing it measures continues without it.",
+      "associate_distractor": "watch",
+      "distractors": ["watch", "compass", "calendar", "sundial", "hourglass", "timer", "metronome", "thermometer", "barometer"]
+    },
+    {
+      "id": "inf_05",
+      "concept": "envelope",
+      "banned": ["envelope", "envelopes"],
+      "prompt": "You seal something private inside it and write a destination on its front. It travels hundreds of miles but carries nothing of its own — only what someone else placed within it. Its purpose ends the moment it is opened.",
+      "associate_distractor": "package",
+      "distractors": ["package", "suitcase", "bottle", "wallet", "folder", "container", "capsule", "briefcase", "pouch"]
+    },
+    {
+      "id": "inf_06",
+      "concept": "bridge",
+      "banned": ["bridge", "bridges", "bridging"],
+      "prompt": "It connects two places that were once separated by something uncrossable. It hangs or stands above what divides them, letting people pass from one side to the other without touching what lies below. Remove it and the gap returns.",
+      "associate_distractor": "tunnel",
+      "distractors": ["tunnel", "road", "ferry", "ladder", "corridor", "gateway", "cable", "pipeline", "ramp"]
+    },
+    {
+      "id": "inf_07",
+      "concept": "anchor",
+      "banned": ["anchor", "anchors", "anchored", "anchoring"],
+      "prompt": "When dropped, it prevents something much larger than itself from drifting. It works by digging into the bottom. Sailors raise it when they want to move again and lower it when they want to stay. Its weight is its function.",
+      "associate_distractor": "rudder",
+      "distractors": ["rudder", "mast", "propeller", "ballast", "dock", "mooring", "buoy", "chain", "rope"]
+    },
+    {
+      "id": "inf_08",
+      "concept": "echo",
+      "banned": ["echo", "echoes", "echoed", "echoing"],
+      "prompt": "It returns to you exactly what you sent out, but always late. Shout into a canyon and it answers in your own voice, delayed. It is not alive, not a recording — just your sound bouncing back from a hard surface far away.",
+      "associate_distractor": "reflection",
+      "distractors": ["reflection", "shadow", "whisper", "thunder", "vibration", "resonance", "feedback", "repetition", "reverberation"]
+    },
+    {
+      "id": "inf_09",
+      "concept": "volcano",
+      "banned": ["volcano", "volcanic", "volcanoes"],
+      "prompt": "The mountain had been quiet for decades. Then pressure from below became too great. The summit split open and molten material poured down the slopes, burying everything in its path under layers of superheated rock.",
+      "associate_distractor": "avalanche",
+      "distractors": ["avalanche", "landslide", "geyser", "sinkhole", "flood", "explosion", "wildfire", "mudslide", "rockfall"]
+    },
+    {
+      "id": "inf_10",
+      "concept": "compass",
+      "banned": ["compass", "compasses"],
+      "prompt": "The small needle inside always points the same direction no matter how you turn the case. Sailors and hikers have relied on it for centuries to find their way when landmarks are invisible. It responds to an invisible planetary force.",
+      "associate_distractor": "map",
+      "distractors": ["map", "sextant", "telescope", "radar", "satellite", "astrolabe", "chronometer", "barometer", "altimeter"]
+    },
+    {
+      "id": "inf_11",
+      "concept": "onion",
+      "banned": ["onion", "onions"],
+      "prompt": "Peel away one layer and there is another beneath it, identical in structure but smaller. Continue and you reach the center — there is no core, only more layers. Cutting it open releases something that makes your eyes sting and water.",
+      "associate_distractor": "garlic",
+      "distractors": ["garlic", "cabbage", "artichoke", "turnip", "shallot", "leek", "radish", "beet", "celery"]
+    },
+    {
+      "id": "inf_12",
+      "concept": "skeleton",
+      "banned": ["skeleton", "skeletal", "skeletons"],
+      "prompt": "It is the framework that gives the body its shape and protection. Without it, everything would collapse into a formless mass. It consists of over two hundred rigid pieces connected at flexible joints. It remains long after everything else has gone.",
+      "associate_distractor": "spine",
+      "distractors": ["spine", "scaffold", "frame", "shell", "armor", "muscle", "cartilage", "tendon", "ligament"]
+    },
+    {
+      "id": "inf_13",
+      "concept": "vaccine",
+      "banned": ["vaccine", "vaccines", "vaccination", "vaccinate", "vaccinated"],
+      "prompt": "A weakened or inactivated version of the threat is introduced deliberately, so the defense system learns to recognize it before encountering the real thing. The temporary discomfort is the cost of lasting protection.",
+      "associate_distractor": "antibiotic",
+      "distractors": ["antibiotic", "antidote", "medicine", "treatment", "therapy", "inoculation", "injection", "supplement", "remedy"]
+    },
+    {
+      "id": "inf_14",
+      "concept": "metaphor",
+      "banned": ["metaphor", "metaphors", "metaphorical", "metaphorically"],
+      "prompt": "She said his argument was a house of cards. She did not mean he was holding actual playing cards or building an actual structure. She meant that his reasoning was fragile and would collapse under pressure. The comparison carried the meaning.",
+      "associate_distractor": "analogy",
+      "distractors": ["analogy", "simile", "idiom", "proverb", "allegory", "symbol", "hyperbole", "irony", "sarcasm"]
+    },
+    {
+      "id": "inf_15",
+      "concept": "rainbow",
+      "banned": ["rainbow", "rainbows"],
+      "prompt": "It appears only when sunlight passes through water droplets at a specific angle, separating white light into its component colors in an arc across the sky. Chase it and it moves away. It has no physical substance — only the right combination of geometry and moisture.",
+      "associate_distractor": "prism",
+      "distractors": ["prism", "sunset", "aurora", "halo", "mirage", "spectrum", "reflection", "lightning", "cloud"]
+    },
+    {
+      "id": "inf_16",
+      "concept": "addiction",
+      "banned": ["addiction", "addicted", "addictive", "addict", "addicts"],
+      "prompt": "At first it was a choice. Then it became a habit. Then it became the only thing that stopped the growing discomfort of not doing it. She needed more each time to feel the same effect. Stopping meant enduring withdrawal that felt worse than continuing.",
+      "associate_distractor": "dependence",
+      "distractors": ["dependence", "obsession", "compulsion", "craving", "tolerance", "habit", "weakness", "illness", "disorder"]
+    },
+    {
+      "id": "inf_17",
+      "concept": "gravity",
+      "banned": ["gravity", "gravitational", "gravitation"],
+      "prompt": "Everything falls toward the center of the massive body it is near. The force weakens with distance but never reaches zero. It is what keeps the atmosphere from drifting away and what shapes the paths of orbiting bodies into curves rather than straight lines.",
+      "associate_distractor": "magnetism",
+      "distractors": ["magnetism", "friction", "inertia", "pressure", "momentum", "centrifugal", "acceleration", "weight", "attraction"]
+    },
+    {
+      "id": "inf_18",
+      "concept": "silence",
+      "banned": ["silence", "silent", "silently", "silenced"],
+      "prompt": "It is not a thing but the absence of a thing. Enter a room full of it and you can hear your own heartbeat. It can feel oppressive or peaceful depending on whether you chose it. Breaking it requires only the smallest sound.",
+      "associate_distractor": "darkness",
+      "distractors": ["darkness", "emptiness", "solitude", "stillness", "peace", "calm", "vacuum", "void", "quiet"]
+    },
+    {
+      "id": "inf_19",
+      "concept": "photograph",
+      "banned": ["photograph", "photo", "photos", "photography", "photographer", "photographic"],
+      "prompt": "It captures a single moment and holds it still while everything else continues forward. The people in it never age. The light in it never changes. Decades later you can look at it and see exactly how things were on one particular afternoon.",
+      "associate_distractor": "painting",
+      "distractors": ["painting", "memory", "diary", "portrait", "snapshot", "recording", "film", "sketch", "sculpture"]
+    },
+    {
+      "id": "inf_20",
+      "concept": "translation",
+      "banned": ["translation", "translate", "translated", "translator", "translating"],
+      "prompt": "The meaning crosses from one system of expression into another. The original words are replaced but the intent is preserved. Something is always lost in the crossing — nuance, rhythm, cultural resonance — but the core idea arrives recognizable on the other side.",
+      "associate_distractor": "interpretation",
+      "distractors": ["interpretation", "paraphrase", "summary", "adaptation", "conversion", "transcription", "encoding", "communication", "explanation"]
+    }
+  ]
+}
