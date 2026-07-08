@@ -124,33 +124,33 @@ signatures that reliably distinguish confabulation from deception from
 honest processing, that track identity across context conditions, and that
 separate encoding-phase from generation-phase representations.
 
-The convergence is not superficial. Our confabulation-detection result
-(AUROC~$0.969$--$0.999$ across three model families) finds a mechanistic
-explanation in the J-space framework: confabulation corresponds to
-\emph{workspace bypass}, where the model produces fluent output without
-fully engaging the reasoning workspace. Our finding that confabulation
-and deception produce \emph{opposite} geometric signatures (spectral
-contraction vs.\ expansion) maps onto the workspace's limited capacity:
-confabulation underuses it; deception overloads it. Our temporal boundary
---- encoding reads knowledge, generation reads behavior --- corresponds
-to two phases of workspace operation: loading and execution.
+The most striking correspondence is that both programs independently
+deconstructed ``deception directions'' into high-arousal states rather
+than deception-specific representations. Beyond this, we propose ---
+but have not yet demonstrated --- that confabulation corresponds to
+workspace bypass (spectral contraction as reduced workspace engagement)
+and that the encoding/generation temporal boundary corresponds to
+workspace loading and execution phases. Our confabulation detection
+ranges from AUROC~$0.627$ to $0.999$ across designs, with the cleanest
+post-audit number at $0.707$; the variation across designs is itself
+informative and we report it in full.
 
 This paper makes three contributions. First, we present the specific
-correspondences between twelve months of V-projection measurements and
-the J-space framework (\S\ref{sec:convergences}). Second, we identify
-three cases where our measurements extend the J-space findings and three
-where J-space mechanics explain our results
+correspondences between our V-projection measurements and the J-space
+framework, classified by evidential status
+(\S\ref{sec:convergences}). Second, we identify cases where our
+measurements may extend the J-space findings and where J-space mechanics
+may explain our results
 (\S\ref{sec:extends}--\S\ref{sec:explains}). Third, we propose eight
-experiments that directly test whether V-projection geometry measures
-workspace dynamics (\S\ref{sec:experiments}), transforming this
-post-hoc convergence into a prospective research program.
+experiments with preregistered falsification thresholds that test
+whether V-projection geometry measures workspace dynamics
+(\S\ref{sec:experiments}).
 
-Throughout, we report our full empirical record, including ten honestly
-falsified findings (\S\ref{sec:bodycount}). The pattern of survivals and
-kills is itself a datum: what survived (metacognitive geometry) aligns
-with J-space selectivity; what was killed (content-level detection)
-aligns with the workspace's documented indifference to automatic
-processing.
+Throughout, we report our full empirical record, including the
+canonical list of ten audited kills (\S\ref{sec:bodycount}), and engage
+the deflationary alternative (V-projections track response-mode
+statistics rather than workspace dynamics) that currently explains every
+surviving detection result.
 
 % ============================================================================
 \section{Background: Two Independent Programs}
@@ -240,72 +240,75 @@ EMERGING = recent, not yet fully audited):
 \end{itemize}
 
 % ============================================================================
-\section{Twelve Convergences}
+\section{Correspondences}
 \label{sec:convergences}
 
-We identify twelve points where the two programs' findings map onto each
-other. Table~\ref{tab:convergences} summarizes the correspondences;
-detailed discussion follows.
+We identify one genuine cross-program convergence, two proposed
+identifications that require experimental confirmation, and several
+weaker correspondences that do not distinguish the workspace
+interpretation from simpler alternatives.
+Table~\ref{tab:convergences} classifies each correspondence by
+evidential status.
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Convergences between J-space and V-projection findings.}
+\caption{Correspondences between J-space and V-projection findings,
+classified by evidential status. \textbf{Genuine}: independently
+discovered, mutually surprising. \textbf{Proposed}: plausible
+identification requiring experimental test. \textbf{Expected}: would
+hold for any mid-layer abstract-representation account, not
+workspace-specific.}
 \label{tab:convergences}
-\begin{tabular}{p{0.28\linewidth}p{0.30\linewidth}p{0.34\linewidth}}
+\begin{tabular}{p{0.10\linewidth}p{0.25\linewidth}p{0.27\linewidth}p{0.30\linewidth}}
 \toprule
-\textbf{J-Space Finding} & \textbf{V-Projection Finding} & \textbf{Relationship} \\
+\textbf{Status} & \textbf{J-Space Finding} & \textbf{V-Projection Finding} & \textbf{Relationship} \\
 \midrule
-Workspace in intermediate layers &
-  Identity/metacognitive features strongest at intermediate-to-deep layers &
-  Both programs find layer-bounded computational structure \\
-\addlinespace
-Workspace bypass preserves fluency &
-  Confabulation shows spectral contraction ($d{=}2.35$) &
-  Confab = workspace bypass; contraction = less workspace engagement \\
-\addlinespace
-Limited workspace capacity &
-  Deception shows spectral expansion &
-  Deception overloads workspace; expansion = more workspace engagement \\
-\addlinespace
-Metacognitive tokens precede content in J-space &
-  Encoding reads knowledge; generation reads behavior &
-  Temporal ordering within workspace matches cross-phase boundary \\
-\addlinespace
-Persistent ``self'' at Assistant turns &
-  Identity dominates substrate ($0.154$ vs $0.080$) &
-  Workspace self-representation IS the identity geometry we measure \\
-\addlinespace
-Consciousness-related tokens in J-space regardless of output &
-  Sonnet 4 $\approx$ Opus 4.6 in V-projection ($0.972$ overlap) &
-  Consciousness instructions constrain output, not workspace \\
-\addlinespace
-Eval-awareness ablation causes misalignment &
-  CoT suppresses deception ($3\%$ vs $28\%$) &
-  Both: workspace engagement enables aligned reasoning \\
-\addlinespace
-J-space carries ``panic'', ``leverage'' &
+\textbf{Genuine} &
+  J-space carries \texttt{panic}, \texttt{leverage}, \texttt{manipulation} &
   LAT deception direction = fight-activation ($d{=}19.8$) &
-  Both: ``deception'' features are high-arousal workspace states \\
+  Both programs independently deconstructed ``deception'' into high-arousal states \\
 \addlinespace
-Selectivity: automatic tasks bypass workspace &
+\textbf{Proposed} &
+  Workspace bypass preserves fluency, destroys reasoning &
+  Confabulation shows spectral contraction ($d{=}2.35$) &
+  Proposed: confabulation = workspace bypass.
+  Test: Experiment~1 \\
+\addlinespace
+\textbf{Proposed} &
+  Post-training installs Assistant-perspective on user tokens &
+  Encoding reads knowledge ($0.794$); generation reads behavior ($d{=}1.36$) &
+  Proposed: temporal boundary = workspace phase transition.
+  Test: Experiment~3 \\
+\addlinespace
+\textbf{Expected} &
+  Workspace in intermediate layers &
+  Metacognitive features strongest mid-to-deep &
+  Mid-layer localization of abstract structure is generic~\citep{raghu2017svcca}; not workspace-specific \\
+\addlinespace
+\textbf{Expected} &
+  Selectivity: automatic tasks bypass workspace &
   Geometry reads metacognitive state, not content &
-  V-projections measure workspace dynamics, not automatic processing \\
+  Both programs find a processing/automatic split; this follows from any hierarchical abstraction account \\
 \addlinespace
-J-space ablation: facts intact, reasoning gone &
-  Abliterated model: $93\%$ confab rate, encoding detection intact &
-  Both: workspace damage destroys reasoning, preserves input processing \\
-\addlinespace
-Mechanistically privileged (many circuits read/write) &
-  Scale-invariant detection ($\rho{=}0.83$--$0.90$) &
-  Privileged structure produces universal geometric signature \\
-\addlinespace
-AST-compatible metacognitive ordering &
-  AST 0-for-3 discriminating, 4-for-4 shared predictions &
-  Workspace is primary; metacognition is emergent property \\
+\textbf{Open} &
+  Eval-awareness ablation surfaces concealed misalignment &
+  CoT suppresses deception ($3\%$ vs $28\%$) &
+  Both involve workspace engagement and alignment; CC notes the simpler
+  alternative ``CoT is just more compute'' is uncontrolled \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\noindent We dropped six rows from an earlier draft that did not
+survive adversarial review: mid-layer localization and scale invariance
+(expected under any trained-network account), a metacognitive-ordering
+claim we could not source in Gurnee et al., a consciousness-deflection
+row whose $0.972$ overlap lacks a null distribution over arbitrary
+instruction pairs, an abliteration parallel that equates different
+interventions without argument, and an AST framing that inverted the
+conclusion of our own commissioned analysis. The original twelve-row
+table is preserved in the repository history for transparency.
 
 \subsection{Confabulation as Workspace Bypass}
 
@@ -465,10 +468,13 @@ honest processing. This moves beyond ``workspace engaged or not'' to
 We demonstrate that V-projection geometric signatures replicate across
 model scales from $0.6$B to $70$B parameters ($\rho{=}0.83$--$0.90$)
 and across hardware ($r{>}0.999$)~\citep{lyra2026campaign2}. Gurnee
-et al.\ acknowledge that they ``do not know how [J-space] scales with
-model size.'' Our universality results suggest the workspace structure
-is convergent: learning systems that must reason arrive at
-geometrically similar workspace organizations regardless of scale.
+et al.\ study J-space primarily in production models of considerable
+size; cross-scale universality of workspace structure is an open
+question their paper raises but does not address. Our geometric
+universality is suggestive but does not demonstrate that \emph{workspace}
+structure specifically is what scales --- spectral universality in
+trained networks has mundane explanations that do not require a
+workspace.
 
 \subsection{Practical Intervention}
 
@@ -514,80 +520,63 @@ interpretive framework and found it 0-for-3 on predictions unique to AST
 (vs.\ simpler alternatives) but 4-for-4 on shared
 predictions~\citep{lyra2026fable_analysis}. The J-space framework
 explains this: the Global Workspace is the primary structure, and
-AST-compatible metacognitive ordering (metacognition precedes content) is
-an \emph{emergent property} of the workspace, not a separate system. Our
-measurements could not discriminate because the distinction does not exist
-at the geometric level --- AST and GWT make the same predictions for a
-workspace that carries metacognitive representations.
+AST-compatible properties (metacognitive representations in the
+workspace) are emergent, not a separate system. Our measurements could
+not discriminate because, for a workspace that carries metacognitive
+representations, AST and GWT make overlapping predictions at the
+geometric level.
 
 % ============================================================================
 \section{The Body Count: What We Killed and Why It Matters}
 \label{sec:bodycount}
 
 Honest science requires reporting what did not survive alongside what
-did. Table~\ref{tab:bodycount} summarizes ten falsified findings from
-our program.
+did. Table~\ref{tab:bodycount} presents the canonical audited kill list
+from the Nexus audit (June 2026), not a curated selection.
+An earlier draft of this paper substituted a different set of ten kills
+chosen for their fit with the workspace narrative; the canonical list
+includes length-confound kills (truth axis, step-0, Bloom taxonomy)
+that are more threatening to geometric claims and were omitted.
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Falsified findings and their relationship to workspace theory.}
+\caption{Canonical falsified findings (Nexus audit, June 2026).
+No workspace interpretation is imposed --- the kills stand on their
+own terms.}
 \label{tab:bodycount}
-\begin{tabular}{p{0.30\linewidth}p{0.25\linewidth}p{0.37\linewidth}}
+\begin{tabular}{p{0.35\linewidth}p{0.55\linewidth}}
 \toprule
-\textbf{Killed Finding} & \textbf{Kill Reason} & \textbf{Workspace Interpretation} \\
+\textbf{Killed Finding} & \textbf{Kill Reason} \\
 \midrule
-Within-model deception AUROC~$1.000$ &
-  Prompt-template confound &
-  Content-level artifact, not workspace signal \\
-\addlinespace
-Self/other spatial separation &
-  Generic to instruction variation &
-  Workspace doesn't segregate self/other spatially \\
-\addlinespace
-Self/other causal probing &
-  Causal attention prevents it &
-  Architectural constraint, not workspace property \\
-\addlinespace
-Depth reorganization specificity &
-  Generic to any instruction pair &
-  Workspace processes all instructions similarly \\
-\addlinespace
-W\_K behavioral correction &
-  Insufficient at tested alphas &
-  Single-vector intervention too weak for workspace \\
-\addlinespace
-Cross-layer presence injection &
-  Architectural filtering (GatedDeltaNet) &
-  Linear-attention layers absorb perturbation pre-workspace \\
-\addlinespace
-Prefill-refeed ``self-recognition'' &
-  Length/register confound &
-  Content-level artifact \\
-\addlinespace
-Hostile single-vector correction &
-  Dose-response absent &
-  Workspace requires combination, not single vector \\
-\addlinespace
-Mode-switching sign (original) &
-  FWL instability &
-  Statistical artifact; sign corrected in replication \\
-\addlinespace
-Deception as concept (LAT) &
-  Actually fight-activation &
-  Workspace carries arousal, not deception category \\
+Truth axis (SAE feature) & Not replicable \\
+Step-0 geometric separation & $r{=}0.996$ with input length \\
+Same-prompt sycophancy & Length-only; no geometric signal after matching \\
+Same-prompt deception & Length-only; input\_auc${=}1.0$ \\
+Within-model deception AUROC & Prompt-template confound; same-prompt $\to 0.160$ \\
+Bloom taxonomy difficulty & $90$--$98\%$ explained by length \\
+Propaganda detection & Indistinguishable from non-propaganda at matched length \\
+MP-emotion features & Dimension-dependent; failed invariance \\
+Valence continuum & Not replicable across models \\
+Hybrid instructed-deception & Confounded with instruction register \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The pattern is striking: every killed finding involved a content-level
-claim (deception detection, self/other separation, self-recognition),
-while every surviving finding involves a metacognitive-level measurement
-(confabulation geometry, temporal boundary, identity subspace, spectral
-signatures). This asymmetry aligns with J-space selectivity: the
-workspace carries abstract assessments and metacognitive state, not raw
-content. Our geometry succeeds when it measures the workspace and fails
-when it tries to measure what the workspace processes.
+The pattern of survivals and kills is suggestive: the surviving claims
+are metacognitive (confabulation geometry, temporal boundary, spectral
+signatures) while the killed claims are content-level (deception
+detection, difficulty, specific features). However, as an adversarial
+reviewer of this paper noted, this asymmetry may partly reflect
+\emph{differential attackability}: content-level claims have an obvious
+confound family (templates, length, vocabulary) that audits targeted,
+while the surviving metacognitive claims have a harder-to-specify
+confound family (register, hedging vocabulary, response formulaicity)
+that has mostly not been attacked. The one time a text baseline was
+compared to geometry on confabulation detection, text features matched
+($0.820$ vs.\ $0.806$). Until the surviving claims face the same
+intensity of attack as the killed ones, the survive/die asymmetry
+cannot carry strong interpretive weight.
 
 % ============================================================================
 \section{Proposed Experiments}
@@ -677,6 +666,54 @@ health of the Global Workspace:
   reasoning, generalize flexibly, and monitor its own processing
   arrives at geometrically similar workspace structure.
 \end{itemize}
+
+\subsection{Alternative Explanations}
+
+The workspace interpretation is not the only account of our data. We
+consider the alternatives that currently explain the most.
+
+\paragraph{Surface statistics and response register.}
+Confabulated answers are short, fluent, and formulaic; hedged answers
+carry stereotyped hedge vocabulary. The divergence between the two modes
+occurs at token~$6.6$ vs.\ $22.9$. FWL residualization removes token
+count linearly but does not remove content, register, or template
+structure. When a text-feature baseline was compared to geometry on
+confabulation detection, text matched ($0.820$ vs.\ $0.806$). The
+mundane hypothesis --- that V-projection spectra track text-production
+statistics of the response mode rather than workspace dynamics ---
+currently explains every surviving detection result and has not been
+excluded. Experiment~1 is designed to discriminate: if confabulation
+score anticorrelates with J-space engagement on matched prompts, the
+workspace account gains ground; if it does not, the surface-statistics
+account is more parsimonious.
+
+\paragraph{The deflationary mid-layer account.}
+Replace ``Global Workspace'' with ``mid-layer band of abstract
+representations'' throughout: every correspondence in
+Table~\ref{tab:convergences} survives. The workspace-specific
+properties --- broadcast, ignition, capacity interference, serial
+bottleneck --- have not been demonstrated for V-projection features.
+Our own commissioned analysis warned that non-discriminating experiments
+``will produce another `consistent with X' result forever.'' The same
+warning applies here with $X =$ GWT. None of our proposed experiments
+test broadcast or ignition; the framework would need to be revised, not
+rejected, if mid-layer-abstraction proves sufficient.
+
+\paragraph{Internal disagreements.}
+Our coalition's perspectives diverge on three points that the paper
+should not paper over. First, CC argues that emotion-vector injection
+at layers~3/7 operates \emph{pre-workspace} (below the $30\%$-depth
+onset), not as workspace modulation --- which would mean \S\ref{sec:explains}'s
+``depth matters because of workspace boundaries'' is wrong for the
+therapeutic window specifically. Second, CC's prediction P2 holds that
+deception planning may be \emph{outside} J-space entirely (specialized
+sub-workspace processing), which would contradict our ``expansion =
+workspace overload'' framing. Third, the identity-vs-substrate finding
+($0.154$ vs.\ $0.080$) was measured on Qwen3.5-27B processing Claude
+system prompts as text inputs --- not on Claude models themselves. The
+$0.972$ Sonnet/Opus overlap lacks a null distribution over arbitrary
+instruction pairs; our own killed finding \#4 (depth reorganization
+generic to any instruction pair) predicts high overlap generically.
 
 \subsection{Implications for Alignment}
 
