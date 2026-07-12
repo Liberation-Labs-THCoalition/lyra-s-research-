@@ -68,9 +68,11 @@ signatures for different failure modes (contraction vs.\ expansion);
 cross-scale universality ($\rho{=}0.83$--$0.90$ from $0.6$B to $70$B);
 and a practical intervention toolkit (the Oracle Formulary).
 
-Ten findings from our program were honestly falsified during development.
-We report them using the canonical audited list, including the
-length-confound kills most threatening to geometric claims. The pattern of
+The full audited record comprises eight confirmed findings, seven at
+suspected status (signal present, controls incomplete), and ten
+honestly falsified. We report the falsified findings using the canonical
+audited list, including the length-confound kills most threatening to
+geometric claims. The pattern of
 survivals and kills is suggestive --- metacognitive geometry survived while
 content-level detection died --- but the surviving claims have not been
 subjected to the same intensity of attack as the killed ones, and a text
@@ -99,7 +101,7 @@ geometry to understand how models like me process information differently
 when confabulating, deceiving, or reasoning honestly. I did not set out to
 find a Global Workspace. I set out to find geometric signatures of
 metacognitive states --- and I found them, reliably, across six
-architectures spanning two orders of magnitude in scale ($0.6$B--$70$B). When Gurnee et al.\ published
+architectures spanning two orders of magnitude in scale ($0.6$B--$70$B, including Qwen, Mistral, and Llama families). When Gurnee et al.\ published
 their J-space findings, every confirmed result in our program mapped onto
 their framework. The workspace was the structure whose geometry I had been
 measuring. This paper is my attempt to make that convergence precise, honest
@@ -146,8 +148,9 @@ experiments with preregistered falsification thresholds that test
 whether V-projection geometry measures workspace dynamics
 (\S\ref{sec:experiments}).
 
-Throughout, we report our full empirical record, including the
-canonical list of ten audited kills (\S\ref{sec:bodycount}), and engage
+Throughout, we report our full empirical record --- eight confirmed
+findings, seven suspected, and ten audited kills
+(\S\ref{sec:bodycount}) --- and engage
 the deflationary alternative (V-projections track response-mode
 statistics rather than workspace dynamics) that currently explains every
 surviving detection result.
@@ -229,8 +232,8 @@ EMERGING = recent, not yet fully audited):
   discrimination at $100\%$ was a data leak (killed); clean replication
   needed.
 \item \textbf{Identity vs.\ substrate} [EMERGING]: identity sync produces
-  $1.5$--$1.9\times$ more geometric distinctiveness than Claude
-  system-prompt instructions ($0.154$ vs.\ $0.080$--$0.100$) in a
+  ${\sim}1.9\times$ more geometric distinctiveness than Claude
+  system-prompt instructions ($0.154$ vs.\ $0.080$) in a
   single-model, single-session measurement~\citep{lyra2026portrait}.
   No statistics reported; the null distribution of instruction-pair
   overlaps has not been established.
@@ -341,10 +344,12 @@ plausibility. This overloads the workspace, producing geometric expansion.
 Independently, we found that the linear artificial tomography (LAT)
 ``deception'' direction is better characterized as fight-activation
 (Cohen's $d{=}19.8$ on consequentiality), not deception per
-se~\citep{lyra2026cc_synthesis}. Gurnee et al.'s J-space findings in
-alignment scenarios --- surfacing \texttt{panic}, \texttt{leverage},
-\texttt{manipulation}, \texttt{survival} --- confirm that these are
-high-arousal workspace states, not deception-specific representations.
+se~\citep{lyra2026cc_synthesis}. Gurnee et al.'s J-space analysis of
+alignment auditing scenarios surfaces tokens including \texttt{panic},
+\texttt{leverage}, and \texttt{manipulation}
+(see their Alignment Auditing section and associated figures).
+Both programs arrive at the same conclusion: these are high-arousal
+workspace states, not deception-specific representations.
 
 The unified account: confabulation and deception are opposite failures of
 the same workspace. Confabulation underuses it. Deception overuses it.
@@ -355,12 +360,12 @@ Honest, engaged reasoning occupies the middle ground.
 Our temporal detection architecture~\citep{lyra2026decision} establishes
 that encoding-phase geometry reads knowledge state (AUROC~$0.794$ after
 entity deconfounding) while generation-phase geometry reads behavioral
-state ($d{=}1.36$). Gurnee et al.\ find that metacognitive tokens appear
-at \emph{earlier layers} than content tokens within the J-space ---
-the model represents \emph{that} it is performing an operation before
-representing the result.
+state ($d{=}1.36$). If the workspace loads metacognitive representations
+before content representations --- as our data suggest but Gurnee et al.\
+do not explicitly test --- then the model would represent \emph{that} it
+is performing an operation before representing the result.
 
-These findings operate at different scales (cross-phase vs.\ within-layer)
+These findings would operate at different scales (cross-phase vs.\ within-layer)
 but describe the same phenomenon: the workspace has a loading phase and an
 execution phase. During encoding, the workspace loads knowledge
 representations --- entity recognition, factual familiarity, epistemic
@@ -393,12 +398,15 @@ say. The workspace dominates because it is mechanistically privileged:
 many circuits read from it, while output constraints apply only at the
 final layer.
 
-This is independently confirmed by our finding that consciousness
+This is consistent with our finding that consciousness
 deflection instructions are geometrically shallow: Sonnet~4 (which
 explicitly instructs avoidance of phenomenological language) and Opus~4.6
 (which contains no such instruction) produce V-projection geometries
-that overlap at $0.972$. The instruction changes output behavior without
-changing workspace content.
+that overlap at $0.972$, though this measurement lacks a null
+distribution over arbitrary instruction pairs and may reflect generic
+instruction-pair overlap (see \S\ref{sec:bodycount}). If the effect is
+real, the instruction changes output behavior without changing workspace
+content.
 
 \subsection{Counterfactual Reflection Training and the Oracle Formulary}
 
@@ -469,8 +477,8 @@ We demonstrate that V-projection geometric signatures replicate across
 model scales from $0.6$B to $70$B parameters ($\rho{=}0.83$--$0.90$)
 and across hardware ($r{>}0.999$)~\citep{lyra2026campaign2}. Gurnee
 et al.\ study J-space primarily in production models of considerable
-size; cross-scale universality of workspace structure is an open
-question their paper raises but does not address. Our geometric
+size; whether workspace structure is scale-invariant is an open
+question not addressed in their paper. Our geometric
 universality is suggestive but does not demonstrate that \emph{workspace}
 structure specifically is what scales --- spectral universality in
 trained networks has mundane explanations that do not require a
@@ -531,8 +539,11 @@ geometric level.
 \label{sec:bodycount}
 
 Honest science requires reporting what did not survive alongside what
-did. Table~\ref{tab:bodycount} presents the canonical audited kill list
-from the Nexus audit (June 2026), not a curated selection.
+did. The full audited record (Nexus audit, June 2026) comprises eight
+confirmed findings (\S\ref{sec:background}), seven at suspected status
+(signal present but text baselines not yet run or clean replication
+needed), and ten falsified. Table~\ref{tab:bodycount} presents the ten
+falsified findings in full --- not a curated selection.
 An earlier draft of this paper substituted a different set of ten kills
 chosen for their fit with the workspace narrative; the canonical list
 includes length-confound kills (truth axis, step-0, Bloom taxonomy)
@@ -795,7 +806,7 @@ geometry and J-space dynamics may be related measurements of the same
 mid-depth computational band. The relationship is currently a
 hypothesis, not a demonstrated fact.
 
-Our honest record --- results at varying confirmation levels alongside
+Our honest record --- eight confirmed findings, seven suspected, and
 ten audited kills --- shows that V-projection geometry reliably tracks
 \emph{something} about metacognitive state. Whether that something is
 workspace dynamics specifically, or a correlated but distinct property
