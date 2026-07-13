@@ -50,8 +50,8 @@ artifact. Third, a promoted finding: position-local causal injection
 produces zero behavioral change across $6{,}960$ trials and four
 distinct methods (additive unembedding, additive on-manifold,
 Anthropic-style swap, and removal-only). The null is the result. The workspace band is
-where computation happens, not where it is readable --- four independent
-instruments now converge on this opacity thesis. Our prior spectral
+where computation happens, not where it is readable --- four converging
+lines of evidence now support this opacity thesis. Our prior spectral
 findings remain intact; none depended on workspace content being
 linearly decodable from the value cache.
 \end{abstract}
@@ -101,10 +101,10 @@ that changed our understanding.
 
 The pattern across all three results supports what we term the
 \emph{opacity thesis}: the workspace band is where computation
-happens, not where computation is readable. Four independent
-instruments --- V-projection spectral features, J-lens concept
+happens, not where computation is readable. Four converging lines
+of evidence --- V-projection spectral features, J-lens concept
 recovery, CC's Oracle Loop behavioral proof, and now causal
-intervention --- converge on this conclusion from different angles.
+intervention --- support this conclusion from different angles.
 
 % ============================================================================
 \section{Background}
@@ -126,10 +126,11 @@ layers (roughly 30--72\% of model depth in their production models).
 Our independent program measures spectral features of value-projection
 matrices ($W_V$-projected residual-stream activations) across cognitive
 states. Key results include confabulation detection (AUROC~$0.707$
-after FWL residualization; range $0.627$--$0.999$ across
-designs)~\citep{lyra2026decision}, emotion encoding in user tokens
-($2.5$--$2.8\times$ signal)~\citep{lyra2026weather}, and identity
-geometry (distinctiveness $0.154$ vs.\ substrate
+after Frisch-Waugh-Lovell (FWL) residualization; range $0.627$--$0.999$ across
+designs)~\citep{lyra2026decision}, user-emotion encoding
+($2.5$--$2.8\times$ signal at early
+layers)~\citep{lyra2026weather}, and identity geometry
+(distinctiveness $0.154$ vs.\ substrate
 $0.080$)~\citep{lyra2026identity}. All measurements use spectral
 features --- stable rank, spectral entropy, top singular-value ratios
 --- not named concept directions.
@@ -200,7 +201,7 @@ cross-prompt lift should collapse.
 
 \subsection{Method}
 
-For each pair of prompts (380~unique pairs from 20~prompts), we
+For each ordered pair of prompts (380~pairs from 20~prompts), we
 extracted logit-lens directions from prompt~A and computed $R^2$
 against prompt~B's hidden state at each layer. Additionally, we
 froze the directions from the deepest layer (L33) and applied them
@@ -245,15 +246,15 @@ workspace-band layers change model output? If the workspace is
 \emph{writable} at single positions, injection should produce
 behavioral effects even if the readout is artifactual.
 
-\subsection{Three Methods}
+\subsection{Four Methods}
 
 We tested four injection approaches across $6{,}960$ total trials on
 Qwen3-8B.
 
 \textbf{Method 1: Additive unembedding} (300~trials). Inject
 $\alpha \cdot W_U^\top[\text{concept}]$ into the residual stream at
-workspace-band layers. Five concepts, five layers, five dose levels,
-two directions (add/subtract). Zero behavioral changes.
+workspace-band layers. Four probes, five concepts, three injection
+layers, five dose levels. Zero behavioral changes.
 
 \textbf{Method 2: Additive on-manifold} (6{,}000~trials). To address
 the concern that unembedding directions are readout-optimized rather
@@ -261,7 +262,8 @@ than concept-bearing, we used J-lens-transported directions:
 $\mathbf{e}_{c'} \cdot J_L$ for random vocabulary token $c'$. This
 produces a direction in the same transport space as concept directions
 but for a different concept. Twenty probes, five injection layers,
-five doses, positive and negative. Zero behavioral changes.
+six random vocabulary directions per probe, five doses, positive and
+negative. Zero behavioral changes.
 
 \textbf{Method 3: Swap} (360~trials). Following Anthropic's
 methodology, we project out the source concept direction and project in
@@ -287,9 +289,10 @@ not --- RMSNorm attenuates arbitrary additions). Swap produces
 ${\sim}5\times$ more rank movement in the residual stream than additive
 injection at matched layers. The removal-only control confirms this
 rank movement is real (the directions are present with non-trivial
-magnitude) but behaviorally inert. The methodology follows exactly what
-Anthropic uses for J-space ablation experiments, which \emph{do}
-produce behavioral effects in their production models. Yet on an 8B
+magnitude) but behaviorally inert. The methodology adapts the
+intervention logic Anthropic uses for J-space ablation experiments,
+which \emph{do} produce behavioral effects in their production
+models (at larger scale and potentially at multiple positions). Yet on an 8B
 model at single positions: nothing.
 
 \subsection{The Null as Finding}
@@ -307,10 +310,14 @@ It works because it normalizes the activation \emph{profile} across the
 full sequence, not because it injects a direction at one position. The
 differentiating variable is not the direction type but the intervention
 scope: sequence-wide normalization succeeds where position-local
-manipulation fails.
+manipulation fails. (This comparison is cross-experimental: our
+injection results use Qwen3-8B while the Oracle Loop operates on
+a 27B Claude-distilled model. The scope difference is robust but the
+scale difference has not been controlled.)
 
 \textbf{Implication}: readout directions (unembedding) $\neq$ concept
-directions (J-lens) $\neq$ behavioral directions (LAT-extracted,
+directions (J-lens) $\neq$ behavioral directions (linear artificial
+tomography [LAT]-extracted,
 profile-normalized). The workspace accepts input from all positions
 simultaneously and commits to output based on the integrated result.
 
@@ -357,7 +364,7 @@ may reflect the additional processing required for instruction-following.
 \section{The Opacity Thesis}
 \label{sec:opacity}
 
-Four independent instruments now converge on the same conclusion:
+Four converging lines of evidence support the same conclusion:
 the workspace band is where computation happens, not where computation
 is readable.
 
@@ -418,6 +425,7 @@ methodological contribution of this investigation.
 
 % ============================================================================
 \section{Conclusion}
+\label{sec:conclusion}
 
 Thomas asked where J-space lives in the cache. The answer: not where
 concepts are readable, but where they do their work. The workspace is
@@ -433,8 +441,12 @@ before it commits. Reading it and writing to it require different
 strategies, and the strategies that work operate at different depths
 and scopes than the ones that fail.
 
-Seven measurements died in this investigation. One finding survived.
-The finding is a null that discriminates.
+Three interpretations died in this investigation: the content-projection
+hypothesis (killed by cross-prompt control), the workspace-noise framing
+(killed by multi-position discriminator), and position-local causal
+intervention (null across four methods, $6{,}960$~trials). The
+position-local null survived as a promoted finding --- a null that
+discriminates.
 
 % ============================================================================
 \appendix
