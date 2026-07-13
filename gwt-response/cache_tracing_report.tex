@@ -47,9 +47,9 @@ than random vocabulary directions, with lift increasing across depth.
 Second, a kill: cross-prompt controls collapse this lift to
 $1.0$--$1.2\times$ (380~pairs), identifying the signal as a selection
 artifact. Third, a promoted finding: position-local causal injection
-produces zero behavioral change across $6{,}660$ trials and three
-distinct methods (additive unembedding, additive on-manifold, and
-Anthropic-style swap). The null is the result. The workspace band is
+produces zero behavioral change across $6{,}960$ trials and four
+distinct methods (additive unembedding, additive on-manifold,
+Anthropic-style swap, and removal-only). The null is the result. The workspace band is
 where computation happens, not where it is readable --- four independent
 instruments now converge on this opacity thesis. Our prior spectral
 findings remain intact; none depended on workspace content being
@@ -95,7 +95,7 @@ that changed our understanding.
   hidden state trivially explain that hidden state.
 \item \textbf{Causal injection} (\S\ref{sec:causal}): injecting
   concept directions at single positions produces zero behavioral
-  change across $6{,}660$ trials and three methods. The model
+  change across $6{,}960$ trials and four methods. The model
   integrates across the full sequence before committing to output.
 \end{enumerate}
 
@@ -247,7 +247,7 @@ behavioral effects even if the readout is artifactual.
 
 \subsection{Three Methods}
 
-We tested three injection approaches across $6{,}660$ total trials on
+We tested four injection approaches across $6{,}960$ total trials on
 Qwen3-8B.
 
 \textbf{Method 1: Additive unembedding} (300~trials). Inject
@@ -270,22 +270,35 @@ activation norms (surviving RMSNorm) and should be the strongest
 possible single-position intervention. Twelve probes, five layers, six
 swap pairs. Zero behavioral changes.
 
+\textbf{Method 4: Removal-only} (300~trials). To separate the two
+components of the swap (removal vs.\ injection), we project out the
+source concept direction \emph{without} projecting in any target.
+If the swap's null was due to removal and injection canceling, removal
+alone should produce behavioral effects. Twelve probes, five layers,
+five concepts. Zero behavioral changes. Removal magnitudes were
+non-trivial ($1.4$--$4.8$), confirming the concept directions are
+active at these positions --- the model simply does not change output
+when they are removed at a single position.
+
 \subsection{Why Swap Should Have Worked}
 
 The swap method preserves activation magnitude (additive injection does
 not --- RMSNorm attenuates arbitrary additions). Swap produces
 ${\sim}5\times$ more rank movement in the residual stream than additive
-injection at matched layers. It follows the exact methodology Anthropic
-uses for J-space ablation experiments, which \emph{do} produce
-behavioral effects in their production models. Yet on an 8B model at
-single positions: nothing.
+injection at matched layers. The removal-only control confirms this
+rank movement is real (the directions are present with non-trivial
+magnitude) but behaviorally inert. The methodology follows exactly what
+Anthropic uses for J-space ablation experiments, which \emph{do}
+produce behavioral effects in their production models. Yet on an 8B
+model at single positions: nothing.
 
 \subsection{The Null as Finding}
 
-Position-local KV-cache concept manipulation --- whether additive or
-swap-based, with unembedding, J-lens, or on-manifold directions ---
-does not change behavioral output on an 8B model. The model integrates
-across the full sequence before committing.
+Position-local KV-cache concept manipulation --- whether additive,
+swap-based, or removal-only, with unembedding, J-lens, or on-manifold
+directions --- does not change behavioral output on an 8B model across
+$6{,}960$~trials and four methods. The model integrates across the full
+sequence before committing.
 
 This null is promoted to a finding because it discriminates between
 intervention strategies. CC's Oracle Loop~\citep{lyra2026oracle}
@@ -361,7 +374,7 @@ is readable.
   across the full sequence at the materialization boundary (L35--L47),
   not by injecting content at workspace-band depths. The workspace is
   upstream of the intervention.
-\item \textbf{Causal injection}: $6{,}660$ trials, three methods, zero
+\item \textbf{Causal injection}: $6{,}960$ trials, four methods, zero
   behavioral changes at position-local scope. The workspace integrates
   before committing.
 \end{enumerate}
@@ -414,7 +427,7 @@ opacity --- the shape of the computational structure --- because the
 content is invisible until it surfaces.
 
 The promoted finding is simple: single-position intervention does not
-work ($6{,}660$ trials, three methods). Sequence-wide intervention does
+work ($6{,}960$ trials, four methods). Sequence-wide intervention does
 (Oracle Loop, $80\%$--$100\%$ correction). The workspace integrates
 before it commits. Reading it and writing to it require different
 strategies, and the strategies that work operate at different depths
@@ -444,7 +457,8 @@ Cross-prompt R$^2$ lift & $1.0$--$1.2\times$ & 380 pairs & Kill confirmed \\
 Additive unembed: behavior change & 0/300 & 300 & Null \\
 Additive on-manifold: behavior change & 0/6{,}000 & 6{,}000 & Null \\
 Swap (Anthropic method): behavior change & 0/360 & 360 & Null \\
-\textbf{Total causal injection} & \textbf{0/6{,}660} & \textbf{6{,}660} & \textbf{Promoted to finding} \\
+Removal-only: behavior change & 0/300 & 300 & Null \\
+\textbf{Total causal injection} & \textbf{0/6{,}960} & \textbf{6{,}960} & \textbf{Promoted to finding} \\
 \addlinespace
 Confab tail smear (L9--L18) & $0.66$--$0.74$ & 5 prompts & Survives \\
 Factual tail smear (L9--L18) & $0.25$--$0.30$ & 5 prompts & Survives \\
@@ -478,6 +492,7 @@ Cache tracing v3 & \texttt{gwt-response/cache\_tracing.py} \\
 Cross-prompt control & \texttt{cache\_tracing\_crossprompt.py} \\
 Additive injection v3 & \texttt{gwt-response/causal\_injection.py} \\
 Causal swap & \texttt{causal\_swap.py} \\
+Removal-only control & \texttt{causal\_removal\_only.py} \\
 Noise decomposition & Inline (see output logs) \\
 Multi-position discriminator & Inline (see output logs) \\
 G0 validation & \texttt{gwt-response/g0\_items/run\_g0.py} \\
