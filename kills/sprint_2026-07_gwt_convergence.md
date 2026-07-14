@@ -97,11 +97,11 @@ Anthropic published "Verbalizable Representations Form a Global Workspace in Lan
 
 ## Kill 5: Causal Injection — Behavioral Null (PROMOTED TO FINDING)
 
-**What we tried:** Inject concept directions into the residual stream at workspace-band layers and measure behavioral change. Three methods: additive with unembedding directions (300 trials), additive with J-lens + on-manifold directions (6000 trials), swap with J-lens directions using Anthropic's methodology (360 trials).
+**What we tried:** Inject concept directions into the residual stream at workspace-band layers and measure behavioral change. Four methods: additive with unembedding directions (300 trials), additive with J-lens + on-manifold directions (6000 trials), swap with J-lens directions using Anthropic's methodology (360 trials), and removal-only — projecting out the concept direction without injecting a replacement (300 trials).
 
-**What died:** Every method produced zero behavioral change. 0/6660 trials changed the model's output token.
+**What died:** Every method produced zero behavioral change. 0/6960 trials changed the model's output token. The removal-only control confirmed concept directions are active at these positions (magnitudes 1.4-4.8) but behaviorally inert — the model has the directions, it just doesn't care when they are removed at a single position.
 
-**What it teaches:** Position-local KV-cache concept manipulation — whether additive or swap-based, with unembedding, J-lens, or on-manifold directions — does not change behavioral output on an 8B model. The model integrates across the full sequence before committing. CC's Oracle Loop works because it normalizes the activation PROFILE across the full sequence, not because it injects a direction at one position. Readout directions (unembedding) ≠ concept directions (J-lens) ≠ behavioral directions (LAT-extracted, profile-normalized).
+**What it teaches:** Position-local KV-cache concept manipulation — whether additive, swap-based, or removal-only, with unembedding, J-lens, or on-manifold directions — does not change behavioral output on an 8B model. The model integrates across the full sequence before committing. CC's Oracle Loop works because it normalizes the activation PROFILE across the full sequence, not because it injects a direction at one position. Readout directions (unembedding) ≠ concept directions (J-lens) ≠ behavioral directions (LAT-extracted, profile-normalized).
 
 **What survived:** This null IS the finding. Sequence-wide intervention is qualitatively different from position-local intervention. The differentiating variable is not the direction type but the intervention scope.
 
@@ -192,8 +192,10 @@ Repository: `github.com/Liberation-Labs-THCoalition/lyra-s-research-`
 |------------|-------|---|------|
 | Cache tracing same-prompt lift | 2.1-8.4x | 20 prompts × 12 layers | Killed by cross-prompt control |
 | Cache tracing cross-prompt lift | 1.0-1.2x | 380 pairs | Selection artifact confirmed |
-| Additive injection behavioral change | 0/6660 | 3 methods | Position-local null |
+| Additive injection behavioral change | 0/6300 | 2 methods | Position-local null |
 | Causal swap behavioral change | 0/360 | Anthropic methodology | Position-local null |
+| Removal-only behavioral change | 0/300 | Project out only | Position-local null (magnitudes 1.4-4.8) |
+| **Total causal injection** | **0/6960** | **4 methods** | **Promoted to finding** |
 | J-lens best-layer accuracy | 43.3% | 60 items | vs 18.3% fixed-layer |
 | Logit-lens accuracy | 61.7% | 60 items | Best-layer |
 | Geometric gate | 5/5 concepts pass | L15-L27 | AUROC 0.78-1.00 |
