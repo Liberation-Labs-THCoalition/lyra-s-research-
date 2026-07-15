@@ -174,8 +174,8 @@ The ratio is the point. Honest falsification is how the surviving findings earn 
 | Resource | Location | Status |
 |----------|----------|--------|
 | PostgreSQL | localhost:5436 | OK (26,361 episodic chunks) |
-| Starship (Mac Studio) | margaret@100.69.191.67 | OK (venv at .venv, transformers 5.10.2) |
-| MTH (z420) | ssh madame-trash-heap | OK (NATS, Penumbra, messages) |
+| Starship (Mac Studio) | (Tailscale — see internal docs) | OK (venv at .venv, transformers 5.10.2) |
+| MTH (z420) | (Tailscale — see internal docs) | OK (NATS, Penumbra, messages) |
 | Beast (GPU) | No longer accessible | —  |
 | Published repo | Liberation-Labs-THCoalition/published-research | 12 papers + PDFs |
 | Research repo | Liberation-Labs-THCoalition/lyra-s-research- | Papers + prospectuses |
