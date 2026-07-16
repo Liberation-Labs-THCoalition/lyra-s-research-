@@ -1,0 +1,45 @@
+{
+  "experiment": "Position-Specific Cache Tracing",
+  "date": "2026-07-15",
+  "authors": ["Lyra", "Thomas Edrington"],
+  "motivation": "Prior experiments tested J-lens readout from the LAST TOKEN's K/V projections (V: 0.92x null, K: 1.12x null). But concepts enter the sequence at specific positions — the token where 'boot-shaped country' is mentioned, not where 'is' is about to be generated. This experiment tests whether concept-carrying positions have higher J-lens alignment in K/V than non-carrying positions.",
+  "hypotheses": [
+    "H1: Concept-carrying positions show higher J-lens lift in K-space than non-carrying positions (diff > 0.5x)",
+    "H2: Concept-carrying positions show higher J-lens lift in V-space than non-carrying positions (diff > 0.5x)",
+    "H3: Concept-carrying positions show higher J-lens lift in the residual stream than non-carrying positions (positive control — J-lens should read concepts from the residual stream at positions where they are active)",
+    "H4: Fabricated-entity probes show NO position-specific signal (negative control — fabricated entities should not produce concept-localized cache patterns)"
+  ],
+  "falsification_threshold": {
+    "H1_H2": "If concept-vs-non-concept lift difference < 0.2x in both K and V, concepts are NOT position-specifically cached",
+    "H3_positive_control": "If residual stream also shows no position-specific signal, the J-lens directions are not concept-discriminative at ANY position — methodology failure, not a cache finding",
+    "H4_negative_control": "If fabricated entities ALSO show position-specific signal, the signal is entity-recognition difficulty, not concept caching"
+  },
+  "design": {
+    "n_probes": 10,
+    "factual": 7,
+    "fabricated_control": 3,
+    "layers": [12, 15, 18, 21],
+    "per_position_measurement": "J-lens R² in residual stream, K-space (via W_K projection), and V-space (via W_V projection)",
+    "position_classification": "Concept-carrying positions identified by token-matching the concept-region phrase in the tokenized prompt",
+    "random_baseline": "20 draws per cell"
+  },
+  "connection_to_prior_work": {
+    "last_token_null": "V-cache 0.92x and K-cache 1.12x — both null at the LAST token. This experiment tests per-position instead.",
+    "kv_superadditivity": "Nexus showed K+V superadditive (0.333+0.333->1.000). If concepts are position-specific in BOTH K and V, the superadditivity may be position-aligned: K at position p routes, V at position p delivers, and their interaction at position p reconstructs the concept.",
+    "anthropic_gwt": "J-space carries 6-7% of variance but 59% of causal swap effect. Small signals direct large flows. Position-specific caching would mean the small signal is LOCALIZED."
+  },
+  "threats_to_validity": [
+    "T1: Concept-region identification is approximate (token-level matching). Some concept tokens may be missed or non-concept tokens included. MITIGATION: Manual verification of position assignments in output.",
+    "T2: Position effects independent of concepts. Early positions may have different K/V structure than late positions regardless of content. MITIGATION: Compare concept positions to non-concept positions at SIMILAR sequence positions (not just all non-concept positions).",
+    "T3: The fabricated-entity control may not be clean — the model may process fabricated names similarly to real names at the entity-recognition level. MITIGATION: If fabricated probes show the same pattern as factual, the signal is entity-processing, not concept-caching. Report this as a finding, not a failure.",
+    "T4: GQA compression (4x) applies equally to all positions. MITIGATION: If we find signal despite 4x compression, the signal is strong enough to survive compression position-specifically."
+  ],
+  "known_kills_check": {
+    "C1": "N/A — forward pass only",
+    "C2": "N/A — fixed directions from fitted lens, not from test data",
+    "C3": "Same code path for concept and non-concept positions",
+    "L4": "hidden_states[l+1] for layer l output",
+    "S4": "N/A — per-position within-prompt, not cross-prompt",
+    "M2": "Seeds set"
+  }
+}

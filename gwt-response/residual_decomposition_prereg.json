@@ -1,0 +1,55 @@
+{
+  "experiment": "Residual Stream Decomposition: Where Workspace Concepts Reconstruct",
+  "date": "2026-07-15",
+  "authors": ["Lyra", "Thomas Edrington"],
+  "motivation": "V-cache readout null (0.92x), K-cache readout null (1.12x), but Nexus showed K+V superadditive (0.333+0.333->1.000). Concepts must reconstruct through the K×V interaction in attention. This experiment decomposes the residual stream to locate WHERE concepts appear in the computation graph.",
+  "pilot_result": "Attention output shows 2.3x lift at L15 (workspace band) where K alone (1.12x) and V alone (0.92x) showed nothing. MLP shows 2.1x at L27. Input shows 3.3x at L33 (output accumulation). Pattern: reconstruct through attention at workspace depth, MLP processes deeper, accumulate at output.",
+  "hypotheses": [
+    "H1: Attention output carries J-lens concept signal at workspace-band layers (lift > 2.0x at L12-L21)",
+    "H2: Neither K alone nor V alone carries signal at those same layers (lift < 1.3x — already confirmed by prior experiments)",
+    "H3: MLP output carries signal at deeper layers (L24-L30) where it processes attention-reconstructed concepts",
+    "H4: The OUTPUT (h_L + attn + MLP) shows LESS signal than attention alone at workspace depth, because other components dilute the attention signal",
+    "H5: Signal in the INPUT component increases with depth (concepts accumulate in the residual stream)"
+  ],
+  "falsification_threshold": {
+    "H1": "Attention lift > 2.0x at 2+ workspace-band layers. If < 1.5x everywhere, reconstruction hypothesis fails.",
+    "H3": "MLP lift > 1.5x at 2+ layers deeper than workspace band. If MLP never shows signal, concepts don't flow through feedforward.",
+    "H4": "Output lift < attention lift at workspace-band layers where attention shows signal. If output > attention, the concept signal isn't being diluted.",
+    "H5": "Input lift at L30+ > input lift at L12. If flat, no accumulation."
+  },
+  "gqa_compression_hypothesis": "Qwen3-8B uses grouped-query attention: 32 Q heads but only 8 KV heads. d_model=4096 but K/V dim=1024 each (4x compression). Concepts survive the attention round-trip (Q provides 4096-dim decompression context) but not a one-way readout from the 1024-dim compressed K or V space. This explains both the K/V readout nulls and the attention output signal.",
+  "connection_to_nexus": "Nexus ghost dimensions: PC1 carries 34-67% variance but cos<=0.001 with J-lens. PC2 ignites at L45 as emotional routing channel. PC1 may be the routing infrastructure that CONTROLS what attention reconstructs, architecturally excluded from verbal output. PC2's ignition at the materialization boundary is where accumulated concepts become permanently workspace-readable.",
+  "model": "Qwen/Qwen3-8B (36 layers, d_model=4096, 32 Q heads, 8 KV heads, head_dim=128)",
+  "lens": "fitted_lenses/lens_qwen3-8b.pt (70 prompts)",
+  "design": {
+    "n_prompts": 15,
+    "categories": "5 factual, 5 confab-prone, 3 instruction, 2 emotional (mixed for diversity)",
+    "layers_sampled": "every 3rd layer (L0, L3, ..., L33) = 12 measurement points",
+    "components_measured": [
+      "input: h_L (residual stream entering layer L — what was already there)",
+      "attn: attention output (softmax(Q@K^T/sqrt(d)) @ V @ W_O — the K×V reconstruction)",
+      "mlp: MLP output (feedforward processing of post-attention residual)",
+      "output: h_{L+1} = h_L + attn + mlp (full residual stream leaving layer L)"
+    ],
+    "readout": "Fixed J-lens directions by transport magnitude (same as approved V-cache/K-cache design), R² via lstsq on CPU",
+    "random_baseline": "20 draws per cell (reduced from 100 for speed; sufficient for lift estimation)",
+    "hooks": "register_forward_pre_hook on each decoder layer (captures input), register_forward_hook on self_attn and mlp modules (captures outputs)"
+  },
+  "threats_to_validity": [
+    "T1: Hook captures may include W_O projection in attention output. If W_O adds its own signal, the attention lift could be from W_O not from K×V interaction. MITIGATION: W_O is a learned projection that TRANSFORMS the attention output back to residual-stream space — if concepts appear after W_O, they were reconstructed by attention and shaped by W_O, which is still the K×V pathway.",
+    "T2: Small N (15 prompts). MITIGATION: This is exploratory; the pilot showed a clear depth-differentiated pattern across all 15 prompts. Publishable version needs N>=30.",
+    "T3: The J-lens directions are fitted to the RESIDUAL STREAM, not to attention output space. After W_O projection the attention output is in residual-stream space, so J-lens directions should apply. But pre-W_O attention output lives in a different space. MITIGATION: Our hooks capture POST-W_O attention output (the self_attn module's full output), which is in residual-stream space.",
+    "T4: 20 random draws may give noisy lift estimates. MITIGATION: The pilot pattern was clear (2.3x attn at L15 vs ~1x everywhere else at that layer). Noise in baseline doesn't change a 2x+ signal.",
+    "T5: The 4x GQA compression hypothesis is testable but not tested here. A model with full attention (no GQA, K/V dim = d_model) should show HIGHER K/V readout signal if compression explains the null. MITIGATION: Note as prediction for future work, not claim."
+  ],
+  "known_kills_check": {
+    "C1_generate_rebuilds_cache": "N/A — forward pass only, no generation",
+    "C2_directions_on_test_data": "N/A — fixed directions from fitted lens, test prompts are novel",
+    "C3_different_code_paths": "Same hooks + readout for all components",
+    "L1_hooks": "Hooks are observation-only (pre_hook reads input, forward_hook reads output). No modification of tensors. Hooks do NOT alter the forward pass.",
+    "L3_no_null": "Random baseline (20 draws) is the null",
+    "L4_hidden_states": "hidden_states[l+1] for output; pre_hook args[0] for input",
+    "S4_no_FWL": "N/A — per-prompt measurement, not classification across prompts",
+    "M2_no_seed": "torch.manual_seed(42), np.random.seed(42), per-draw seeds"
+  }
+}
