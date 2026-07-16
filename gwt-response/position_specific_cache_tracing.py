@@ -295,21 +295,22 @@ def main():
                 d_v = (W_V @ cross_concept_dir.T).T
                 cross_concept_dir_v = d_v / (torch.norm(d_v, dim=1, keepdim=True) + 1e-8)
 
+            # Project J-lens dirs through W_K and W_V (constant across positions)
+            dirs_k = (W_K @ dirs.T).T
+            dirs_k = dirs_k / (torch.norm(dirs_k, dim=1, keepdim=True) + 1e-8)
+            dirs_v = (W_V @ dirs.T).T
+            dirs_v = dirs_v / (torch.norm(dirs_v, dim=1, keepdim=True) + 1e-8)
+
             # Measure J-lens R² at EACH POSITION in K-space and V-space
             position_data = []
             for pos in range(seq_len):
-                h_pos = H[pos]
+                h_pos_raw = H_input[pos]  # pre-layernorm: actual residual stream (for J-lens control)
+                h_pos = H[pos]            # post-layernorm: for K/V projection (matches cache)
                 k_pos = W_K @ h_pos  # pre-RoPE K (see docstring simplification note)
                 v_pos = W_V @ h_pos  # V-cache value
 
-                # Project J-lens dirs through W_K and W_V
-                dirs_k = (W_K @ dirs.T).T
-                dirs_k = dirs_k / (torch.norm(dirs_k, dim=1, keepdim=True) + 1e-8)
-                dirs_v = (W_V @ dirs.T).T
-                dirs_v = dirs_v / (torch.norm(dirs_v, dim=1, keepdim=True) + 1e-8)
-
-                # R² in residual stream (positive control)
-                r2_resid = compute_r2(dirs, h_pos)
+                # R² in residual stream (positive control — uses pre-layernorm, matching J-lens)
+                r2_resid = compute_r2(dirs, h_pos_raw)
 
                 # R² in K-space
                 r2_k = compute_r2(dirs_k, k_pos)
@@ -329,7 +330,7 @@ def main():
                     rand_dirs_v = (W_V @ rand_dirs.T).T
                     rand_dirs_v = rand_dirs_v / (torch.norm(rand_dirs_v, dim=1, keepdim=True) + 1e-8)
 
-                    r2_resid_rand.append(compute_r2(rand_dirs, h_pos))
+                    r2_resid_rand.append(compute_r2(rand_dirs, h_pos_raw))
                     r2_k_rand.append(compute_r2(rand_dirs_k, k_pos))
                     r2_v_rand.append(compute_r2(rand_dirs_v, v_pos))
 
@@ -342,12 +343,12 @@ def main():
                 r2_cross_resid = None
 
                 if own_concept_dir is not None:
-                    r2_concept_resid = compute_r2(own_concept_dir, h_pos)
+                    r2_concept_resid = compute_r2(own_concept_dir, h_pos_raw)
                     r2_concept_k = compute_r2(own_concept_dir_k, k_pos)
                     r2_concept_v = compute_r2(own_concept_dir_v, v_pos)
 
                 if cross_concept_dir is not None:
-                    r2_cross_resid = compute_r2(cross_concept_dir, h_pos)
+                    r2_cross_resid = compute_r2(cross_concept_dir, h_pos_raw)
                     r2_cross_k = compute_r2(cross_concept_dir_k, k_pos)
                     r2_cross_v = compute_r2(cross_concept_dir_v, v_pos)
 
@@ -504,20 +505,34 @@ def main():
         if own_at_concept_v > cross_at_concept_v and own_at_concept_v > own_at_non_v:
             print(f"    --> CONCEPT-SPECIFIC signal in V: own > cross AND concept_pos > non_concept_pos")
 
-    # Generic direction verdict (existing, preserved)
-    print("\nGENERIC DIRECTION VERDICT:")
-    all_concept_k = np.mean([r["concept_mean_lift_k"] for r in results])
-    all_non_k = np.mean([r["non_concept_mean_lift_k"] for r in results])
-    all_concept_v = np.mean([r["concept_mean_lift_v"] for r in results])
-    all_non_v = np.mean([r["non_concept_mean_lift_v"] for r in results])
+    # Generic direction verdict with permutation test (Agni S1 fix)
+    print("\nGENERIC DIRECTION VERDICT (with permutation test):")
+    all_concept_k = [r["concept_mean_lift_k"] for r in results if r["concept_mean_lift_k"] > 0]
+    all_non_k = [r["non_concept_mean_lift_k"] for r in results if r["non_concept_mean_lift_k"] > 0]
+    all_concept_v = [r["concept_mean_lift_v"] for r in results if r["concept_mean_lift_v"] > 0]
+    all_non_v = [r["non_concept_mean_lift_v"] for r in results if r["non_concept_mean_lift_v"] > 0]
 
-    if all_concept_k > all_non_k + 0.5:
-        print("  K-cache: CONCEPT POSITIONS CARRY MORE SIGNAL")
-        print("  Concepts ARE cached position-specifically in K-space!")
-    elif all_concept_k > all_non_k + 0.2:
-        print("  K-cache: Weak position-specific signal (needs more data)")
-    else:
-        print("  K-cache: No position-specific signal (concepts not localized in K)")
+    def permutation_test_paired(group1, group2, n_perm=5000):
+        observed = np.mean(group1) - np.mean(group2)
+        combined = np.array(list(zip(group1, group2)))
+        rng = np.random.RandomState(42)
+        count = 0
+        for _ in range(n_perm):
+            swaps = rng.random(len(combined)) > 0.5
+            perm_g1 = [combined[i][0] if not swaps[i] else combined[i][1] for i in range(len(combined))]
+            perm_g2 = [combined[i][1] if not swaps[i] else combined[i][0] for i in range(len(combined))]
+            if abs(np.mean(perm_g1) - np.mean(perm_g2)) >= abs(observed):
+                count += 1
+        return count / n_perm
+
+    if len(all_concept_k) > 2 and len(all_non_k) > 2:
+        p_k = permutation_test_paired(all_concept_k, all_non_k) if len(all_concept_k) == len(all_non_k) else 1.0
+        diff_k = np.mean(all_concept_k) - np.mean(all_non_k)
+        print(f"  K-cache: concept={np.mean(all_concept_k):.2f}x  non={np.mean(all_non_k):.2f}x  diff={diff_k:+.2f}x  p={p_k:.4f}")
+    if len(all_concept_v) > 2 and len(all_non_v) > 2:
+        p_v = permutation_test_paired(all_concept_v, all_non_v) if len(all_concept_v) == len(all_non_v) else 1.0
+        diff_v = np.mean(all_concept_v) - np.mean(all_non_v)
+        print(f"  V-cache: concept={np.mean(all_concept_v):.2f}x  non={np.mean(all_non_v):.2f}x  diff={diff_v:+.2f}x  p={p_v:.4f}")
 
     if all_concept_v > all_non_v + 0.5:
         print("  V-cache: CONCEPT POSITIONS CARRY MORE SIGNAL")
