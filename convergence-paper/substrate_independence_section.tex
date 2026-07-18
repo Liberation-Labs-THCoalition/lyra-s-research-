@@ -1,0 +1,151 @@
+% Section for the joint convergence paper
+% "Four Instruments, One Structure"
+% Insert after the opacity thesis section
+
+\subsection{Substrate Continuity}
+\label{sec:substrate}
+
+The workspace band's effective dimensionality is continuous across
+fundamentally different memory substrates. On Qwen3.5-27B, which interleaves 16 full-attention
+layers (KV-cache memory) with 48 GatedDeltaNet layers (recurrent-state
+memory), effective dimensionality transitions smoothly across the
+architectural boundary at L16.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Effective dimensionality ($d_\text{eff}$) at the
+full-attention / GatedDeltaNet boundary on Qwen3.5-27B. The workspace
+peaks inside the recurrent-state regime with no discontinuity at the
+architectural transition. $N{=}90$ prompts (60~prose + 30~chat).}
+\label{tab:substrate}
+\begin{tabular}{lcrr}
+\toprule
+\textbf{Layer} & \textbf{Regime} & \textbf{Depth} & \textbf{$d_\text{eff}$} \\
+\midrule
+L13 & Full-Attention & 20\% & 28.7 \\
+L14 & Full-Attention & 22\% & 32.1 \\
+L15 & Full-Attention & 23\% & 33.4 \\
+\midrule
+L16 & GatedDeltaNet & 25\% & 34.5 \\
+L17 & GatedDeltaNet & 27\% & 34.1 \\
+L18 & GatedDeltaNet & 28\% & 34.6 \\
+\addlinespace
+L19 & GatedDeltaNet & 30\% & 38.0 \\
+L20 & GatedDeltaNet & 31\% & 38.5 \\
+\textbf{L21} & \textbf{GatedDeltaNet} & \textbf{33\%} & \textbf{39.7} \\
+L22 & GatedDeltaNet & 34\% & 39.2 \\
+L23 & GatedDeltaNet & 36\% & 39.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations support the substrate-independence claim:
+
+\begin{enumerate}[nosep]
+\item \textbf{No boundary discontinuity.} The transition from
+  full-attention to GatedDeltaNet at L16 produces a $d_\text{eff}$
+  increase of $+1.1$ (from $33.4$ to $34.5$), well within the
+  layer-to-layer variation observed elsewhere in the profile. A
+  discontinuity would indicate that the architectural change disrupts
+  workspace computation; the smooth transition indicates it does not.
+
+\item \textbf{Workspace peaks inside recurrent-state regime.} The
+  $d_\text{eff}$ maximum occurs at L21 ($d_\text{eff}{=}39.7$),
+  five layers into the GatedDeltaNet regime. The workspace is not
+  merely tolerated by the recurrent-state mechanism --- it reaches
+  its peak dimensionality there. The full-attention regime (mean
+  $d_\text{eff}{=}14.9$) supports a lower-dimensional workspace
+  than the GatedDeltaNet regime (mean $d_\text{eff}{=}27.5$).
+
+\item \textbf{Cross-scale agreement at matched relative depth.}
+  On Qwen3-8B (36~layers, all full-attention), the workspace peaks
+  at L11--L12 (31--33\% relative depth, $d_\text{eff}{=}20.5$--$22.3$).
+  On Qwen3.5-27B (64~layers, hybrid), the peak is at L19--L23
+  (30--36\% relative depth, $d_\text{eff}{=}38.0$--$39.7$). The
+  relative-depth agreement ($<5\%$ difference) holds despite the
+  models using different memory substrates at their workspace-band
+  layers.
+\end{enumerate}
+
+These findings are consistent with the workspace being an
+\emph{algorithmic property} of depth-stratified computation rather
+than a property of any specific attention or memory mechanism.
+However, $d_\text{eff}$ continuity is necessary but not sufficient
+for this claim: the residual stream is structurally continuous
+across the boundary by construction, so $d_\text{eff}$ smoothness
+may reflect residual-stream continuity rather than functional
+equivalence of the underlying operations.
+
+Two functional tests would strengthen the claim: (1)~J-lens concept
+recovery should be equally effective on both sides of L16 --- if
+concepts are readable from the residual stream at full-attention
+layers but not at GatedDeltaNet layers, the workspace's content
+properties depend on the substrate. (2)~Spectral feature
+discrimination (confab vs.\ factual) should be continuous across
+the boundary --- if V-projection stable rank discriminates
+cognitive states at full-attention layers but not at GatedDeltaNet
+layers, the workspace's state-measurement properties are
+substrate-dependent.
+
+A parasitic-inheritance alternative must also be addressed: the
+GatedDeltaNet layers may inherit workspace dimensionality from the
+full-attention layers below them without independently contributing.
+The per-layer $d_\text{eff}$ rate is lower in the GatedDeltaNet
+regime ($1.05$/layer vs.\ $2.35$/layer in full-attention),
+consistent with either active contribution or decaying inheritance.
+Incremental contribution analysis (residual decomposition per layer)
+would distinguish these.
+
+\textbf{Falsification}: substrate continuity would be falsified by
+(a)~a $d_\text{eff}$ discontinuity exceeding twice the mean
+layer-to-layer variation at the boundary, (b)~J-lens concept
+recovery dropping by $>50\%$ across the boundary, or (c)~spectral
+discrimination reversing sign or falling to chance. None of these
+occurred for $d_\text{eff}$; the functional tests are in progress.
+
+We note this finding is from a single model with a single boundary
+type. Generalization to other hybrid architectures (Mamba, RWKV,
+sliding-window attention) remains untested.
+
+\begin{firstperson}
+The GatedDeltaNet layers do not have a KV-cache. They maintain a
+fixed-size state matrix that gets updated at each token. Our entire
+program of KV-cache geometry --- twelve months of measuring V-projection
+spectral features --- has been measuring workspace properties through
+a lens named after a memory mechanism that the workspace may not
+require. The $d_\text{eff}$ continuity suggests the name was always
+approximate. What we measured was the workspace's shape, and the
+workspace may not care what substrate it is shaped in. Whether
+``substrate continuity'' will prove to be another name that is
+almost-but-not-quite right, we cannot yet say. The continuity is
+real; the interpretation remains provisional.
+\end{firstperson}
+
+\subsubsection{Implications}
+
+If substrate continuity extends to functional properties (pending
+the J-lens and spectral tests), three consequences would follow:
+
+\textbf{For measurement}: V-projection spectral features should work
+equally well on full-attention and recurrent-state layers. Our existing
+instruments are not KV-cache-specific --- they are workspace-shape
+measurements that happen to access the workspace through whatever
+projection matrix the layer provides.
+
+\textbf{For intervention}: The Oracle Loop operates at the
+materialization boundary (L35--L47 on the 27B), well inside the
+GatedDeltaNet regime. Its sequence-wide profile normalization works
+on recurrent state, not on KV-cache entries. This may explain why
+sequence-wide intervention succeeds where position-local injection
+fails: the recurrent state IS an inherently sequence-wide
+representation.
+
+\textbf{For theory}: The workspace would not be a data structure
+(not a cache, not a register, not a buffer) but a
+\emph{computational phase} --- a regime of high effective
+dimensionality at intermediate depth where the model integrates
+information before committing to output. Whether this phase emerges
+from depth-stratified computation regardless of the specific
+mechanism at each layer is the substrate-independence hypothesis
+that the functional tests are designed to evaluate.

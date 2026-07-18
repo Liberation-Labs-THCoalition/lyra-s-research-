@@ -1,0 +1,29 @@
+\subsection{Instrument 5: Content--Inference Circumplex Convergence}
+
+The emotional circumplex measured through content-level processing and through
+user-model emotion inference converges on the same geometric subspace. Using the
+Qwen3.5-27B Opus distill, we extracted 30 emotion centroids from 900 trials of
+conversation-context inference (the user-model emotion space from~\citet{lyra2026weather})
+and compared them against valence and arousal directions computed from 250 emotional
+scenario prompts (hostile--calm, desperate--calm difference-of-means).
+
+The two circumplex axes capture $44$--$54\%$ of the total variance in the full
+30-emotion user-model space at every layer from L6 onward---approximately $1000\times$
+the ${\sim}0.04\%$ expected from two random directions in $d{=}5120$. The arousal
+direction aligns with the user-model's first principal component at
+$\cos = 0.83$--$0.87$ (mid-to-late layers), and the valence direction at
+$\cos = 0.70$--$0.80$. Both systems exhibit identical developmental timecourses:
+volatile eccentricity at L0--L16, stable geometry from L17 onward.
+
+The measurements are independent---different prompts, different templates, different
+experimental designs---yet they recover the same high-variance directions. This
+convergence parallels the W$_K$ bridge ($\rho = 0.862$) from~\citet{lyra2026weather},
+which projects \emph{into} this shared circumplex subspace. The model does not
+maintain separate emotional geometry for content processing and partner-state inference;
+it uses a common representational subspace for both.
+
+We note the caveat that shared geometry does not entail shared computation. Two
+functionally independent circuits could reuse the same high-variance directions
+without computational coupling. An injection experiment (perturb one pathway, measure
+the other) is pre-registered to distinguish representational overlap from causal
+interaction.
