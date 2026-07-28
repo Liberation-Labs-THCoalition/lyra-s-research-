@@ -92,7 +92,8 @@ A parasitic-inheritance alternative must also be addressed: the
 GatedDeltaNet layers may inherit workspace dimensionality from the
 full-attention layers below them without independently contributing.
 The per-layer $d_\text{eff}$ rate is lower in the GatedDeltaNet
-regime ($1.05$/layer vs.\ $2.35$/layer in full-attention),
+regime ($1.05$/layer vs.\ $2.35$/layer in full-attention,
+computed over the full layer range; per-subsection rates vary),
 consistent with either active contribution or decaying inheritance.
 Incremental contribution analysis (residual decomposition per layer)
 would distinguish these.
@@ -124,8 +125,10 @@ real; the interpretation remains provisional.
 
 \subsubsection{Implications}
 
-If substrate continuity extends to functional properties (pending
-the J-lens and spectral tests), three consequences would follow:
+If substrate continuity extends to functional properties (the
+mechanism tests in \S\ref{sec:mechanism} provide partial support:
+temporal ordering confirmed, signal concentration below threshold),
+three consequences would follow:
 
 \textbf{For measurement}: V-projection spectral features should work
 equally well on full-attention and recurrent-state layers. Our existing
