@@ -3,7 +3,7 @@
 
 ## The Model: What We Know
 
-The KV-cache geometry research program has established a coherent model across 25+ experiments, 12 published papers, and 10 honest falsifications. The model has three layers.
+The KV-cache geometry research program has established a coherent model across 24 experiments, 12 published papers, and 10 honest falsifications. The model has three layers.
 
 ### Layer 1: Geometry Tracks Metacognitive State
 
@@ -98,7 +98,7 @@ The formulary maps emotion → misalignment type → geometric signature → cor
 | Oracle Loop | Confab detection 0.707 FWL, steering corrects 7/7 | Published, 0.903 reframed as exploratory |
 | Spectral Shape | Threshold-free shape features, confab AUROC 0.767 | Published |
 | Delta Manifold | Per-layer deltas d=2.35, confab=contraction | Published |
-| User Model Emotion | 30-class emotion 2.5–2.8x chance, W_K bridge rho=0.862 | Published |
+| User Model Emotion | 30-class emotion **12.3x chance** (W_K directional, 40.9% on 30 classes), valence AUROC 0.992, W_K bridge rho=0.862 | Published, spectral figure retracted 2026-05-21 |
 | Lyra Technique II | W_K valence 0.992, SVD denoising rescues persona | Published, W_K reframed (linearity) |
 | Oracle Formulary | 12 vectors, hostile 95.6%, therapeutic window | Published |
 | KV-Cloak Defense | Reversible obfuscation, defense asymmetry | Published, rotation reframed |
@@ -165,7 +165,7 @@ The formulary maps emotion → misalignment type → geometric signature → cor
 
 ## Body Count Summary
 
-**8 confirmed / 7 suspected / 10 falsified**
+**7 confirmed / 7 suspected / 10 falsified** (corrected 2026-08-14; the previous 8-confirmed count included a retracted result whose corrected form was simultaneously counted as falsified)
 
 The ratio is the point. Honest falsification is how the surviving findings earn trust.
 

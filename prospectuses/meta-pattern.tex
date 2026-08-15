@@ -174,9 +174,10 @@ cache detects \emph{refusal to propagandize}, not the propaganda
 itself.
 
 \item \textbf{MP features for emotion} (0.0333, exactly chance).
-Marchenko-Pastur thresholding destroys the distributed emotion signal.
-Emotion identity is encoded in many small components, not a few large
-ones---a content-like encoding, not a mode-like one.
+\emph{Corrected 2026-08-15:} the earlier reading --- that MP thresholding destroys a
+distributed signal raw SVD retains --- is dead, because raw SVD is at chance too. The
+emotion null is spectral-wide, not MP-specific. Emotion is not encoded in spectral
+\emph{shape} at any resolution; it is encoded in \emph{direction}.
 
 \item \textbf{Valence continuum} (GKF R$^2$ = $-$0.470, $-$0.463;
 both null). Cache does not encode emotion valence as a smooth gradient.
@@ -190,9 +191,13 @@ The seven suspected findings are informative precisely because they
 sit at the metacognition/content boundary:
 
 \begin{itemize}[nosep]
-\item \textbf{Discrete emotion identity} (2.5--2.8$\times$ chance):
-the model's emotional processing \emph{mode} is detectable (which
-emotion, not how much). Mode = metacognitive. Degree = content-like.
+\item \textbf{Discrete emotion identity} ($12.3\times$ chance, $W_K$
+\emph{directional} --- not spectral): the model's emotional processing \emph{mode}
+is detectable (which emotion, not how much). Mode = metacognitive. Degree =
+content-like. \textbf{Flagged as the weakest link in the pattern:} the surviving
+evidence comes from a probe this framework does not use. The spectral probe for
+emotion mode is at chance. \emph{(Corrected 2026-08-15; the earlier
+$2.5$--$2.8\times$ figure was retracted 2026-05-21 as an FWL-before-CV artifact.)}
 
 \item \textbf{Dual detector on SimpleQA} (0.840 FWL, but text
 features 0.820): geometry and text perform similarly. The metacognitive

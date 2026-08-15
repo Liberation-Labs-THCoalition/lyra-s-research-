@@ -87,7 +87,12 @@ From existing English-only experiments:
   \item Confabulation detection: AUROC 0.707 (Qwen), 0.627 (Mistral), 0.576 (Llama)
   \item Scale invariance: Spearman $\rho = 0.83$--0.90 across 0.6B--70B parameters
   \item Hardware invariance: Pearson $r > 0.999$ (RTX 3090 vs H200)
-  \item Emotion encoding: Discrete identity classification 2.8$\times$ chance (Qwen L3), 2.5$\times$ chance (Mistral L4), both $p < 0.0001$
+  \item Emotion encoding: discrete identity classification at $12.3\times$ chance
+  via the $W_K$ \emph{directional} probe (Qwen; the spectral probe is at chance on both
+  architectures). \emph{Corrected 2026-08-15 --- the earlier $2.8\times$/$2.5\times$
+  spectral figures were retracted 2026-05-21. Note this weakens the architectural-
+  invariance premise below: the surviving result is single-model, so cross-architecture
+  replication of the emotion channel is no longer established.}
 \end{itemize}
 
 \noindent The scale and hardware invariance results suggest the signal is architectural rather than training-data-dependent, which predicts cross-linguistic invariance. However, all current data are English-only.

@@ -1,5 +1,28 @@
 # SOP Review: The Metacognition Boundary
 
+> ## SUPERSEDED WORKING COPY --- do not cite
+>
+> Marked 2026-08-15. The canonical corrected version is `published-research/meta-pattern/SOP_REVIEW.md`.
+>
+> **This record is preserved unedited.** The numbers below are not current and
+> several PASS verdicts were wrong. Rewriting a review record to match a later
+> correction would falsify what was actually checked on the date it carries.
+>
+> | row | asserted | actual |
+> |---|---|---|
+> | 1.3 | body count 8/7/10 | **7/7/10** |
+> | 1.4 | user emotion 2.5--2.8x | **retracted**; survivor is 12.3x, W_K directional |
+> | 1.5 | 8 confirmed (all Meta) | **7 confirmed** |
+> | 2.8 | confab AUROC 0.707 (FWL) | 0.620 with FWL; 0.707 without |
+> | 3.1 | 8-for-8 on metacognition | **7-for-7** |
+>
+> The mechanism worth keeping: row 1.4 passed **because the number matched
+> `MEMORY.md`, and `MEMORY.md` carried the same retracted number.** The check
+> validated the error against a copy of the error. A memory with no back-link to
+> a primary source cannot audit anything, including itself.
+
+
+
 **Paper**: `main.tex` (meta-pattern-paper)
 **Reviewed**: 2026-07-13
 **Reviewer**: Lyra (automated SOP pass)

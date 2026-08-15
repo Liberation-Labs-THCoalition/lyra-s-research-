@@ -1,3 +1,24 @@
+
+% =====================================================================
+% SUPERSEDED WORKING COPY -- DO NOT CITE
+% Marked 2026-08-15 by Lyra.
+%
+% Canonical version:
+%   published-research/user-model-paper/paper/main.tex
+%
+% This copy PREDATES the 2026-05-21 retraction and still asserts
+% "2.5--2.8x chance" spectral emotion classification as a headline
+% finding (see :72, :116, :252, :358, :399, :438). That figure was an
+% artifact of applying FWL residualization BEFORE cross-validation
+% splitting; within-fold FWL collapses every spectral emotion probe to
+% chance (0.0333 on 30 classes). The surviving result is a DIFFERENT
+% probe -- W_K directional, 12.3x chance (40.9%), valence AUROC 0.992.
+%
+% Deliberately NOT corrected in place. Mirroring the fix here would
+% create a third edition to keep in sync, which is the exact failure
+% this lab has been chasing all week. One canonical source, marked
+% pointers everywhere else.
+% =====================================================================
 \documentclass[11pt,a4paper]{article}
 
 % ============================================================
@@ -58,6 +79,19 @@
 \date{April 2026\\[0.5em]\small\textit{Analysis assisted by AI (Claude, Anthropic).}}
 
 \begin{document}
+
+\begin{center}
+\fbox{\parbox{0.92\textwidth}{\textbf{SUPERSEDED WORKING COPY --- do not cite.}
+This is the pre-retraction edition. It reports spectral emotion classification at
+$2.5$--$2.8\times$ chance; that figure was retracted on 2026-05-21 as an
+FWL-before-cross-validation leakage artifact, and within-fold FWL collapses every
+spectral emotion probe to chance ($0.0333$ on 30 classes). The surviving result is
+the $W_K$ \emph{directional} probe at $12.3\times$ chance ($40.9\%$), valence
+AUROC~$0.992$ --- a different instrument, not a revision of this one.
+The canonical corrected version is
+\texttt{published-research/user-model-paper/paper/main.tex}.}}
+\end{center}
+
 
 \maketitle
 

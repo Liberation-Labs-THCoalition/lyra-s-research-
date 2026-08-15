@@ -53,6 +53,35 @@
 \date{April 2026}
 
 \begin{document}
+
+\begin{center}
+\fbox{\parbox{0.93\textwidth}{\textbf{PREMISE CORRECTED --- 2026-08-15.}
+This prospectus was built on a contrast between Marchenko-Pastur features (at chance
+for emotion) and raw SVD features ($2.5$--$2.8\times$ chance). \textbf{That contrast
+does not exist.} The $2.5$--$2.8\times$ figure was retracted at source on 2026-05-21 as
+an FWL-before-cross-validation leakage artifact; under within-fold FWL \emph{every}
+spectral probe --- raw SVD, MP, stable rank, spectral entropy alike --- sits at chance
+($0.0333$ on 30 classes). The residual-stream $94.07\%$ figure below is retracted by the
+same mechanism.
+
+\medskip
+\textbf{What dies:} Research Question 1 (``why does MP thresholding destroy emotion
+signal but preserve confab/deception signal?'') presupposes an SVD signal for MP to
+destroy --- there is none. Sub-study 1 (spectral structure comparison, above-edge vs
+below-edge) is unmotivated: the null is spectral-wide, not MP-specific. Research
+Question 2 is answered rather than open.
+
+\medskip
+\textbf{What replaces it, and it is a better question.} The surviving emotion result is
+the $W_K$ \emph{directional} probe: $12.3\times$ chance ($40.9\%$ on 30 classes),
+binary valence AUROC~$0.992$. Emotions change the \emph{direction} key vectors point
+without altering the \emph{shape} of the singular value distribution. So the live
+question is not \emph{why does MP destroy emotion signal} but \emph{why is emotion
+directional when confabulation and deception are spectral?} --- i.e.\ what makes a
+cognitive state legible to shape versus to rotation. That is sharper than the original
+and the instruments to test it already exist.}}
+\end{center}
+
 \maketitle
 
 \section{Motivation}
@@ -66,10 +95,11 @@ Mistral-7B) produced three surprising findings that warrant follow-up:
     features work well for confab/deception detection. MP thresholding
     destroys emotion signal that lives below the MP edge.
 
-  \item \textbf{Raw SVD features achieve 2.5--2.8$\times$ chance at
-    encoding peaks} (L3/L4) but show \emph{no} cross-emotion valence
-    generalization ($R^2 = -0.47$). The cache encodes discrete emotion
-    identity, not a smooth valence continuum.
+  \item \textbf{Spectral features are at chance for emotion} ($0.0333$ on 30
+    classes) under within-fold FWL --- raw SVD, MP and shape statistics alike ---
+    and show no cross-emotion valence generalization ($R^2 = -0.47$). The
+    surviving signal is directional: the $W_K$ projection reaches $12.3\times$
+    chance. \emph{(Corrected 2026-08-15; see the premise note above.)}
 
   \item \textbf{$W_K$ bridge analysis shows high cosine similarity}
     (Qwen plateau 0.83--0.87 at L27--L55, Mistral 0.932 at L17), but
@@ -122,9 +152,10 @@ From the completed emotion bridge experiment (900 trials):
   \item \textbf{Enc/gen profile correlation}: Qwen $\rho = 0.433$
     (NS), Mistral $\rho = 0.002$ (NS)---encoding and generation peaks
     are uncorrelated
-  \item \textbf{Residual-stream linear probes}: L3 = 94.07\% on
-    30-class emotion ID (28$\times$ chance)---but L0 = 97.48\% (text
-    content drives signal)
+  \item \textbf{Residual-stream linear probes}: \textbf{[RETRACTED]} L3 = 94.07\% on
+    30-class emotion ID (28$\times$ chance) --- retracted by the same
+    FWL-before-CV mechanism. The L0 = 97.48\% figure was always the tell that text
+    content drove the signal.
   \item \textbf{$W_K$ bridge PC1-valence}: $\rho = 0.862$ at L35
     (strong projected bridge)
 \end{itemize}
