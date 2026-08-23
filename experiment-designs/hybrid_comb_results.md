@@ -7,6 +7,23 @@
 
 ---
 
+> **CORRECTION 2026-08-22 (next morning): this was a replication, not a first look.**
+> This document and its design say the corrected substrate analysis "has never been executed."
+> **Partially false.** The R3 *script* was never rerun — that part stands — but the crossing
+> re-analysis **was** performed on 2026-08-12 and its numbers are recorded in the docstring of
+> `starship:~/lab/kv-experiments/substrate_independence.py`:
+> *"mean |delta| 2.32 vs 2.37, Mann-Whitney p=0.445, n=31 crossings. Depth-matched regime means
+> are 25.24 (full-attn) vs 24.03 (GatedDeltaNet)."*
+>
+> Recomputed from the July artifact 2026-08-22: **2.3215 vs 2.3685, p=0.4454, 25.24 vs 24.03** —
+> every digit. My crossing test's `T = −0.0470` is exactly `2.3215 − 2.3685`.
+>
+> So the finding below is an **independent replication by a different route** (circular-shift and
+> spectral tests vs Mann-Whitney on |Δ|), which is *stronger* evidence than a single analysis.
+> It is also a smaller claim to novelty than I made. I missed the docstring because I searched
+> for result *files* and never read the header of a script I had already opened — the record was
+> inside the artifact I was standing on.
+
 ## Headline
 
 **Pre-registered outcome branch 2.** At the resolution of a 90-prompt mean `d_eff` depth
