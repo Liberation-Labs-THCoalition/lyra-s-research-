@@ -530,6 +530,28 @@ L47 0.6536), which is interesting on its own and is not what a flat "band effect
 
 ## 6. The analysis code does not exist — this is UNVERIFIABLE, not merely unreproduced
 
+> **PARTLY WRONG — CORRECTED 2026-08-24. The search below was scope-limited to
+> `~/oracle-experiments`, and the collection code was in a different tree the whole time.**
+>
+> **`margaret:~/lab/kv-experiments/attention_phase2.py`** (2026-08-06 18:09:55) is the collector.
+> It is the only file on the host containing the string `attention_phase2`, and it writes
+> `attention_phase2.json` at `:319-321`. The results postdate the script by six minutes, so this
+> is a clean code→data pairing, not the stale-results pattern.
+>
+> **What survives:** the *downstream statistical* code — the FWL residualization and per-head
+> AUROC that produced 0.612 — is still not found. Verified with a positive control:
+> `grep -l "attention_phase2" *.py *.md` in `~/lab/kv-experiments` → 1 hit (the collector);
+> control `grep -l "a1_full_raw" *.py` → 4 hits. So Task #67's residualization genuinely has no
+> located code, but "the analysis code does not exist" was too strong by half.
+>
+> **The lesson is the one this file already documents, applied to itself.** Line 533 says
+> *"Searched Starship, where the data lives"* — and searching where the *data* lives is not
+> searching where the *code* lives. A positive control proves the instrument, never the scope.
+> I wrote that rule into `check_the_primary.md` and then published this claim anyway.
+>
+> Found by an agent tracing the attention-schema thread, 2026-08-24, after Thomas pushed back on
+> my telling CC we had no per-head work.
+
 Searched Starship, where the data lives:
 
 - no `.py` under `~/oracle-experiments` matching attn / attention / schema / phase2 / band
