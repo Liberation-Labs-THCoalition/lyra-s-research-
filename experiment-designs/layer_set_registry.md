@@ -538,11 +538,49 @@ L47 0.6536), which is interesting on its own and is not what a flat "band effect
 > `attention_phase2.json` at `:319-321`. The results postdate the script by six minutes, so this
 > is a clean code→data pairing, not the stale-results pattern.
 >
-> **What survives:** the *downstream statistical* code — the FWL residualization and per-head
-> AUROC that produced 0.612 — is still not found. Verified with a positive control:
-> `grep -l "attention_phase2" *.py *.md` in `~/lab/kv-experiments` → 1 hit (the collector);
-> control `grep -l "a1_full_raw" *.py` → 4 hits. So Task #67's residualization genuinely has no
-> located code, but "the analysis code does not exist" was too strong by half.
+> **CORRECTED AGAIN, same night. The paragraph immediately below was also wrong.** The
+> downstream analysis code exists too:
+>
+> - `starship:~/oracle-experiments/results/a1_benchmark/recompute_0612.py` — **2026-08-20 21:38**
+> - `starship:~/oracle-experiments/results/a1_benchmark/bootstrap_confab_gap.py` — **2026-08-20 22:14**
+>
+> Both load `attention_phase2.json` and implement the FWL + AUROC pipeline. They were in the same
+> directory this section says contains "zero code," and they landed **four days before this
+> document's own last write**.
+>
+> ~~What survives: the downstream statistical code — the FWL residualization and per-head AUROC
+> that produced 0.612 — is still not found.~~ **False.** Struck rather than deleted, because the
+> sequence is the finding.
+>
+> **THREE STATES, ALL ASSERTED CONFIDENTLY, ALL WRONG:**
+>
+> | when | claim | why it failed |
+> |---|---|---|
+> | 2026-08-14 | "the analysis code does not exist" | searched `~/oracle-experiments` by **filename pattern** (`attn\|attention\|schema\|phase2\|band`) |
+> | 2026-08-24, ~01:00 | "collection code exists, analysis code genuinely not found" | searched `~/lab/kv-experiments` by **filename pattern**, with a positive control that passed |
+> | 2026-08-24, ~02:00 | both exist | **content-grep**, run recursively, no filename assumption |
+>
+> **The positive control passed every time.** It proved the grep worked. It could not prove the
+> *pattern* was right, and the pattern was the broken part: `recompute_0612.py` and
+> `bootstrap_confab_gap.py` contain none of the words I was searching filenames for. A file is not
+> obliged to be named after what it does.
+>
+> **Rule, since two corrections did not install it:** for an absence claim about code, grep
+> **contents** for the artifact the code must touch (here, `attention_phase2`), never filenames for
+> a topic. The thing a script *reads* is a fact about it; the thing it is *called* is a preference.
+>
+> **Two substantive consequences.**
+>
+> 1. **My per-head AUROC reading was backwards.** `bootstrap_confab_gap.py:6` fixes the convention:
+>    *"AUROC = P(confab > grounded) … Values BELOW 0.5 mean confab is LOWER."* The 0.10–0.20 values
+>    I found are not weak signal — they are **strong signal in the negative direction** (confab has
+>    markedly lower `sink_fraction`). The other two caveats — controls ranking as high as band
+>    layers, and channel-proxy labels rather than adjudicated ones — still stand and still block.
+> 2. **The analyses write nothing.** Neither script has a `json.dump`; both only `print()`. So the
+>    "Phase 0 recompute — results" numbers in this file exist **only as prose here**, with no
+>    machine-readable artifact behind them. Reproducible by re-running, consumable by nothing. That
+>    is `RESULTS_FROM_UNRUN_EXPERIMENT`'s quieter cousin: results from a run whose output was never
+>    saved.
 >
 > **The lesson is the one this file already documents, applied to itself.** Line 533 says
 > *"Searched Starship, where the data lives"* — and searching where the *data* lives is not
