@@ -202,6 +202,65 @@ is the row where the divergence is worst.
 Consequence 3 is the load-bearing one and it is `DOUBLE_COUNTED_EXPERIMENT` in spirit if any
 paper leans on the agreement.
 
+---
+
+### UPDATE 2026-08-24 — there is a THIRD definition, and a rule that supersedes chasing them
+
+I treated this collision as closed on 08-20. It was not closed; I had only stopped looking. On
+08-24 CC described the v8 production stack's primary metrics as *"projection (dot product),
+**stable rank (nuclear/Frobenius)**, and Jaccard"* — and on the strength of "we don't use `d_eff`"
+I told them their stack was clear of the sample-size problem. **That reassurance was wrong.**
+
+`‖A‖_* / ‖A‖_F` **squared is the participation ratio.** Verified on Qwen3.5-27B, L21, n=90:
+
+| definition | L21 value | where |
+|---|---|---|
+| `‖A‖_F² / ‖A‖_2²` | **1.2907** | the literature |
+| `(Σs)² / Σs²` | **25.1202** | our `kv-experiments` |
+| `‖A‖_* / ‖A‖_F` | **5.0120** | CC's v8 stack |
+
+`5.0120² = 25.1202` exactly. Three names, three values, one label, no error message. CC's planned
+sweep for "effective rank" in old calibration code would have missed it entirely, because the
+string they would grep for is not there.
+
+**A metric's name is not its definition. The formula is what travels between codebases.**
+
+### The rule that makes the chase unnecessary
+
+Measured on the same draws, L21, B=100 subsamples without replacement, drift m=20 → m=89:
+
+| metric | drift |
+|---|---|
+| mean(projection onto a fixed unit direction) | **+0.7%** |
+| mean \|projection\| | **−0.6%** |
+| mean ‖h‖ | **−0.0%** |
+| kurtosis (mean over 64 layers) | **+0.2%** |
+| **stable rank / `d_eff` / participation ratio** | **+71% to +116%, still climbing** |
+
+> **A statistic that is a per-sample quantity averaged over samples converges fast.
+> A statistic that is a property of the sample's spectrum or rank is bounded by `n` and does not.**
+
+Per-sample and safe: projection, norm, kurtosis, dot products, any mean of a per-item score.
+Rank-bounded and unsafe: stable rank (all three definitions), `d_eff`, participation ratio,
+effective rank, explained-variance ratios — anything eigen- or singular-value derived.
+
+This classifies a new metric in seconds without running anything, and it is more reliable than
+grepping for a variable name. It also explains the collision and the instability with one cause:
+**people name a metric after what they think it means, and the formula is what actually
+propagates.**
+
+### Downstream: relative baselines do not fix it
+
+CC's mitigation was to z-score against a running (Welford) baseline instead of an absolute
+threshold. Correct for the absolute-magnitude problem; **insufficient for a monotone drift**,
+because the baseline drifts too, just later. Simulated over 30 randomised streams, a
+rank-bounded metric sits at **mean z ≈ +1.5σ at every stage** of the stream and **never trips a
+2σ alarm** — it silently consumes the detection headroom asymmetrically. (Magnitude inflated by
+the simulation's smoothness; direction and persistence are structural.)
+
+**The fix is an N-matched baseline, or detrending the N-dependence before z-scoring.** A running
+baseline alone inherits the problem with an extra layer of indirection hiding it.
+
 **Recommended fix, not yet applied:** rename ours to `participation_ratio_sv` everywhere and
 state the formula inline at every reporting site. Do NOT silently swap in the literature
 definition — that changes every published number. Flag, don't overwrite.
