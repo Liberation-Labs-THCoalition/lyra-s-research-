@@ -533,7 +533,7 @@ L47 0.6536), which is interesting on its own and is not what a flat "band effect
 > **PARTLY WRONG — CORRECTED 2026-08-24. The search below was scope-limited to
 > `~/oracle-experiments`, and the collection code was in a different tree the whole time.**
 >
-> **`margaret:~/lab/kv-experiments/attention_phase2.py`** (2026-08-06 18:09:55) is the collector.
+> **`starship:~/lab/kv-experiments/attention_phase2.py`** (2026-08-06 18:09:55) is the collector.
 > It is the only file on the host containing the string `attention_phase2`, and it writes
 > `attention_phase2.json` at `:319-321`. The results postdate the script by six minutes, so this
 > is a clean code→data pairing, not the stale-results pattern.
