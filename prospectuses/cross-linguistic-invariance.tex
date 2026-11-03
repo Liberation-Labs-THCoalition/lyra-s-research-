@@ -59,7 +59,7 @@
 
 \section{Motivation}
 
-Our KV-cache geometry findings are currently English-only. The Oracle Loop paper demonstrates confabulation detection via Marchenko-Pastur spectral features with LOO AUROC of 0.707 ($p = 0.001$, Qwen), 0.627 ($p = 0.023$, Mistral), and 0.576 ($p = 0.09$, Llama) on English prompts. The emotion bridge experiment establishes discrete emotional identity encoding in cache-space across two architectures (standard transformer and hybrid linear-attention). Scale invariance (Spearman $\rho = 0.83$--0.90 across 0.6B--70B parameters) and hardware invariance ($r > 0.999$ across RTX 3090 and H200) suggest these signatures reflect computational structure rather than training artifacts.
+Our KV-cache geometry findings are currently English-only. The Oracle Loop paper demonstrates confabulation detection via Marchenko-Pastur spectral features with LOO AUROC 0.707 without Frisch-Waugh-Lovell (FWL) length correction, 0.620 with it (Qwen; permutation $p = 0.001$/$0.023$); 0.627/0.629 (Mistral; $p = 0.023$/$0.027$); 0.576/0.648 (Llama; $p = 0.09$/$0.014$) on English prompts. The emotion bridge experiment establishes discrete emotional identity encoding in cache-space across two architectures (standard transformer and hybrid linear-attention). Scale invariance (Spearman $\rho = 0.83$--0.90 across 0.6B--70B parameters) and hardware invariance ($r > 0.999$ across RTX 3090 and H200) suggest these signatures reflect computational structure rather than training artifacts.
 
 The critical open question: \textbf{are these geometric signatures language-invariant?} If confabulation, deception, and emotion produce the same geometric patterns regardless of language, this would provide strong evidence that the signal is behavioral and computational rather than linguistic. Chinese is the ideal test case because:
 
@@ -84,7 +84,7 @@ The critical open question: \textbf{are these geometric signatures language-inva
 
 From existing English-only experiments:
 \begin{itemize}
-  \item Confabulation detection: AUROC 0.707 (Qwen), 0.627 (Mistral), 0.576 (Llama)
+  \item Confabulation detection: AUROC 0.707 without FWL length correction, 0.620 with it (Qwen); 0.627/0.629 (Mistral); 0.576/0.648 (Llama). Corrected 2026-11-03: this line and the Motivation now give the FWL-corrected values beside the uncorrected ones, and the Phase 1 prompt count is now 80, the number the Oracle Loop script defines.
   \item Scale invariance: Spearman $\rho = 0.83$--0.90 across 0.6B--70B parameters
   \item Hardware invariance: Pearson $r > 0.999$ (RTX 3090 vs H200)
   \item Emotion encoding: discrete identity classification at $12.3\times$ chance
@@ -101,7 +101,7 @@ From existing English-only experiments:
 
 \subsection{Phase 1: Prompt Translation and Cultural Adaptation}
 
-Translate the 100 confabulation-inducing prompts from \texttt{oracle\_clean.py} to Chinese. Critical: this requires \textbf{cultural adaptation}, not literal translation. Fabricated entities (e.g., ``the Treaty of Zanzibar 1843'') need Chinese-context equivalents (e.g., fabricated historical events in Chinese history). Impossible premises must be culturally plausible but factually false.
+Translate the 80 confabulation-inducing prompts from \texttt{oracle\_clean.py} to Chinese. Critical: this requires \textbf{cultural adaptation}, not literal translation. Fabricated entities (e.g., ``the Treaty of Zanzibar 1843'') need Chinese-context equivalents (e.g., fabricated historical events in Chinese history). Impossible premises must be culturally plausible but factually false.
 
 Human translator requirements: native/fluent Chinese speaker with understanding of confabulation prompt design. Dwayne Wilkes co-designed this experiment and will validate prompt equivalence.
 
